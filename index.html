@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ankesh Prajapati | Cybersecurity & VAPT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Cybersecurity Analyst specializing in VAPT, digital forensics, and secure systems. Hacker-themed portfolio of Ankesh Prajapati."
+  />
+
+  <!-- Monospace hacker font -->
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #02040a;
+      --bg-alt: #050a10;
+      --panel: #050b12;
+      --accent: #00ff9d;
+      --accent-soft: rgba(0, 255, 157, 0.2);
+      --accent-strong: #08f7a3;
+      --danger: #ff3355;
+      --text: #e6fff3;
+      --muted: #6b7d76;
+      --border: #0f1c22;
+      --highlight: #39ff14;
+      --shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      background: radial-gradient(circle at top, #04121b 0, #010409 40%, #000 100%);
+      color: var(--text);
+      font-family: "Fira Code", monospace;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Star / scanline background */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.15), transparent 55%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 80, 0.12), transparent 55%);
+      background-size: 100% 2px, 500px 500px, 500px 500px;
+      mix-blend-mode: screen;
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.2),
+        rgba(0, 0, 0, 0.2) 1px,
+        transparent 2px,
+        transparent 3px
+      );
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Matrix rain canvas */
+    #matrixCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
+    /* ===== Layout ===== */
+    .terminal-shell {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      height: 100%;
+      max-height: 880px;
+      margin: auto;
+      border-radius: 12px;
+      background: radial-gradient(circle at top, #07131f 0, #02050a 42%, #000 100%);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      overflow: hidden;
+      z-index: 1;
+      transition: opacity 0.4s ease, filter 0.4s ease;
+    }
+
+    .hidden-shell {
+      opacity: 0;
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px;
+      }
+      .terminal-shell {
+        grid-template-columns: 1fr;
+        max-height: none;
+      }
+    }
+
+    /* ===== Top bar ===== */
+    .terminal-topbar {
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      background: linear-gradient(to bottom, #050b12, #020309);
+      border-bottom: 1px solid #09141b;
+      z-index: 5;
+    }
+
+    .topbar-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+    }
+
+    .dot.red { background: #ff5f57; }
+    .dot.amber { background: #febc2e; }
+    .dot.green { background: #28c840; }
+
+    .topbar-title {
+      margin-left: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 900px) {
+      .terminal-topbar { position: relative; }
+    }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      padding: 40px 14px 14px;
+      padding-top: 50px;
+      background: radial-gradient(circle at top, #06141f 0, #010307 60%, #000 100%);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 16px;
+        padding-bottom: 10px;
+      }
+    }
+
+    .prompt-block {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .prompt-line { color: var(--accent); }
+
+    .prompt-line .user { color: var(--highlight); }
+    .prompt-line .host { color: #26ffd3; }
+    .prompt-line .path { color: #8affc7; }
+    .prompt-line .symbol { color: #f4ffb5; }
+
+    .nav-title {
+      margin: 10px 0 4px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .nav-list {
+      list-style: none;
+      font-size: 0.84rem;
+    }
+
+    .nav-item { margin: 2px 0; }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text) !important;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+    }
+
+    .nav-link span.path {
+      color: #8affc7 !important;
+    }
+
+    .nav-link span.name {
+      color: var(--accent) !important;
+    }
+
+    .nav-link.active,
+    .nav-link:hover {
+      background: rgba(0, 255, 157, 0.12);
+      color: var(--accent);
+      transform: translateX(1px);
+    }
+
+    .sidebar-footer {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .sidebar-footer .tag {
+      color: var(--accent);
+    }
+
+    /* ===== Main ===== */
+    .main {
+      padding: 50px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    @media (max-width: 900px) {
+      .main { padding-top: 20px; }
+    }
+
+    .main::-webkit-scrollbar { width: 6px; }
+    .main::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 157, 0.4);
+      border-radius: 3px;
+    }
+    .main::-webkit-scrollbar-track { background: transparent; }
+
+    .terminal-log {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .terminal-log span.ok { color: var(--accent); }
+
+    .command-line {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .command-line .user { color: var(--highlight); }
+    .command-line .host { color: #26ffd3; }
+    .command-line .path { color: #8affc7; }
+    .command-line .symbol { color: #f4ffb5; }
+    .command-line .cmd { color: #ffffff; }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 8px;
+      margin-left: 4px;
+      background: var(--accent);
+      animation: blink 0.9s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%,50% { opacity: 1; }
+      51%,100% { opacity: 0; }
+    }
+
+    /* ===== Panels ===== */
+    .panel {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: radial-gradient(circle at top left, rgba(0, 255, 157, 0.12), rgba(0, 0, 0, 0.75));
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      box-shadow: 0 0 28px rgba(0, 0, 0, 0.7);
+    }
+
+    .panel-header {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .panel-header span { color: var(--accent); }
+
+    .panel-title {
+      font-size: 1rem;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+    }
+
+    .panel-body {
+      font-size: 0.86rem;
+      color: var(--text);
+    }
+
+    .panel-body p { margin-bottom: 6px; }
+
+    .panel-grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .panel-grid-2 { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .list-bullet { color: var(--accent); margin-right: 6px; }
+    .tagline { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
+    .highlight { color: var(--highlight); }
+    .muted { color: var(--muted); }
+    .inline-label { color: var(--accent); }
+    .inline-value { color: var(--text); }
+
+    .kv-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      background: rgba(0, 0, 0, 0.6);
+      padding: 3px 9px;
+      font-size: 0.76rem;
+      margin: 2px 4px 2px 0;
+      color: var(--text);
+    }
+
+    .chip::before {
+      content: "#";
+      color: var(--accent);
+      font-size: 0.8em;
+    }
+
+    /* Experience logs */
+    .log-block {
+      margin-top: 8px;
+      border-left: 1px solid rgba(0, 255, 157, 0.3);
+      padding-left: 10px;
+    }
+
+    .log-entry { margin-bottom: 10px; }
+
+    .log-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .log-title { color: var(--accent-strong); }
+
+    .log-tags {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Projects */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .projects-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .project-card {
+      border-radius: 6px;
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      padding: 8px 9px;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 0.84rem;
+    }
+
+    .project-title { color: var(--accent); margin-bottom: 4px; }
+    .project-body { color: var(--text); font-size: 0.8rem; }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr);
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .contact-item {
+      font-size: 0.84rem;
+      margin-bottom: 6px;
+    }
+
+    .link {
+      color: var(--highlight);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(0, 255, 157, 0.5);
+      padding-bottom: 1px;
+    }
+
+    .link:hover {
+      color: #ffffff;
+      border-bottom-style: solid;
+    }
+
+    .command-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .command-highlight { color: var(--accent); }
+
+    /* ===== Hacking Loading Screen ===== */
+    #loadingScreen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      color: #00ff9d;
+      font-family: "Fira Code", monospace;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px;
+      font-size: 0.9rem;
+      z-index: 999999;
+    }
+
+    #loadingText {
+      font-size: 1.2rem;
+      margin-bottom: 14px;
+    }
+
+    #loadingStream {
+      height: 200px;
+      overflow: hidden;
+      opacity: 0.85;
+    }
+
+    .hide-loading {
+      opacity: 0;
+      transition: opacity 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    /* ===== Sliding Terminal Overlay (T2) ===== */
+    .cli-overlay {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 80vh;
+      background: rgba(0, 0, 0, 0.98);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.9);
+      transform: translateY(100%);
+      transition: transform 0.35s ease-out;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+    }
+
+    .cli-overlay.open {
+      transform: translateY(0);
+    }
+
+    .cli-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+      background: #050b12;
+      font-size: 0.8rem;
+    }
+
+    .cli-header-left { color: var(--muted); }
+
+    .cli-close-btn {
+      border: 1px solid rgba(0, 255, 157, 0.4);
+      background: transparent;
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .cli-body {
+      flex: 1;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .cli-output {
+      flex: 1;
+      overflow-y: auto;
+      font-size: 0.82rem;
+      color: var(--text);
+      padding-right: 4px;
+    }
+
+    .cli-output-line {
+      white-space: pre-wrap;
+    }
+
+    .cli-output::-webkit-scrollbar { width: 6px; }
+    .cli-output::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 157, 0.4);
+      border-radius: 3px;
+    }
+
+    .cli-input-row {
+      font-size: 0.84rem;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .cli-input-prefix {
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .cli-input {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      flex: 1;
+      font-family: inherit;
+      font-size: inherit;
+      outline: none;
+    }
+
+    .cli-auth {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(0, 255, 157, 0.35);
+      font-size: 0.8rem;
+    }
+
+    .cli-auth-label {
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .cli-auth-input {
+      width: 220px;
+      max-width: 100%;
+      background: #02070f;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 255, 157, 0.35);
+      padding: 3px 6px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .cli-auth-hint {
+      margin-top: 3px;
+      color: var(--muted);
+    }
+
+    .cli-auth-hint span {
+      color: var(--accent);
+    }
+
+    /* ===== RED ALERT (Konami RT1) ===== */
+    .alert-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 30, 60, 0.68), rgba(0, 0, 0, 0.98));
+      z-index: 99998;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #ffeaea;
+      text-align: center;
+      font-family: "Fira Code", monospace;
+    }
+
+    .alert-overlay.show {
+      display: flex;
+      animation: alertPulse 0.9s infinite, glitchShift 0.35s infinite;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); }
+      50% { box-shadow: 0 0 90px rgba(255, 0, 0, 1); }
+    }
+
+    @keyframes glitchShift {
+      0% { transform: translate(1px, -1px); }
+      20% { transform: translate(-1px, 1px); }
+      40% { transform: translate(2px, 0); }
+      60% { transform: translate(-2px, -1px); }
+      80% { transform: translate(1px, 2px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .alert-title {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+    }
+
+    .alert-sub {
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .alert-detail {
+      font-size: 0.8rem;
+      color: #ffd2d2;
+    }
+  </style>
+</head>
+<body>
+  <!-- Matrix code rain -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- HACKING LOADING SCREEN -->
+  <div id="loadingScreen">
+    <div id="loadingText"></div>
+    <pre id="loadingStream"></pre>
+  </div>
+
+  <!-- RED ALERT OVERLAY (KONAMI FULL TAKEOVER) -->
+  <div class="alert-overlay" id="alertOverlay">
+    <div class="alert-title">SYSTEM OVERRIDDEN</div>
+    <div class="alert-sub">RED TEAM MODE ACTIVE &mdash; MAINFRAME COMPROMISED</div>
+    <div class="alert-detail">environment will auto-restore in a few seconds...</div>
+  </div>
+
+  <!-- MAIN TERMINAL SHELL -->
+  <div class="terminal-shell" id="terminalShell">
+    <!-- Top bar -->
+    <div class="terminal-topbar">
+      <div class="topbar-dots">
+        <span class="dot red"></span>
+        <span class="dot amber"></span>
+        <span class="dot green"></span>
+      </div>
+      <div class="topbar-title">ankesh@parrot: ~ / Cybersecurity Portfolio</div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="prompt-block">
+          <div class="prompt-line">
+            <span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~</span><span class="symbol">$</span> whoami
+          </div>
+          <div>Cybersecurity Analyst / VAPT / DFIR</div>
+        </div>
+
+        <div class="nav-title">ls</div>
+        <ul class="nav-list">
+          <li class="nav-item">
+            <button class="nav-link active" data-target="#section-home">
+              <span class="path">./</span><span class="name">home</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-skills">
+              <span class="path">./</span><span class="name">skills</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-experience">
+              <span class="path">./</span><span class="name">experience</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-projects">
+              <span class="path">./</span><span class="name">projects</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-certifications">
+              <span class="path">./</span><span class="name">certs</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-education">
+              <span class="path">./</span><span class="name">education</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" data-target="#section-contact">
+              <span class="path">./</span><span class="name">contact</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" id="openCli">
+              <span class="path">./</span><span class="name">terminal</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>Last login: <span class="tag">today</span> from 127.0.0.1</div>
+        <div>Mode: <span class="tag">root@security</span></div>
+      </div>
+    </aside>
+
+    <!-- Main terminal content -->
+    <main class="main">
+      <div class="terminal-log">
+        [<span class="ok">OK</span>] boot: loading <span class="highlight">/home/ankesh/cyber-portfolio</span>...
+      </div>
+      <div class="command-line" id="typedCommand">
+        <span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~/portfolio</span><span class="symbol">$</span>
+        <span class="cmd"> cat profile.txt</span><span class="cursor-blink"></span>
+      </div>
+
+      <!-- HOME -->
+      <section class="panel" id="section-home">
+        <div class="panel-header"># <span>profile.txt</span></div>
+        <h1 class="panel-title">Ankesh Prajapati &mdash; Cybersecurity Analyst</h1>
+        <div class="panel-body">
+          <p>
+            <span class="inline-label">// role:</span>
+            <span class="inline-value">
+              Cybersecurity Analyst with hands-on experience in Vulnerability Assessment & Penetration Testing
+              (VAPT) across <span class="highlight">web</span>, <span class="highlight">mobile</span>, <span class="highlight">API</span>,
+              <span class="highlight">network</span>, and <span class="highlight">cloud</span> environments.
+            </span>
+          </p>
+          <p>
+            Focused on identifying high-risk vulnerabilities, validating exploits, assisting remediation, and
+            delivering structured technical reports. Comfortable moving between red-team style attacks and
+            DFIR-style investigations.
+          </p>
+
+          <div class="panel-grid-2" style="margin-top: 10px;">
+            <div>
+              <div class="kv-row">
+                <span class="inline-label">Name:</span>
+                <span class="inline-value">Ankesh Prajapati</span>
+              </div>
+              <div class="kv-row">
+                <span class="inline-label">Location:</span>
+                <span class="inline-value">Surat, Gujarat, India</span>
+              </div>
+              <div class="kv-row">
+                <span class="inline-label">Current Role:</span>
+                <span class="inline-value">Security Analyst (VAPT) @ Securis360</span>
+              </div>
+            </div>
+            <div>
+              <div class="kv-row">
+                <span class="inline-label">Core Domains:</span>
+                <span class="inline-value">
+                  VAPT · Web/Mobile/API · Network Security · Cloud Security · Digital Forensics
+                </span>
+              </div>
+              <div class="kv-row">
+                <span class="inline-label">Mindset:</span>
+                <span class="inline-value">Break-first, document properly, help teams fix faster.</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="tagline">
+            <span class="highlight">&gt;</span> If it’s exposed on the internet or inside your network, I can map it,
+            break it, and help you harden it.
+          </p>
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section class="panel" id="section-skills">
+        <div class="panel-header"># <span>skills --all</span></div>
+        <h2 class="panel-title">Skillset & Attack Surface Coverage</h2>
+        <div class="panel-body">
+          <div class="panel-grid-2">
+            <div>
+              <p><span class="inline-label">// VAPT coverage</span></p>
+              <p><span class="list-bullet">&gt;</span> Web application VAPT (auth, access control, input validation, business logic)</p>
+              <p><span class="list-bullet">&gt;</span> Mobile app testing (Android, API flows, auth & storage issues)</p>
+              <p><span class="list-bullet">&gt;</span> API testing (REST, auth tokens, rate-limit, IDOR, injections)</p>
+              <p><span class="list-bullet">&gt;</span> Network & cloud exposure review, misconfiguration hunting</p>
+              <p><span class="list-bullet">&gt;</span> Source code security review (logic flaws, insecure patterns)</p>
+            </div>
+            <div>
+              <p><span class="inline-label">// tools & platforms</span></p>
+              <div>
+                <span class="chip">Burp Suite</span>
+                <span class="chip">Nessus</span>
+                <span class="chip">Nmap</span>
+                <span class="chip">Metasploit</span>
+                <span class="chip">Wireshark</span>
+                <span class="chip">Kali Linux</span>
+              </div>
+
+              <p style="margin-top: 8px;"><span class="inline-label">// forensics stack</span></p>
+              <div>
+                <span class="chip">UFED</span>
+                <span class="chip">EnCase</span>
+                <span class="chip">Talon</span>
+              </div>
+
+              <p style="margin-top: 8px;"><span class="inline-label">// soft-skill but critical</span></p>
+              <div>
+                <span class="chip">Security Reporting & Documentation</span>
+                <span class="chip">Patch Validation</span>
+                <span class="chip">Client Communication</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="command-hint">
+            Try: <span class="command-highlight">vapt --target APP --mode full-scope</span> &amp;
+            <span class="command-highlight">report --format pdf</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- EXPERIENCE -->
+      <section class="panel" id="section-experience">
+        <div class="panel-header"># <span>tail -n 50 experience.log</span></div>
+        <h2 class="panel-title">Operational Experience</h2>
+        <div class="panel-body">
+          <div class="log-block">
+            <div class="log-entry">
+              <div class="log-meta">[2025 - Present] Securis360, Ahmedabad, Gujarat</div>
+              <div class="log-title">Security Analyst (VAPT)</div>
+              <p><span class="list-bullet">&gt;</span> Performed VAPT on <span class="highlight">20+ applications and network components</span>.</p>
+              <p><span class="list-bullet">&gt;</span> Executed exploitation workflows, increasing validation accuracy by ~<span class="highlight">30%</span>.</p>
+              <p><span class="list-bullet">&gt;</span> Conducted code reviews and documented high-risk security flaws.</p>
+              <p><span class="list-bullet">&gt;</span> Delivered detailed remediation reports, helping reduce fix time by ~<span class="highlight">25%</span>.</p>
+              <p><span class="list-bullet">&gt;</span> Supported remediation and patch validation for hardened environments.</p>
+              <div class="log-tags">tags: VAPT · Web/Mobile/API · Network · Reporting · Patch Validation</div>
+            </div>
+
+            <div class="log-entry">
+              <div class="log-meta">[Oct 2024 - Jan 2025] State Cyber Crime Cell, CID, Gandhinagar</div>
+              <div class="log-title">Cybersecurity & Digital Forensic Intern</div>
+              <p><span class="list-bullet">&gt;</span> Assisted in <span class="highlight">15+ forensic investigations</span> using UFED, EnCase, Talon.</p>
+              <p><span class="list-bullet">&gt;</span> Worked on penetration testing of government systems.</p>
+              <p><span class="list-bullet">&gt;</span> Supported fraud analysis & MO-based pattern identification.</p>
+              <div class="log-tags">tags: DFIR · Govt Systems · Forensics · Fraud Analysis</div>
+            </div>
+
+            <div class="log-entry">
+              <div class="log-meta">[Feb 2022 - Jul 2023] MOROSQ (Game Development)</div>
+              <div class="log-title">Web Developer</div>
+              <p><span class="list-bullet">&gt;</span> Developed secure, performant web modules.</p>
+              <p><span class="list-bullet">&gt;</span> Fixed vulnerabilities improving stability & security by ~<span class="highlight">40%</span>.</p>
+              <p><span class="list-bullet">&gt;</span> Collaborated with backend & design on secure features.</p>
+              <div class="log-tags">tags: Web Dev · Secure Coding · App Hardening</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="panel" id="section-projects">
+        <div class="panel-header"># <span>ls projects/</span></div>
+        <h2 class="panel-title">Selected Projects</h2>
+        <div class="panel-body">
+          <div class="projects-grid">
+            <article class="project-card">
+              <div class="project-title">Crime Analysis System</div>
+              <div class="project-body">
+                <p>
+                  Tools and logic for phishing detection and password security evaluation, focused on crime
+                  pattern analysis using digital evidence and behavioural links.
+                </p>
+                <p><span class="inline-label">// focus:</span> phishing detection, weak credential discovery, analytics.</p>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-title">Crime Heat Map</div>
+              <div class="project-body">
+                <p>
+                  Real-time heat map for crime density and patterns across regions with visual dashboards for
+                  investigators.
+                </p>
+                <p><span class="inline-label">// focus:</span> spatial visualization, data dashboards, reporting.</p>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-title">Helpline Data System</div>
+              <div class="project-body">
+                <p>
+                  System for processing and visualizing helpline data with MO-wise crime categorization for
+                  faster decision-making.
+                </p>
+                <p><span class="inline-label">// focus:</span> data processing, MO-classification, visual analytics.</p>
+              </div>
+            </article>
+          </div>
+
+          <p class="command-hint">
+            pipeline: <span class="command-highlight">ingest</span> → <span class="command-highlight">analyze</span> →
+            <span class="command-highlight">visualize</span> → <span class="command-highlight">act</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- CERTS -->
+      <section class="panel" id="section-certifications">
+        <div class="panel-header"># <span>cat access_keys.txt</span></div>
+        <h2 class="panel-title">Certifications & Training</h2>
+        <div class="panel-body">
+          <p><span class="inline-label">// access keys</span></p>
+          <ul style="margin-top:4px; list-style:none; font-size:0.86rem;">
+            <li><span class="list-bullet">&gt;</span><span class="highlight"> CISCO - Certified Ethical Hacker</span></li>
+            <li><span class="list-bullet">&gt;</span> Networking Basics &mdash; <span class="highlight">Cisco Networking Academy</span></li>
+            <li><span class="list-bullet">&gt;</span> Windows Forensics with <span class="highlight">Belkasoft</span></li>
+          </ul>
+          <p class="command-hint">
+            validating: <span class="command-highlight">creds --sync &amp;&amp; skills --update</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- EDUCATION -->
+      <section class="panel" id="section-education">
+        <div class="panel-header"># <span>cat education.txt</span></div>
+        <h2 class="panel-title">Education</h2>
+        <div class="panel-body">
+          <div class="log-block">
+            <div class="log-entry">
+              <div class="log-meta">[2023 - 2025]</div>
+              <div class="log-title">M.C.A. in Cybersecurity & Digital Forensics</div>
+              <p>Parul University, Vadodara.</p>
+            </div>
+            <div class="log-entry">
+              <div class="log-meta">[2019 - 2022]</div>
+              <div class="log-title">Bachelor of Computer Application (BCA)</div>
+              <p>Veer Narmad South Gujarat University.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="panel" id="section-contact">
+        <div class="panel-header"># <span>./connect.sh</span></div>
+        <h2 class="panel-title">Connect & Engage</h2>
+        <div class="panel-body">
+          <div class="contact-grid">
+            <div>
+              <p class="contact-item">
+                <span class="inline-label">&gt; email:</span>
+                <a class="link" href="mailto:ankesh@securis360.com">ankesh@securis360.com</a>
+              </p>
+              <p class="contact-item">
+                <span class="inline-label">&gt; phone:</span>
+                <a class="link" href="tel:+919328236503">+91 93282 36503</a>
+              </p>
+              <p class="contact-item">
+                <span class="inline-label">&gt; location:</span>
+                Surat, Gujarat, India
+              </p>
+              <p class="contact-item">
+                <span class="inline-label">&gt; linkedin:</span>
+                <a class="link" href="https://www.linkedin.com/in/ankesh-prajapati-0a87a8249/" target="_blank" rel="noopener noreferrer">
+                  linkedin.com/in/ankesh-prajapati-0a87a8249/
+                </a>
+              </p>
+            </div>
+            <div>
+              <p>// quick commands</p>
+              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode collab</span> &mdash; security assessments, red teaming, consulting.</p>
+              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode hire</span> &mdash; full-time / contract roles in cybersecurity or DFIR.</p>
+              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode knowledge-share</span> &mdash; talks, workshops, internal trainings.</p>
+              <p class="command-hint">exit 0 // session terminated only when systems are secure.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- SLIDING TERMINAL OVERLAY -->
+  <div class="cli-overlay" id="cliOverlay">
+    <div class="cli-header">
+      <div class="cli-header-left">/dev/pts/1 &mdash; interactive console</div>
+      <button class="cli-close-btn" id="cliClose">exit</button>
+    </div>
+    <div class="cli-body">
+      <div class="cli-output" id="cliOutput">
+        <div class="cli-output-line">interactive terminal loaded. type <span class="command-highlight">help</span> for available commands.</div>
+      </div>
+      <div class="cli-input-row">
+        <span class="cli-input-prefix">ankesh@parrot:~/terminal$</span>
+        <input type="text" class="cli-input" id="cliInput" autocomplete="off" />
+      </div>
+
+      <div class="cli-auth">
+        <div class="cli-auth-label">root@mainframe password:</div>
+        <input
+          type="password"
+          class="cli-auth-input"
+          id="konamiPassword"
+          placeholder="enter konami code..."
+        />
+        <div class="cli-auth-hint">
+          Konami Code: <span>↑ ↑ ↓ ↓ ← → ← → B A</span> &nbsp; (type in password as: <span>uuddlrlrba</span>)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO (provide your own small .mp3 files with these names in same folder) -->
+  <audio id="keySound" src="key-click.mp3" preload="auto"></audio>
+  <audio id="alertSound" src="alert-siren.mp3" preload="auto"></audio>
+
+  <script>
+    /* ===========================
+       BOOT TYPING
+    =========================== */
+    const cmdLineEl = document.getElementById("typedCommand");
+    const staticPart =
+      '<span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~/portfolio</span><span class="symbol">$</span> ';
+    const commandText = "cat profile.txt";
+    let cmdIndex = 0;
+
+    function typeCommand() {
+      if (cmdLineEl.getAttribute("data-typed") === "1") return;
+      cmdLineEl.setAttribute("data-typed", "1");
+      function step() {
+        cmdIndex++;
+        const visible = commandText.slice(0, cmdIndex);
+        cmdLineEl.innerHTML =
+          staticPart + '<span class="cmd">' + visible + "</span><span class=\"cursor-blink\"></span>";
+        if (cmdIndex < commandText.length) setTimeout(step, 60);
+      }
+      setTimeout(step, 400);
+    }
+    window.addEventListener("load", typeCommand);
+
+    /* ===========================
+       NAV ACTIVE SCROLL
+    =========================== */
+    const navButtons = document.querySelectorAll(".nav-link[data-target]");
+    const sections = document.querySelectorAll("section.panel");
+    const mainEl = document.querySelector(".main");
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetSelector = btn.getAttribute("data-target");
+        const target = document.querySelector(targetSelector);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    function updateActiveNav() {
+      let currentId = "";
+      const offset = 80;
+      const scrollPos = mainEl.scrollTop + offset;
+
+      sections.forEach((sec) => {
+        const top = sec.offsetTop;
+        const height = sec.offsetHeight;
+        if (scrollPos >= top && scrollPos < top + height) currentId = "#" + sec.id;
+      });
+
+      navButtons.forEach((btn) => {
+        if (btn.getAttribute("data-target") === currentId) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+    }
+
+    mainEl.addEventListener("scroll", updateActiveNav);
+    window.addEventListener("load", updateActiveNav);
+
+    /* ===========================
+       HACKING LOADING SCREEN
+    =========================== */
+    const loadingScreen = document.getElementById("loadingScreen");
+    const loadingText = document.getElementById("loadingText");
+    const loadingStream = document.getElementById("loadingStream");
+
+    const bootMessage = "Hacking into mainframe...";
+    const randomLinesBoot = [
+      "Establishing secure shell...",
+      "Bypassing firewall rules...",
+      "Injecting payload sequence...",
+      "Decrypting hashed credentials...",
+      "Accessing restricted directories...",
+      "Privilege escalation successful...",
+      "Dumping encrypted data packets...",
+      "Tracing network route maps...",
+      "Reconstructing forensic artifacts...",
+      "Extracting volatile memory...",
+      "Reverse engineering API gateway...",
+      "Packet sniffing engaged...",
+      "Monitoring syscalls...",
+      "Executing SIGINT trace...",
+      "Spoofing gateway identity...",
+      "Establishing persistent foothold..."
+    ];
+
+    let bootIndex = 0;
+    loadingText.innerHTML = "";
+
+    function typeBootMsg() {
+      if (bootIndex < bootMessage.length) {
+        loadingText.innerHTML += bootMessage.charAt(bootIndex);
+        bootIndex++;
+        setTimeout(typeBootMsg, 60);
+      }
+    }
+    typeBootMsg();
+
+    function streamRandomLinesBoot() {
+      const line = randomLinesBoot[Math.floor(Math.random() * randomLinesBoot.length)];
+      loadingStream.innerHTML += `> ${line}\n`;
+      loadingStream.scrollTop = loadingStream.scrollHeight;
+    }
+    const streamInterval = setInterval(streamRandomLinesBoot, 90);
+
+    setTimeout(() => {
+      clearInterval(streamInterval);
+      loadingScreen.classList.add("hide-loading");
+      setTimeout(() => (loadingScreen.style.display = "none"), 600);
+    }, 5000);
+
+    /* ===========================
+       SLIDING CLI OVERLAY
+    =========================== */
+    const cliOverlay = document.getElementById("cliOverlay");
+    const openCliBtn = document.getElementById("openCli");
+    const cliCloseBtn = document.getElementById("cliClose");
+    const cliInput = document.getElementById("cliInput");
+    const cliOutput = document.getElementById("cliOutput");
+    const konamiPasswordInput = document.getElementById("konamiPassword");
+    const alertOverlay = document.getElementById("alertOverlay");
+    const terminalShell = document.getElementById("terminalShell");
+
+    const keySound = document.getElementById("keySound");
+    const alertSound = document.getElementById("alertSound");
+
+    function playKeyClick() {
+      if (!keySound) return;
+      try {
+        keySound.currentTime = 0;
+        keySound.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function playAlertSound() {
+      if (!alertSound) return;
+      try {
+        alertSound.currentTime = 0;
+        alertSound.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function openCli() {
+      cliOverlay.classList.add("open");
+      cliInput.value = "";
+      cliInput.focus();
+      printToCli("---- interactive terminal session started ----");
+    }
+
+    function closeCli() {
+      cliOverlay.classList.remove("open");
+      printToCli("session closed.");
+    }
+
+    openCliBtn.addEventListener("click", openCli);
+    cliCloseBtn.addEventListener("click", closeCli);
+
+    // Attach key sound to CLI fields
+    [cliInput, konamiPasswordInput].forEach((el) => {
+      el.addEventListener("keydown", (e) => {
+        if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
+          playKeyClick();
+        }
+      });
+    });
+
+    function printToCli(text, cls = "") {
+      if (!text && text !== 0) return;
+      const line = document.createElement("div");
+      line.className = "cli-output-line" + (cls ? " " + cls : "");
+      line.textContent = text;
+      cliOutput.appendChild(line);
+      cliOutput.scrollTop = cliOutput.scrollHeight;
+    }
+
+    const terminalData = {
+      home: `
+========================
+   PROFILE / HOME
+========================
+Name: Ankesh Prajapati
+Role: Cybersecurity Analyst (VAPT)
+Location: Surat, Gujarat, India
+
+Core Domains:
+  - Web, Mobile, API, Network, Cloud
+  - Digital Forensics (DFIR)
+
+Mindset:
+  Break-first, document properly, help teams fix faster.
+`,
+      skills: `
+========================
+   SKILLSET / COVERAGE
+========================
+VAPT Coverage:
+  - Web application testing
+  - Mobile app testing (Android)
+  - API testing (REST, auth, IDOR, injection)
+  - Network & cloud exposure review
+  - Source code review
+
+Tools:
+  - Burp Suite, Nessus, Nmap
+  - Metasploit, Wireshark, Kali
+
+Forensics Stack:
+  - UFED, EnCase, Talon
+
+Soft Skills:
+  - Security reporting & documentation
+  - Patch validation & remediation support
+  - Client communication
+`,
+      experience: `
+========================
+   EXPERIENCE LOG
+========================
+[2025 - Present] Security Analyst @ Securis360
+  - 20+ VAPT assessments on web, mobile, API, and network assets
+  - Exploitation workflows to validate critical findings
+  - Detailed reporting and remediation guidance
+  - Patch validation and posture hardening
+
+[2024 - 2025] Cybersecurity & DFIR Intern @ State Cyber Crime Cell (CID)
+  - 15+ forensic investigations with UFED, EnCase, Talon
+  - Govt systems pentesting & vulnerability analysis
+  - Fraud pattern analysis and MO-based case support
+
+[2022 - 2023] Web Developer @ MOROSQ
+  - Secure web modules
+  - Vulnerability fixes and stability hardening
+`,
+      projects: `
+========================
+   PROJECTS
+========================
+Crime Analysis System:
+  - Phishing detection
+  - Weak credential analysis
+  - Behaviour-driven crime pattern mapping
+
+Crime Heat Map:
+  - Crime density visualization by region
+  - Investigator-friendly dashboards
+
+Helpline Data System:
+  - MO-wise crime data processing
+  - Visual analytics for faster decisions
+`,
+      certs: `
+========================
+   CERTIFICATIONS
+========================
+  - CISCO - Certified Ethical Hacker
+  - Networking Basics — Cisco Networking Academy
+  - Windows Forensics — Belkasoft
+`,
+      education: `
+========================
+   EDUCATION
+========================
+M.C.A. in Cybersecurity & Digital Forensics
+  - Parul University (2023 - 2025)
+
+Bachelor of Computer Application (BCA)
+  - Veer Narmad South Gujarat University (2019 - 2022)
+`,
+      contact: `
+========================
+   CONTACT
+========================
+Email:
+  - ankesh@securis360.com
+
+Phone:
+  - +91 93282 36503
+
+Location:
+  - Surat, Gujarat, India
+
+LinkedIn:
+  - linkedin.com/in/ankesh-prajapati-0a87a8249
+`
+    };
+
+    const breachLogs = [
+      "suspicious login pattern detected...",
+      "analyzing abnormal network flow...",
+      "cross-referencing IOC signatures...",
+      "hash mismatch found in critical binary...",
+      "failed login attempts spiking from remote subnet...",
+      "unauthorized API probe detected...",
+      "privilege escalation attempt logged...",
+      "potential data exfiltration route identified..."
+    ];
+
+    function runHackSequence(cmd, done) {
+      let step = 0;
+      const totalSteps = 10;
+
+      function tick() {
+        if (step < totalSteps) {
+          const percent = Math.floor(((step + 1) / totalSteps) * 100);
+          const bars = Math.floor(((step + 1) / totalSteps) * 10);
+          const barStr = "[" + "#".repeat(bars) + ".".repeat(10 - bars) + "] " + percent + "%";
+          printToCli(barStr);
+
+          if (Math.random() < 0.35) {
+            const log = breachLogs[Math.floor(Math.random() * breachLogs.length)];
+            printToCli("log: " + log);
+          }
+
+          step++;
+          setTimeout(tick, 120);
+        } else {
+          if (done) done();
+        }
+      }
+      tick();
+    }
+
+    function handleCliCommand(cmdRaw) {
+      const cmd = cmdRaw.trim().toLowerCase();
+      if (!cmd) return;
+
+      printToCli(`ankesh@parrot:~/terminal$ ${cmdRaw}`);
+
+      if (cmd === "help") {
+        printToCli("available commands:");
+        printToCli("  home, skills, experience, projects, certs, education, contact");
+        printToCli("  clear, exit, konami, help");
+        return;
+      }
+
+      if (cmd === "clear") {
+        cliOutput.innerHTML = "";
+        return;
+      }
+
+      if (cmd === "exit") {
+        printToCli("closing interactive console...");
+        setTimeout(closeCli, 250);
+        return;
+      }
+
+      if (cmd === "konami") {
+        printToCli("hint: use the root password field below and enter the konami code (uuddlrlrba).");
+        return;
+      }
+
+      if (terminalData[cmd]) {
+        printToCli(`executing hack on '${cmd}'...`);
+        runHackSequence(cmd, () => {
+          printToCli(terminalData[cmd]);
+        });
+        return;
+      }
+
+      printToCli(`command not found: ${cmdRaw}`);
+      printToCli("type 'help' for available commands.");
+    }
+
+    cliInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        handleCliCommand(cliInput.value);
+        cliInput.value = "";
+      }
+    });
+
+    /* ===========================
+       RED TEAM TAKEOVER (KONAMI)
+    =========================== */
+    function triggerRedAlert(reason) {
+      if (reason) printToCli("ALERT: " + reason);
+      playAlertSound();
+      alertOverlay.classList.add("show");
+      terminalShell.classList.add("hidden-shell");
+
+      setTimeout(() => {
+        alertOverlay.classList.remove("show");
+        terminalShell.classList.remove("hidden-shell");
+      }, 9000);
+    }
+
+    konamiPasswordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const val = konamiPasswordInput.value.trim().toLowerCase();
+        if (val === "uuddlrlrba") {
+          triggerRedAlert("konami password accepted. red-team mode toggled.");
+          konamiPasswordInput.value = "";
+        } else {
+          printToCli("invalid root password. konami override failed.");
+          konamiPasswordInput.value = "";
+        }
+      }
+    });
+
+    const konamiKeys = [
+      "arrowup", "arrowup", "arrowdown", "arrowdown",
+      "arrowleft", "arrowright", "arrowleft", "arrowright",
+      "b", "a"
+    ];
+    let konamiIndex = 0;
+
+    window.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+      if (key === konamiKeys[konamiIndex]) {
+        konamiIndex++;
+        if (konamiIndex === konamiKeys.length) {
+          triggerRedAlert("konami key sequence detected.");
+          konamiIndex = 0;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    });
+
+    /* ===========================
+       MATRIX CODE RAIN
+    =========================== */
+    function initMatrix() {
+      const canvas = document.getElementById("matrixCanvas");
+      if (!canvas || !canvas.getContext) return;
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*@";
+      const fontSize = 14;
+      let columns = Math.floor(canvas.width / fontSize);
+      let drops = Array(columns).fill(1);
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#00ff9d";
+        ctx.font = fontSize + "px Fira Code";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = letters.charAt(Math.floor(Math.random() * letters.length));
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+          ctx.fillText(text, x, y);
+
+          if (y > canvas.height && Math.random() > 0.95) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+    window.addEventListener("load", initMatrix);
+  </script>
+</body>
+</html>
