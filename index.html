@@ -678,6 +678,95 @@
       font-size: 0.8rem;
       color: #ffd2d2;
     }
+
+    /* ===== MOBILE HAMBURGER & FULLSCREEN MENU ===== */
+    .mobile-menu-btn {
+      position: fixed;
+      top: 10px;
+      right: 14px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 255, 157, 0.5);
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--accent);
+      font-family: "Fira Code", monospace;
+      font-size: 0.9rem;
+      cursor: pointer;
+      z-index: 20000;
+      display: none; /* shown only on mobile */
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      z-index: 19999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+
+    .mobile-menu.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .mobile-menu-inner {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: transparent;
+      border: 1px solid rgba(0, 255, 157, 0.5);
+      color: var(--accent);
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .mobile-menu-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .mobile-menu-list li {
+      margin: 10px 0;
+      color: var(--accent);
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.1s ease;
+    }
+
+    .mobile-menu-list li:hover {
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 900px) {
+      .terminal-shell {
+        grid-template-columns: 1fr;
+        max-height: none;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: inline-block;
+      }
+    }
   </style>
 </head>
 <body>
@@ -695,6 +784,26 @@
     <div class="alert-title">SYSTEM OVERRIDDEN</div>
     <div class="alert-sub">RED TEAM MODE ACTIVE &mdash; MAINFRAME COMPROMISED</div>
     <div class="alert-detail">environment will auto-restore in a few seconds...</div>
+  </div>
+
+  <!-- MOBILE HAMBURGER BUTTON -->
+  <button id="mobileMenuBtn" class="mobile-menu-btn">&gt;_</button>
+
+  <!-- FULLSCREEN MOBILE MENU -->
+  <div id="mobileMenu" class="mobile-menu">
+    <div class="mobile-menu-inner">
+      <button id="mobileMenuClose" class="mobile-menu-close">X</button>
+      <ul class="mobile-menu-list">
+        <li data-target="#section-home">./home</li>
+        <li data-target="#section-skills">./skills</li>
+        <li data-target="#section-experience">./experience</li>
+        <li data-target="#section-projects">./projects</li>
+        <li data-target="#section-certifications">./certs</li>
+        <li data-target="#section-education">./education</li>
+        <li data-target="#section-contact">./contact</li>
+        <li id="mobileTerminal">./terminal</li>
+      </ul>
+    </div>
   </div>
 
   <!-- MAIN TERMINAL SHELL -->
@@ -716,7 +825,7 @@
           <div class="prompt-line">
             <span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~</span><span class="symbol">$</span> whoami
           </div>
-          <div>Cybersecurity Analyst / VAPT / DFIR</div>
+          <div>Cybersecurity Analyst / VAPT</div>
         </div>
 
         <div class="nav-title">ls</div>
@@ -757,6 +866,7 @@
             </button>
           </li>
           <li class="nav-item">
+            <!-- Opens sliding CLI -->
             <button class="nav-link" id="openCli">
               <span class="path">./</span><span class="name">terminal</span>
             </button>
@@ -877,7 +987,7 @@
           </div>
 
           <p class="command-hint">
-            Try: <span class="command-highlight">vapt --target APP --mode full-scope</span> &amp;
+            Try: <span class="command-highlight">vapt --target &lt;app&gt; --mode full-scope</span> &amp;
             <span class="command-highlight">report --format pdf</span>
           </p>
         </div>
@@ -1136,6 +1246,57 @@
 
     mainEl.addEventListener("scroll", updateActiveNav);
     window.addEventListener("load", updateActiveNav);
+
+    /* ===========================
+       MOBILE FULLSCREEN MENU
+    =========================== */
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const mobileMenuClose = document.getElementById("mobileMenuClose");
+    const mobileMenuItems = document.querySelectorAll(".mobile-menu-list li[data-target]");
+    const mobileTerminalItem = document.getElementById("mobileTerminal");
+
+    function openMobileMenu() {
+      if (mobileMenu) mobileMenu.classList.add("open");
+    }
+
+    function closeMobileMenu() {
+      if (mobileMenu) mobileMenu.classList.remove("open");
+    }
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener("click", openMobileMenu);
+    }
+
+    if (mobileMenuClose) {
+      mobileMenuClose.addEventListener("click", closeMobileMenu);
+    }
+
+    if (mobileMenu) {
+      mobileMenu.addEventListener("click", (e) => {
+        if (e.target === mobileMenu) {
+          closeMobileMenu();
+        }
+      });
+    }
+
+    mobileMenuItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const targetSelector = item.getAttribute("data-target");
+        const target = document.querySelector(targetSelector);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        closeMobileMenu();
+      });
+    });
+
+    if (mobileTerminalItem) {
+      mobileTerminalItem.addEventListener("click", () => {
+        closeMobileMenu();
+        openCli();
+      });
+    }
 
     /* ===========================
        HACKING LOADING SCREEN
