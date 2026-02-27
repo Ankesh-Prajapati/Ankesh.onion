@@ -1,1735 +1,1823 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ankesh Prajapati | Cybersecurity & VAPT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta
-    name="description"
-    content="Cybersecurity Analyst specializing in VAPT, digital forensics, and secure systems. Hacker-themed portfolio of Ankesh Prajapati."
-  />
-
-  <!-- Monospace hacker font -->
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
-
-  <style>
-    :root {
-      --bg: #02040a;
-      --bg-alt: #050a10;
-      --panel: #050b12;
-      --accent: #00ff9d;
-      --accent-soft: rgba(0, 255, 157, 0.2);
-      --accent-strong: #08f7a3;
-      --danger: #ff3355;
-      --text: #e6fff3;
-      --muted: #6b7d76;
-      --border: #0f1c22;
-      --highlight: #39ff14;
-      --shadow: 0 0 40px rgba(0, 0, 0, 0.9);
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      background: radial-gradient(circle at top, #04121b 0, #010409 40%, #000 100%);
-      color: var(--text);
-      font-family: "Fira Code", monospace;
-      -webkit-font-smoothing: antialiased;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      padding: 16px;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Star / scanline background */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background:
-        linear-gradient(rgba(0, 255, 157, 0.03) 1px, transparent 1px),
-        radial-gradient(circle at 10% 20%, rgba(0, 255, 157, 0.15), transparent 55%),
-        radial-gradient(circle at 90% 80%, rgba(255, 0, 80, 0.12), transparent 55%);
-      background-size: 100% 2px, 500px 500px, 500px 500px;
-      mix-blend-mode: screen;
-      opacity: 0.35;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.2),
-        rgba(0, 0, 0, 0.2) 1px,
-        transparent 2px,
-        transparent 3px
-      );
-      opacity: 0.35;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* Matrix rain canvas */
-    #matrixCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      opacity: 0.18;
-      pointer-events: none;
-    }
-
-    /* ===== Layout ===== */
-    .terminal-shell {
-      position: relative;
-      width: 100%;
-      max-width: 1200px;
-      height: 100%;
-      max-height: 880px;
-      margin: auto;
-      border-radius: 12px;
-      background: radial-gradient(circle at top, #07131f 0, #02050a 42%, #000 100%);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      display: grid;
-      grid-template-columns: 230px minmax(0, 1fr);
-      overflow: hidden;
-      z-index: 1;
-      transition: opacity 0.4s ease, filter 0.4s ease;
-    }
-
-    .hidden-shell {
-      opacity: 0;
-      filter: blur(4px);
-      pointer-events: none;
-    }
-
-    @media (max-width: 900px) {
-      body {
-        padding: 10px;
-      }
-      .terminal-shell {
-        grid-template-columns: 1fr;
-        max-height: none;
-      }
-    }
-
-    /* ===== Top bar ===== */
-    .terminal-topbar {
-      position: absolute;
-      inset: 0 0 auto 0;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      background: linear-gradient(to bottom, #050b12, #020309);
-      border-bottom: 1px solid #09141b;
-      z-index: 5;
-    }
-
-    .topbar-dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
-    }
-
-    .dot.red { background: #ff5f57; }
-    .dot.amber { background: #febc2e; }
-    .dot.green { background: #28c840; }
-
-    .topbar-title {
-      margin-left: 10px;
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    @media (max-width: 900px) {
-      .terminal-topbar { position: relative; }
-    }
-
-    /* ===== Sidebar ===== */
-    .sidebar {
-      padding: 40px 14px 14px;
-      padding-top: 50px;
-      background: radial-gradient(circle at top, #06141f 0, #010307 60%, #000 100%);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        flex-direction: row;
-        align-items: flex-end;
-        gap: 16px;
-        padding-bottom: 10px;
-      }
-    }
-
-    .prompt-block {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .prompt-line { color: var(--accent); }
-
-    .prompt-line .user { color: var(--highlight); }
-    .prompt-line .host { color: #26ffd3; }
-    .prompt-line .path { color: #8affc7; }
-    .prompt-line .symbol { color: #f4ffb5; }
-
-    .nav-title {
-      margin: 10px 0 4px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .nav-list {
-      list-style: none;
-      font-size: 0.84rem;
-    }
-
-    .nav-item { margin: 2px 0; }
-
-    .nav-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text) !important;
-      cursor: pointer;
-      padding: 2px 4px;
-      border-radius: 4px;
-      border: none;
-      background: transparent;
-      font-family: inherit;
-      font-size: inherit;
-      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
-    }
-
-    .nav-link span.path {
-      color: #8affc7 !important;
-    }
-
-    .nav-link span.name {
-      color: var(--accent) !important;
-    }
-
-    .nav-link.active,
-    .nav-link:hover {
-      background: rgba(0, 255, 157, 0.12);
-      color: var(--accent);
-      transform: translateX(1px);
-    }
-
-    .sidebar-footer {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .sidebar-footer .tag {
-      color: var(--accent);
-    }
-
-    /* ===== Main ===== */
-    .main {
-      padding: 50px 20px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    @media (max-width: 900px) {
-      .main { padding-top: 20px; }
-    }
-
-    .main::-webkit-scrollbar { width: 6px; }
-    .main::-webkit-scrollbar-thumb {
-      background: rgba(0, 255, 157, 0.4);
-      border-radius: 3px;
-    }
-    .main::-webkit-scrollbar-track { background: transparent; }
-
-    .terminal-log {
-      font-size: 0.86rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-    .terminal-log span.ok { color: var(--accent); }
-
-    .command-line {
-      color: var(--accent);
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    .command-line .user { color: var(--highlight); }
-    .command-line .host { color: #26ffd3; }
-    .command-line .path { color: #8affc7; }
-    .command-line .symbol { color: #f4ffb5; }
-    .command-line .cmd { color: #ffffff; }
-
-    .cursor-blink {
-      display: inline-block;
-      width: 8px;
-      margin-left: 4px;
-      background: var(--accent);
-      animation: blink 0.9s steps(1) infinite;
-    }
-
-    @keyframes blink {
-      0%,50% { opacity: 1; }
-      51%,100% { opacity: 0; }
-    }
-
-    /* ===== Panels ===== */
-    .panel {
-      margin-top: 10px;
-      padding: 12px 14px;
-      border-radius: 8px;
-      background: radial-gradient(circle at top left, rgba(0, 255, 157, 0.12), rgba(0, 0, 0, 0.75));
-      border: 1px solid rgba(0, 255, 157, 0.25);
-      box-shadow: 0 0 28px rgba(0, 0, 0, 0.7);
-    }
-
-    .panel-header {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .panel-header span { color: var(--accent); }
-
-    .panel-title {
-      font-size: 1rem;
-      color: var(--accent-strong);
-      margin-bottom: 8px;
-    }
-
-    .panel-body {
-      font-size: 0.86rem;
-      color: var(--text);
-    }
-
-    .panel-body p { margin-bottom: 6px; }
-
-    .panel-grid-2 {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
-      gap: 16px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .panel-grid-2 { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .list-bullet { color: var(--accent); margin-right: 6px; }
-    .tagline { color: var(--muted); font-size: 0.85rem; margin-top: 4px; }
-    .highlight { color: var(--highlight); }
-    .muted { color: var(--muted); }
-    .inline-label { color: var(--accent); }
-    .inline-value { color: var(--text); }
-
-    .kv-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 255, 157, 0.3);
-      background: rgba(0, 0, 0, 0.6);
-      padding: 3px 9px;
-      font-size: 0.76rem;
-      margin: 2px 4px 2px 0;
-      color: var(--text);
-    }
-
-    .chip::before {
-      content: "#";
-      color: var(--accent);
-      font-size: 0.8em;
-    }
-
-    /* Experience logs */
-    .log-block {
-      margin-top: 8px;
-      border-left: 1px solid rgba(0, 255, 157, 0.3);
-      padding-left: 10px;
-    }
-
-    .log-entry { margin-bottom: 10px; }
-
-    .log-meta {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-
-    .log-title { color: var(--accent-strong); }
-
-    .log-tags {
-      font-size: 0.76rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* Projects */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .projects-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .project-card {
-      border-radius: 6px;
-      border: 1px solid rgba(0, 255, 157, 0.3);
-      padding: 8px 9px;
-      background: rgba(0, 0, 0, 0.7);
-      font-size: 0.84rem;
-    }
-
-    .project-title { color: var(--accent); margin-bottom: 4px; }
-    .project-body { color: var(--text); font-size: 0.8rem; }
-
-    /* Contact */
-    .contact-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr);
-      gap: 16px;
-      margin-top: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .contact-grid { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .contact-item {
-      font-size: 0.84rem;
-      margin-bottom: 6px;
-    }
-
-    .link {
-      color: var(--highlight);
-      text-decoration: none;
-      border-bottom: 1px dotted rgba(0, 255, 157, 0.5);
-      padding-bottom: 1px;
-    }
-
-    .link:hover {
-      color: #ffffff;
-      border-bottom-style: solid;
-    }
-
-    .command-hint {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    .command-highlight { color: var(--accent); }
-
-    /* ===== Hacking Loading Screen ===== */
-    #loadingScreen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      color: #00ff9d;
-      font-family: "Fira Code", monospace;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 40px;
-      font-size: 0.9rem;
-      z-index: 999999;
-    }
-
-    #loadingText {
-      font-size: 1.2rem;
-      margin-bottom: 14px;
-    }
-
-    #loadingStream {
-      height: 200px;
-      overflow: hidden;
-      opacity: 0.85;
-    }
-
-    .hide-loading {
-      opacity: 0;
-      transition: opacity 0.6s ease-out;
-      pointer-events: none;
-    }
-
-    /* ===== Sliding Terminal Overlay (T2) ===== */
-    .cli-overlay {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 80vh;
-      background: rgba(0, 0, 0, 0.98);
-      border-top: 1px solid var(--border);
-      box-shadow: 0 -20px 40px rgba(0, 0, 0, 0.9);
-      transform: translateY(100%);
-      transition: transform 0.35s ease-out;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      color: var(--text);
-    }
-
-    .cli-overlay.open {
-      transform: translateY(0);
-    }
-
-    .cli-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 12px;
-      border-bottom: 1px solid var(--border);
-      background: #050b12;
-      font-size: 0.8rem;
-    }
-
-    .cli-header-left { color: var(--muted); }
-
-    .cli-close-btn {
-      border: 1px solid rgba(0, 255, 157, 0.4);
-      background: transparent;
-      color: var(--accent);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
-
-    .cli-body {
-      flex: 1;
-      padding: 8px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      overflow: hidden;
-    }
-
-    .cli-output {
-      flex: 1;
-      overflow-y: auto;
-      font-size: 0.82rem;
-      color: var(--text);
-      padding-right: 4px;
-    }
-
-    .cli-output-line {
-      white-space: pre-wrap;
-    }
-
-    .cli-output::-webkit-scrollbar { width: 6px; }
-    .cli-output::-webkit-scrollbar-thumb {
-      background: rgba(0, 255, 157, 0.4);
-      border-radius: 3px;
-    }
-
-    .cli-input-row {
-      font-size: 0.84rem;
-      margin-top: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .cli-input-prefix {
-      color: var(--accent);
-      white-space: nowrap;
-    }
-
-    .cli-input {
-      background: transparent;
-      border: none;
-      color: var(--text);
-      flex: 1;
-      font-family: inherit;
-      font-size: inherit;
-      outline: none;
-    }
-
-    .cli-auth {
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px dashed rgba(0, 255, 157, 0.35);
-      font-size: 0.8rem;
-    }
-
-    .cli-auth-label {
-      margin-bottom: 4px;
-      color: var(--muted);
-    }
-
-    .cli-auth-input {
-      width: 220px;
-      max-width: 100%;
-      background: #02070f;
-      border-radius: 4px;
-      border: 1px solid rgba(0, 255, 157, 0.35);
-      padding: 3px 6px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.8rem;
-      outline: none;
-    }
-
-    .cli-auth-hint {
-      margin-top: 3px;
-      color: var(--muted);
-    }
-
-    .cli-auth-hint span {
-      color: var(--accent);
-    }
-
-    /* ===== RED ALERT (Konami RT1) ===== */
-    .alert-overlay {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at center, rgba(255, 30, 60, 0.68), rgba(0, 0, 0, 0.98));
-      z-index: 99998;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: #ffeaea;
-      text-align: center;
-      font-family: "Fira Code", monospace;
-    }
-
-    .alert-overlay.show {
-      display: flex;
-      animation: alertPulse 0.9s infinite, glitchShift 0.35s infinite;
-    }
-
-    @keyframes alertPulse {
-      0%, 100% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.6); }
-      50% { box-shadow: 0 0 90px rgba(255, 0, 0, 1); }
-    }
-
-    @keyframes glitchShift {
-      0% { transform: translate(1px, -1px); }
-      20% { transform: translate(-1px, 1px); }
-      40% { transform: translate(2px, 0); }
-      60% { transform: translate(-2px, -1px); }
-      80% { transform: translate(1px, 2px); }
-      100% { transform: translate(0, 0); }
-    }
-
-    .alert-title {
-      font-size: 1.7rem;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.22em;
-    }
-
-    .alert-sub {
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-
-    .alert-detail {
-      font-size: 0.8rem;
-      color: #ffd2d2;
-    }
-
-    /* ===== MOBILE HAMBURGER & FULLSCREEN MENU ===== */
-    .mobile-menu-btn {
-      position: fixed;
-      top: 10px;
-      right: 14px;
-      padding: 4px 10px;
-      border-radius: 4px;
-      border: 1px solid rgba(0, 255, 157, 0.5);
-      background: rgba(0, 0, 0, 0.8);
-      color: var(--accent);
-      font-family: "Fira Code", monospace;
-      font-size: 0.9rem;
-      cursor: pointer;
-      z-index: 20000;
-      display: none; /* shown only on mobile */
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      z-index: 19999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-10px);
-      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
-    }
-
-    .mobile-menu.open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    .mobile-menu-inner {
-      text-align: center;
-      padding: 20px;
-    }
-
-    .mobile-menu-close {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      background: transparent;
-      border: 1px solid rgba(0, 255, 157, 0.5);
-      color: var(--accent);
-      padding: 3px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .mobile-menu-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      font-size: 1.1rem;
-    }
-
-    .mobile-menu-list li {
-      margin: 10px 0;
-      color: var(--accent);
-      cursor: pointer;
-      transition: color 0.2s ease, transform 0.1s ease;
-    }
-
-    .mobile-menu-list li:hover {
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-
-    @media (max-width: 900px) {
-      .terminal-shell {
-        grid-template-columns: 1fr;
-        max-height: none;
-      }
-
-      .sidebar {
-        display: none;
-      }
-
-      .mobile-menu-btn {
-        display: inline-block;
-      }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<title>Ankesh Prajapati | CyberSec Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0d1117;
+  --taskbar: #161b22;
+  --panel: #0d1117;
+  --panel-header: #161b22;
+  --border: #30363d;
+  --accent: #00ff9d;
+  --accent2: #39ff14;
+  --red: #ff5f57;
+  --amber: #febc2e;
+  --green: #28c840;
+  --text: #c9d1d9;
+  --muted: #6e7681;
+  --highlight: #58a6ff;
+  --danger: #ff3355;
+  --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px #30363d;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
+
+/* Matrix canvas */
+#matrixCanvas{position:fixed;inset:0;z-index:0;opacity:0.07;pointer-events:none;}
+
+/* Desktop */
+#desktop{
+  position:fixed;inset:0 0 44px 0;
+  background:
+    radial-gradient(ellipse at 60% 40%, rgba(0,180,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(0,255,157,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 10%, rgba(100,0,255,0.07) 0%, transparent 50%),
+    linear-gradient(135deg, #020b18 0%, #030d1a 40%, #040f1e 70%, #020a15 100%);
+  overflow:hidden;z-index:1;
+}
+/* SVG wallpaper layer */
+#desktopWallpaper{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  width:100%;height:100%;
+}
+
+/* Icon column scrollbar hidden but functional */
+.desktop-icons::-webkit-scrollbar{display:none;}
+.desktop-icons{scrollbar-width:none;-ms-overflow-style:none;}
+
+/* Scanline effect */
+#desktop::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.15),rgba(0,0,0,0.15) 1px,transparent 2px,transparent 4px);
+  pointer-events:none;z-index:0;
+}
+
+/* Desktop icons */
+.desktop-icons{
+  position:absolute;top:12px;left:0;right:0;bottom:0;
+  display:flex;flex-direction:column;flex-wrap:wrap;
+  align-content:flex-start;
+  gap:4px;padding:12px 10px;z-index:2;
+  pointer-events:none;
+}
+.icon{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:8px 6px;border-radius:8px;cursor:pointer;
+  transition:background 0.2s,transform 0.15s;
+  width:72px;user-select:none;pointer-events:all;
+  flex-shrink:0;
+}
+.icon:hover{background:rgba(0,255,157,0.13);transform:scale(1.06);}
+.icon:active{background:rgba(0,255,157,0.22);transform:scale(0.97);}
+.icon-img{
+  font-size:1.7rem;
+  filter:drop-shadow(0 0 6px var(--accent));
+  line-height:1;
+}
+.icon-label{
+  font-size:0.62rem;color:#e0f0ea;text-align:center;
+  text-shadow:0 1px 6px #000,0 0 12px #000;
+  word-break:break-word;line-height:1.3;
+  max-width:68px;
+}
+
+/* Taskbar */
+#taskbar{
+  position:fixed;bottom:0;left:0;right:0;height:44px;
+  background:rgba(22,27,34,0.95);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  display:flex;align-items:center;gap:8px;
+  padding:0 12px;z-index:9999;
+}
+.taskbar-start{
+  padding:4px 12px;border-radius:6px;
+  background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);
+  color:var(--accent);font-size:0.78rem;cursor:pointer;
+  font-family:inherit;transition:all 0.2s;white-space:nowrap;
+}
+.taskbar-start:hover{background:rgba(0,255,157,0.2);}
+.taskbar-sep{width:1px;height:24px;background:var(--border);}
+.taskbar-tasks{display:flex;gap:4px;flex:1;overflow-x:auto;}
+.taskbar-task{
+  padding:3px 10px;border-radius:4px;font-size:0.72rem;
+  border:1px solid transparent;cursor:pointer;white-space:nowrap;
+  font-family:inherit;transition:all 0.2s;color:var(--muted);background:transparent;
+}
+.taskbar-task:hover{background:rgba(255,255,255,0.05);color:var(--text);}
+.taskbar-task.active{background:rgba(0,255,157,0.1);border-color:rgba(0,255,157,0.3);color:var(--accent);}
+.taskbar-clock{
+  font-size:0.75rem;color:var(--muted);white-space:nowrap;
+  padding:0 8px;border-left:1px solid var(--border);
+}
+.taskbar-tray{display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid var(--border);}
+.tray-icon{font-size:0.9rem;cursor:pointer;opacity:0.6;transition:opacity 0.2s;}
+.tray-icon:hover{opacity:1;}
+
+/* Windows */
+.window{
+  position:absolute;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:var(--window-shadow);
+  display:flex;flex-direction:column;
+  min-width:300px;min-height:200px;
+  z-index:10;
+  transition:opacity 0.15s,transform 0.15s;
+  overflow:hidden;
+  min-height:0;
+}
+.window.minimized{opacity:0;transform:scale(0.85) translateY(20px);pointer-events:none;}
+.window.maximized{
+  top:0!important;left:0!important;
+  width:100%!important;height:calc(100vh - 44px)!important;
+  border-radius:0;
+  display:flex!important;
+  flex-direction:column;
+}
+.window.focused{z-index:100;border-color:rgba(0,255,157,0.4);}
+
+/* Window title bar */
+.win-titlebar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  background:var(--panel-header);
+  border-bottom:1px solid var(--border);
+  cursor:grab;user-select:none;flex-shrink:0;
+}
+.win-titlebar:active{cursor:grabbing;}
+.win-dots{display:flex;gap:6px;align-items:center;}
+.win-dot{
+  width:14px;height:14px;border-radius:50%;cursor:pointer;
+  transition:all 0.15s;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:transparent;
+  line-height:1;user-select:none;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.25);
+}
+.win-dot:hover{color:rgba(0,0,0,0.75);filter:brightness(1.1);}
+.win-dot.close{background:var(--red);}
+.win-dot.close::after{content:"✕";}
+.win-dot.minimize{background:var(--amber);}
+.win-dot.minimize::after{content:"−";}
+.win-dot.maximize{background:var(--green);}
+.win-dot.maximize::after{content:"+";}
+.window:not(.focused) .win-dot{opacity:0.5;}
+.window:not(.focused) .win-dot:hover{opacity:1;}
+.win-title{font-size:0.75rem;color:var(--muted);margin-left:4px;flex:1;text-align:center;}
+.win-title-right{width:54px;} /* balance */
+
+/* Window body */
+.win-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+.win-content{flex:1;overflow-y:auto;padding:16px;min-height:0;}
+.win-content::-webkit-scrollbar{width:5px;}
+.win-content::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.3);border-radius:3px;}
+
+/* Resize handle */
+.win-resize{
+  position:absolute;right:0;bottom:0;width:16px;height:16px;
+  cursor:se-resize;z-index:5;
+  background:linear-gradient(135deg,transparent 50%,rgba(0,255,157,0.3) 50%);
+  border-radius:0 0 10px 0;
+}
+
+/* ============ PANEL SECTIONS ============ */
+.section-title{
+  font-size:0.7rem;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.1em;
+  margin-bottom:12px;border-bottom:1px solid var(--border);
+  padding-bottom:6px;
+}
+.section-title span{color:var(--accent);}
+
+/* About */
+.about-header{
+  display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;
+}
+.avatar{
+  width:70px;height:70px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 40% 35%,#1a3a2a,#050f08);
+  border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;box-shadow:0 0 20px rgba(0,255,157,0.3);
+}
+.about-name{font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:4px;}
+.about-role{font-size:0.8rem;color:var(--text);}
+.about-badge{
+  display:inline-block;margin-top:6px;padding:2px 8px;
+  border-radius:999px;border:1px solid rgba(0,255,157,0.4);
+  font-size:0.68rem;color:var(--accent);background:rgba(0,255,157,0.05);
+}
+.about-bio{font-size:0.82rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
+.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+.stat-box{
+  background:rgba(0,255,157,0.04);border:1px solid var(--border);
+  border-radius:6px;padding:10px 8px;text-align:center;
+}
+.stat-num{font-size:1.1rem;color:var(--accent);font-weight:600;}
+.stat-label{font-size:0.65rem;color:var(--muted);margin-top:2px;}
+
+/* Skills */
+.skill-group{margin-bottom:14px;}
+.skill-group-title{font-size:0.72rem;color:var(--accent);margin-bottom:8px;opacity:0.8;}
+.skill-item{margin-bottom:6px;}
+.skill-name{font-size:0.76rem;color:var(--text);margin-bottom:3px;display:flex;justify-content:space-between;}
+.skill-name span{color:var(--muted);}
+.skill-bar{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+.skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),#08f7a3);transition:width 1s ease;}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
+.chip{
+  padding:2px 8px;border-radius:4px;font-size:0.68rem;
+  border:1px solid rgba(0,255,157,0.25);color:var(--text);
+  background:rgba(0,0,0,0.3);
+}
+
+/* Experience */
+.timeline{position:relative;padding-left:16px;}
+.timeline::before{content:"";position:absolute;left:4px;top:0;bottom:0;width:1px;background:rgba(0,255,157,0.2);}
+.timeline-item{position:relative;margin-bottom:16px;}
+.timeline-dot{
+  position:absolute;left:-16px;top:4px;width:8px;height:8px;
+  border-radius:50%;background:var(--accent);border:2px solid var(--panel);
+  box-shadow:0 0 8px var(--accent);
+}
+.timeline-date{font-size:0.68rem;color:var(--muted);margin-bottom:3px;}
+.timeline-role{font-size:0.82rem;color:var(--accent);font-weight:500;}
+.timeline-company{font-size:0.72rem;color:var(--text);margin-bottom:5px;}
+.timeline-desc{font-size:0.74rem;color:var(--muted);line-height:1.6;}
+
+/* Projects */
+.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.project-card{
+  background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  border-radius:8px;padding:12px;
+  transition:border-color 0.2s,transform 0.2s;cursor:pointer;
+}
+.project-card:hover{border-color:rgba(0,255,157,0.4);transform:translateY(-2px);}
+.project-icon{font-size:1.4rem;margin-bottom:8px;}
+.project-name{font-size:0.82rem;color:var(--accent);margin-bottom:5px;font-weight:500;}
+.project-desc{font-size:0.72rem;color:var(--muted);line-height:1.6;}
+.project-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.project-tag{padding:1px 6px;border-radius:3px;font-size:0.62rem;background:rgba(0,255,157,0.08);color:var(--accent);border:1px solid rgba(0,255,157,0.15);}
+
+/* Certs */
+.cert-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:6px;margin-bottom:6px;
+  background:rgba(0,0,0,0.2);border:1px solid var(--border);
+  font-size:0.76rem;
+}
+.cert-icon{font-size:1.1rem;flex-shrink:0;}
+.cert-name{color:var(--text);flex:1;}
+.cert-org{font-size:0.66rem;color:var(--muted);}
+
+/* Contact */
+.contact-list{display:flex;flex-direction:column;gap:10px;}
+.contact-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:8px;
+  background:rgba(0,0,0,0.2);border:1px solid var(--border);
+  font-size:0.8rem;transition:border-color 0.2s;
+}
+.contact-item:hover{border-color:rgba(0,255,157,0.3);}
+.contact-icon{font-size:1.2rem;flex-shrink:0;}
+.contact-label{font-size:0.65rem;color:var(--muted);}
+.contact-val{color:var(--accent);}
+.contact-val a{color:inherit;text-decoration:none;}
+.contact-val a:hover{text-decoration:underline;}
+
+/* Terminal window */
+.terminal-body{
+  background:#000;flex:1;
+  padding:10px 12px;
+  font-size:0.8rem;
+  display:flex;flex-direction:column;
+  gap:6px;
+  overflow:hidden;
+  min-height:0;
+  height:100%;
+}
+.term-output{
+  flex:1;overflow-y:auto;color:var(--text);
+  white-space:pre-wrap;word-break:break-all;
+  padding-right:4px;line-height:1.5;
+}
+.term-output::-webkit-scrollbar{width:4px;}
+.term-output::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.3);}
+.term-input-row{display:flex;align-items:center;gap:6px;border-top:1px solid #1a1a1a;padding-top:6px;}
+.term-prompt{color:var(--accent);white-space:nowrap;}
+.term-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:inherit;font-size:inherit;caret-color:var(--accent);
+}
+.t-green{color:var(--accent);}
+.t-red{color:var(--danger);}
+.t-blue{color:var(--highlight);}
+.t-muted{color:var(--muted);}
+.t-yellow{color:var(--amber);}
+
+/* Neofetch window */
+.neofetch-body{
+  background:#000;padding:12px 16px;font-size:0.76rem;
+  display:flex;gap:20px;
+}
+.neofetch-logo{color:var(--accent);white-space:pre;line-height:1.3;font-size:0.7rem;flex-shrink:0;}
+.neofetch-info{color:var(--text);line-height:1.8;}
+.nf-key{color:var(--accent);}
+.nf-val{color:var(--text);}
+
+/* Boot/loading screen */
+#loadingScreen{
+  position:fixed;inset:0;background:#000;
+  color:var(--accent);font-family:"Fira Code",monospace;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:40px;font-size:0.85rem;z-index:99999;
+}
+.boot-header{font-size:1rem;margin-bottom:20px;color:#fff;}
+#bootLog{height:300px;overflow:hidden;opacity:0.9;line-height:1.8;}
+.boot-line{animation:fadeIn 0.1s ease forwards;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.hide-loading{opacity:0;transition:opacity 0.6s;pointer-events:none;}
+
+/* Alert overlay (Konami) */
+.alert-overlay{
+  position:fixed;inset:0;
+  background:radial-gradient(circle at center,rgba(255,30,60,0.7),rgba(0,0,0,0.97));
+  z-index:99998;display:none;align-items:center;justify-content:center;
+  flex-direction:column;color:#ffeaea;text-align:center;font-family:"Fira Code",monospace;
+}
+.alert-overlay.show{display:flex;animation:alertPulse 0.9s infinite,glitchShift 0.3s infinite;}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 40px rgba(255,0,0,0.6);}50%{box-shadow:0 0 100px rgba(255,0,0,1);}}
+@keyframes glitchShift{0%{transform:translate(1px,-1px);}50%{transform:translate(-1px,1px);}100%{transform:translate(0,0);}}
+.alert-title{font-size:2rem;letter-spacing:0.2em;margin-bottom:10px;}
+.alert-sub{font-size:1rem;}
+
+/* Wallpaper picker */
+.wp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.wp-item{
+  border-radius:8px;cursor:pointer;overflow:hidden;
+  border:2px solid transparent;transition:border-color 0.2s,transform 0.15s;
+  background:#0a0a12;
+  display:flex;flex-direction:column;
+}
+.wp-item:hover{transform:scale(1.04);}
+.wp-item.selected{border-color:var(--accent);}
+.wp-item svg{width:100%;height:80px;display:block;flex-shrink:0;}
+.wp-label{padding:4px 6px;background:rgba(0,0,0,0.5);}
+.wp-os{display:block;font-size:0.58rem;color:var(--muted);}
+.wp-name{display:block;font-size:0.66rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Context menu */
+#ctxMenu{
+  position:fixed;display:none;
+  background:var(--panel-header);border:1px solid var(--border);
+  border-radius:8px;padding:4px;z-index:99990;
+  box-shadow:0 10px 30px rgba(0,0,0,0.8);min-width:160px;
+}
+.ctx-item{
+  padding:6px 14px;border-radius:4px;font-size:0.78rem;
+  cursor:pointer;color:var(--text);
+}
+.ctx-item:hover{background:rgba(0,255,157,0.1);color:var(--accent);}
+.ctx-sep{height:1px;background:var(--border);margin:3px 6px;}
+
+/* Notification */
+.notif{
+  position:fixed;right:16px;bottom:60px;
+  background:var(--panel-header);border:1px solid rgba(0,255,157,0.3);
+  border-radius:8px;padding:10px 14px;
+  font-size:0.76rem;color:var(--text);
+  box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  z-index:99997;max-width:280px;
+  animation:slideInNotif 0.3s ease;
+}
+.notif-title{color:var(--accent);font-size:0.72rem;margin-bottom:4px;}
+@keyframes slideInNotif{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* Tooltip */
+[data-tip]{position:relative;}
+[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
+  background:#111;border:1px solid var(--border);color:var(--text);
+  font-size:0.65rem;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:9999;
+}
+
+/* Blink cursor */
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.blink{animation:blink 1s steps(1) infinite;}
+
+/* Scrollbar global */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.2);border-radius:3px;}
+</style>
 </head>
 <body>
-  <!-- Matrix code rain -->
-  <canvas id="matrixCanvas"></canvas>
 
-  <!-- HACKING LOADING SCREEN -->
-  <div id="loadingScreen">
-    <div id="loadingText"></div>
-    <pre id="loadingStream"></pre>
-  </div>
+<!-- Matrix Rain -->
+<canvas id="matrixCanvas"></canvas>
 
-  <!-- RED ALERT OVERLAY (KONAMI FULL TAKEOVER) -->
-  <div class="alert-overlay" id="alertOverlay">
-    <div class="alert-title">SYSTEM OVERRIDDEN</div>
-    <div class="alert-sub">RED TEAM MODE ACTIVE &mdash; MAINFRAME COMPROMISED</div>
-    <div class="alert-detail">environment will auto-restore in a few seconds...</div>
-  </div>
+<!-- Boot Screen -->
+<div id="loadingScreen">
+  <div class="boot-header">[ BOOTING ANKESH-OS v2.5.1 ]</div>
+  <div id="bootLog"></div>
+</div>
 
-  <!-- MOBILE HAMBURGER BUTTON -->
-  <button id="mobileMenuBtn" class="mobile-menu-btn">&gt;_</button>
+<!-- Alert Overlay (Konami) -->
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert-title">⚠ RED TEAM MODE ACTIVATED</div>
+  <div class="alert-sub">Unauthorized access detected. All systems compromised.</div>
+</div>
 
-  <!-- FULLSCREEN MOBILE MENU -->
-  <div id="mobileMenu" class="mobile-menu">
-    <div class="mobile-menu-inner">
-      <button id="mobileMenuClose" class="mobile-menu-close">X</button>
-      <ul class="mobile-menu-list">
-        <li data-target="#section-home">./home</li>
-        <li data-target="#section-skills">./skills</li>
-        <li data-target="#section-experience">./experience</li>
-        <li data-target="#section-projects">./projects</li>
-        <li data-target="#section-certifications">./certs</li>
-        <li data-target="#section-education">./education</li>
-        <li data-target="#section-contact">./contact</li>
-        <li id="mobileTerminal">./terminal</li>
-      </ul>
+<!-- Desktop -->
+<div id="desktop" oncontextmenu="showCtxMenu(event)">
+
+  <!-- Parrot OS / Kali SVG Wallpaper -->
+  <svg id="desktopWallpaper" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Deep dark background -->
+      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#020c1b;stop-opacity:1"/>
+        <stop offset="50%" style="stop-color:#030f20;stop-opacity:1"/>
+        <stop offset="100%" style="stop-color:#010810;stop-opacity:1"/>
+      </linearGradient>
+      <!-- Cyan glow -->
+      <radialGradient id="glowCyan" cx="65%" cy="38%" r="45%">
+        <stop offset="0%" style="stop-color:#00c8ff;stop-opacity:0.12"/>
+        <stop offset="100%" style="stop-color:#00c8ff;stop-opacity:0"/>
+      </radialGradient>
+      <!-- Green glow -->
+      <radialGradient id="glowGreen" cx="20%" cy="75%" r="40%">
+        <stop offset="0%" style="stop-color:#00ff9d;stop-opacity:0.09"/>
+        <stop offset="100%" style="stop-color:#00ff9d;stop-opacity:0"/>
+      </radialGradient>
+      <!-- Purple glow -->
+      <radialGradient id="glowPurple" cx="85%" cy="15%" r="35%">
+        <stop offset="0%" style="stop-color:#7b2fff;stop-opacity:0.1"/>
+        <stop offset="100%" style="stop-color:#7b2fff;stop-opacity:0"/>
+      </radialGradient>
+      <!-- Logo glow -->
+      <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style="stop-color:#00c8ff;stop-opacity:0.25"/>
+        <stop offset="100%" style="stop-color:#00c8ff;stop-opacity:0"/>
+      </radialGradient>
+      <!-- Grid line filter -->
+      <filter id="blur2">
+        <feGaussianBlur stdDeviation="2"/>
+      </filter>
+      <filter id="glow4">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow8">
+        <feGaussianBlur stdDeviation="8" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow16">
+        <feGaussianBlur stdDeviation="16" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- Base background -->
+    <rect width="1440" height="900" fill="url(#bgGrad)"/>
+
+    <!-- Ambient glows -->
+    <rect width="1440" height="900" fill="url(#glowCyan)"/>
+    <rect width="1440" height="900" fill="url(#glowGreen)"/>
+    <rect width="1440" height="900" fill="url(#glowPurple)"/>
+
+    <!-- ===== PERSPECTIVE GRID FLOOR ===== -->
+    <g opacity="0.18">
+      <!-- Horizontal lines converging to center-bottom horizon -->
+      <line x1="0" y1="900" x2="1440" y2="900" stroke="#00c8ff" stroke-width="0.5"/>
+      <line x1="180" y1="760" x2="1260" y2="760" stroke="#00c8ff" stroke-width="0.4"/>
+      <line x1="300" y1="660" x2="1140" y2="660" stroke="#00c8ff" stroke-width="0.35"/>
+      <line x1="380" y1="590" x2="1060" y2="590" stroke="#00c8ff" stroke-width="0.3"/>
+      <line x1="440" y1="540" x2="1000" y2="540" stroke="#00c8ff" stroke-width="0.25"/>
+      <line x1="490" y1="505" x2="950" y2="505" stroke="#00c8ff" stroke-width="0.2"/>
+      <line x1="525" y1="480" x2="915" y2="480" stroke="#00c8ff" stroke-width="0.15"/>
+      <!-- Vertical converging lines -->
+      <line x1="720" y1="450" x2="0"    y2="900" stroke="#00c8ff" stroke-width="0.4"/>
+      <line x1="720" y1="450" x2="160"  y2="900" stroke="#00c8ff" stroke-width="0.35"/>
+      <line x1="720" y1="450" x2="320"  y2="900" stroke="#00c8ff" stroke-width="0.3"/>
+      <line x1="720" y1="450" x2="480"  y2="900" stroke="#00c8ff" stroke-width="0.25"/>
+      <line x1="720" y1="450" x2="640"  y2="900" stroke="#00c8ff" stroke-width="0.2"/>
+      <line x1="720" y1="450" x2="800"  y2="900" stroke="#00c8ff" stroke-width="0.2"/>
+      <line x1="720" y1="450" x2="960"  y2="900" stroke="#00c8ff" stroke-width="0.25"/>
+      <line x1="720" y1="450" x2="1120" y2="900" stroke="#00c8ff" stroke-width="0.3"/>
+      <line x1="720" y1="450" x2="1280" y2="900" stroke="#00c8ff" stroke-width="0.35"/>
+      <line x1="720" y1="450" x2="1440" y2="900" stroke="#00c8ff" stroke-width="0.4"/>
+    </g>
+
+    <!-- ===== CIRCUIT TRACES ===== -->
+    <g opacity="0.12" stroke="#00ff9d" stroke-width="0.8" fill="none">
+      <polyline points="0,200 120,200 120,300 280,300 280,180 500,180"/>
+      <polyline points="500,180 500,120 700,120"/>
+      <circle cx="120" cy="200" r="3" fill="#00ff9d" opacity="0.6"/>
+      <circle cx="280" cy="300" r="3" fill="#00ff9d" opacity="0.6"/>
+      <circle cx="500" cy="180" r="3" fill="#00ff9d" opacity="0.6"/>
+
+      <polyline points="1440,350 1300,350 1300,250 1100,250 1100,400 900,400"/>
+      <circle cx="1300" cy="350" r="3" fill="#00ff9d" opacity="0.6"/>
+      <circle cx="1100" cy="250" r="3" fill="#00ff9d" opacity="0.6"/>
+      <circle cx="900"  cy="400" r="3" fill="#00ff9d" opacity="0.6"/>
+
+      <polyline points="0,600 200,600 200,520 400,520"/>
+      <polyline points="1440,700 1200,700 1200,620 1000,620 1000,700 800,700"/>
+      <circle cx="200" cy="600" r="3" fill="#00ff9d" opacity="0.6"/>
+      <circle cx="1200" cy="700" r="3" fill="#00ff9d" opacity="0.6"/>
+    </g>
+
+    <!-- ===== HEXAGON PATTERN (top right) ===== -->
+    <g opacity="0.07" fill="none" stroke="#00c8ff" stroke-width="0.7">
+      <polygon points="1200,20 1230,37 1230,71 1200,88 1170,71 1170,37"/>
+      <polygon points="1260,20 1290,37 1290,71 1260,88 1230,71 1230,37"/>
+      <polygon points="1320,20 1350,37 1350,71 1320,88 1290,71 1290,37"/>
+      <polygon points="1380,20 1410,37 1410,71 1380,88 1350,71 1350,37"/>
+      <polygon points="1230,71 1260,88 1260,122 1230,139 1200,122 1200,88"/>
+      <polygon points="1290,71 1320,88 1320,122 1290,139 1260,122 1260,88"/>
+      <polygon points="1350,71 1380,88 1380,122 1350,139 1320,122 1320,88"/>
+      <polygon points="1410,71 1440,88 1440,122 1410,139 1380,122 1380,88"/>
+      <polygon points="1200,122 1230,139 1230,173 1200,190 1170,173 1170,139"/>
+      <polygon points="1260,122 1290,139 1290,173 1260,190 1230,173 1230,139"/>
+      <polygon points="1320,122 1350,139 1350,173 1320,190 1290,173 1290,139"/>
+      <polygon points="1380,122 1410,139 1410,173 1380,190 1350,173 1350,139"/>
+    </g>
+
+    <!-- ===== PARROT OS LOGO (center-right area) ===== -->
+    <g transform="translate(820,80) scale(0.72)" filter="url(#glow8)">
+      <!-- Parrot body - stylized geometric bird -->
+      <!-- Wings spread -->
+      <path d="M200,180 C160,120 80,100 40,140 C20,160 30,190 60,185 C90,180 120,170 150,175 C130,200 110,230 120,260 C130,290 160,280 180,260 Z" fill="#00c8ff" opacity="0.85"/>
+      <path d="M200,180 C240,120 320,100 360,140 C380,160 370,190 340,185 C310,180 280,170 250,175 C270,200 290,230 280,260 C270,290 240,280 220,260 Z" fill="#00c8ff" opacity="0.85"/>
+      <!-- Body -->
+      <ellipse cx="200" cy="240" rx="55" ry="75" fill="#0099cc" opacity="0.9"/>
+      <!-- Chest lighter -->
+      <ellipse cx="200" cy="260" rx="35" ry="50" fill="#00c8ff" opacity="0.6"/>
+      <!-- Head -->
+      <circle cx="200" cy="155" r="40" fill="#0099cc" opacity="0.9"/>
+      <!-- Eye -->
+      <circle cx="210" cy="148" r="12" fill="#001a2e"/>
+      <circle cx="213" cy="145" r="7" fill="#00c8ff"/>
+      <circle cx="215" cy="143" r="3" fill="#ffffff" opacity="0.9"/>
+      <!-- Beak -->
+      <path d="M200,160 L225,168 L200,176 Z" fill="#00e5ff" opacity="0.95"/>
+      <!-- Crest/feathers on head -->
+      <path d="M195,115 C190,90 175,75 180,60 C185,75 200,80 200,115 Z" fill="#00c8ff" opacity="0.7"/>
+      <path d="M200,112 C200,85 210,68 215,55 C212,70 215,88 205,112 Z" fill="#33ddff" opacity="0.6"/>
+      <path d="M205,115 C215,88 230,76 232,62 C224,78 215,90 210,115 Z" fill="#00c8ff" opacity="0.5"/>
+      <!-- Tail feathers -->
+      <path d="M180,300 C165,330 150,360 140,390 C160,365 175,340 185,310 Z" fill="#0088bb" opacity="0.7"/>
+      <path d="M200,305 C200,340 198,370 195,400 C202,372 205,342 205,308 Z" fill="#00aadd" opacity="0.7"/>
+      <path d="M220,300 C235,330 250,358 260,388 C242,364 228,338 218,308 Z" fill="#0088bb" opacity="0.7"/>
+      <!-- Wing highlights -->
+      <path d="M80,155 C90,145 110,148 130,160" stroke="#33ddff" stroke-width="2" fill="none" opacity="0.5"/>
+      <path d="M270,155 C285,145 310,148 330,160" stroke="#33ddff" stroke-width="2" fill="none" opacity="0.5"/>
+    </g>
+
+    <!-- Parrot glow circle behind -->
+    <circle cx="968" cy="195" r="130" fill="url(#logoGlow)" opacity="0.5"/>
+
+    <!-- ===== KALI DRAGON (left area, subtle) ===== -->
+    <g transform="translate(60,550) scale(0.5)" opacity="0.15" fill="#00ff9d">
+      <path d="M100,200 C80,160 60,120 80,80 C100,40 140,30 160,60 C170,75 165,95 150,100 C180,90 200,70 190,40 C210,60 215,100 195,130 C220,110 240,80 230,50 C260,80 255,130 235,160 C260,145 280,120 275,90 C295,120 285,165 260,190 C280,180 295,160 292,135 C305,165 295,205 272,225 C285,220 295,205 293,188 C300,215 288,250 265,265 C255,270 240,268 232,258 C228,280 210,295 190,290 C195,275 200,258 195,242 C185,262 168,272 150,265 C158,250 162,232 155,218 C140,238 118,244 100,235 C112,220 120,202 115,188 C100,205 80,210 65,200 C78,188 88,172 83,158 C68,172 50,174 38,165 C52,152 65,136 60,120 C45,132 26,130 15,118 C32,106 48,88 44,72 C30,82 12,78 4,64 C24,54 45,38 44,20 C56,35 62,55 55,72 C72,58 88,42 84,22 C96,40 96,65 85,82 C103,68 118,50 115,28 C128,48 126,75 112,92 C132,78 148,58 145,35 C158,58 153,87 137,103 C157,90 172,68 170,44 C183,70 176,102 158,116 C176,105 192,82 190,56 C202,84 193,118 173,130 C190,122 206,98 204,72 C215,102 204,138 182,148 Z"/>
+    </g>
+
+    <!-- ===== FLOATING PARTICLES ===== -->
+    <g opacity="0.5">
+      <circle cx="150" cy="100" r="1.5" fill="#00c8ff"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+      <circle cx="400" cy="80"  r="1"   fill="#00ff9d"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4s" repeatCount="indefinite"/></circle>
+      <circle cx="650" cy="50"  r="2"   fill="#00c8ff"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/></circle>
+      <circle cx="900" cy="30"  r="1.5" fill="#7b2fff"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.5s" repeatCount="indefinite"/></circle>
+      <circle cx="1100" cy="70" r="1"   fill="#00c8ff"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite"/></circle>
+      <circle cx="1350" cy="40" r="2"   fill="#00ff9d"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.2s" repeatCount="indefinite"/></circle>
+      <circle cx="80"  cy="400" r="1.5" fill="#00c8ff"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4.5s" repeatCount="indefinite"/></circle>
+      <circle cx="1380" cy="500" r="1"  fill="#7b2fff"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.8s" repeatCount="indefinite"/></circle>
+      <circle cx="500" cy="780" r="1.5" fill="#00ff9d"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.2s" repeatCount="indefinite"/></circle>
+      <circle cx="950" cy="820" r="2"   fill="#00c8ff"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/></circle>
+    </g>
+
+    <!-- ===== SCAN LINE SWEEP (animated) ===== -->
+    <rect x="0" y="0" width="1440" height="2" fill="#00c8ff" opacity="0">
+      <animate attributeName="y" values="-2;902" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.08;0" dur="8s" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- ===== TEXT WATERMARK bottom right ===== -->
+    <text x="1400" y="870" text-anchor="end" font-family="Fira Code, monospace" font-size="11" fill="#00c8ff" opacity="0.25">PARROT OS 6.1 // ANKESH-OS 2.5.1</text>
+    <text x="1400" y="885" text-anchor="end" font-family="Fira Code, monospace" font-size="10" fill="#00ff9d" opacity="0.2">stay ethical. stay curious. 🦜</text>
+  </svg>
+
+  <!-- Desktop Icons -->
+  <div class="desktop-icons" style="left:auto;right:0;top:0;bottom:0;width:82px;flex-direction:column;flex-wrap:nowrap;overflow-y:auto;overflow-x:hidden;align-items:center;padding:10px 5px;">
+    <div class="icon" ondblclick="openWindow('about')" title="About Me">
+      <div class="icon-img">👤</div>
+      <div class="icon-label">about.sh</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('skills')" title="Skills">
+      <div class="icon-img">⚡</div>
+      <div class="icon-label">skills.sh</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('experience')" title="Experience">
+      <div class="icon-img">📋</div>
+      <div class="icon-label">xp.log</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('projects')" title="Projects">
+      <div class="icon-img">🛡️</div>
+      <div class="icon-label">projects/</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('certs')" title="Certifications">
+      <div class="icon-img">🎓</div>
+      <div class="icon-label">certs.db</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('contact')" title="Contact">
+      <div class="icon-img">📡</div>
+      <div class="icon-label">contact</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('terminal')" title="Terminal">
+      <div class="icon-img">💻</div>
+      <div class="icon-label">terminal</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('neofetch')" title="System Info">
+      <div class="icon-img">🖥️</div>
+      <div class="icon-label">neofetch</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('wallpaper')" title="Wallpaper">
+      <div class="icon-img">🎨</div>
+      <div class="icon-label">wallpaper</div>
     </div>
   </div>
+</div>
 
-  <!-- MAIN TERMINAL SHELL -->
-  <div class="terminal-shell" id="terminalShell">
-    <!-- Top bar -->
-    <div class="terminal-topbar">
-      <div class="topbar-dots">
-        <span class="dot red"></span>
-        <span class="dot amber"></span>
-        <span class="dot green"></span>
-      </div>
-      <div class="topbar-title">ankesh@parrot: ~ / Security Analyst Terminal</div>
-    </div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div>
-        <div class="prompt-block">
-          <div class="prompt-line">
-            <span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~</span><span class="symbol">$</span> whoami
-          </div>
-          <div>Cybersecurity Analyst / VAPT</div>
-        </div>
-
-        <div class="nav-title">ls</div>
-        <ul class="nav-list">
-          <li class="nav-item">
-            <button class="nav-link active" data-target="#section-home">
-              <span class="path">./</span><span class="name">home</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-skills">
-              <span class="path">./</span><span class="name">skills</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-experience">
-              <span class="path">./</span><span class="name">experience</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-projects">
-              <span class="path">./</span><span class="name">projects</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-certifications">
-              <span class="path">./</span><span class="name">certs</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-education">
-              <span class="path">./</span><span class="name">education</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" data-target="#section-contact">
-              <span class="path">./</span><span class="name">contact</span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <!-- Opens sliding CLI -->
-            <button class="nav-link" id="openCli">
-              <span class="path">./</span><span class="name">terminal</span>
-            </button>
-          </li>
-        </ul>
-      </div>
-
-      <div class="sidebar-footer">
-        <div>Last login: <span class="tag">today</span> from 127.0.0.1</div>
-        <div>Mode: <span class="tag">root@security</span></div>
-      </div>
-    </aside>
-
-    <!-- Main terminal content -->
-    <main class="main">
-      <div class="terminal-log">
-        [<span class="ok">OK</span>] boot: loading <span class="highlight">/home/ankesh/cyber-portfolio</span>...
-      </div>
-      <div class="command-line" id="typedCommand">
-        <span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~/portfolio</span><span class="symbol">$</span>
-        <span class="cmd"> cat profile.txt</span><span class="cursor-blink"></span>
-      </div>
-
-      <!-- HOME -->
-      <section class="panel" id="section-home">
-        <div class="panel-header"># <span>profile.txt</span></div>
-        <h1 class="panel-title">Ankesh Prajapati &mdash; Cybersecurity Analyst</h1>
-        <div class="panel-body">
-          <p>
-            <span class="inline-label">// role:</span>
-            <span class="inline-value">
-              Cybersecurity Analyst with hands-on experience in Vulnerability Assessment & Penetration Testing
-              (VAPT) across <span class="highlight">web</span>, <span class="highlight">mobile</span>, <span class="highlight">API</span>,
-              <span class="highlight">network</span>, and <span class="highlight">cloud</span> environments.
-            </span>
-          </p>
-          <p>
-            Focused on identifying high-risk vulnerabilities, validating exploits, assisting remediation, and
-            delivering structured technical reports. Comfortable moving between red-team style attacks and
-            DFIR-style investigations.
-          </p>
-
-          <div class="panel-grid-2" style="margin-top: 10px;">
-            <div>
-              <div class="kv-row">
-                <span class="inline-label">Name:</span>
-                <span class="inline-value">Ankesh Prajapati</span>
-              </div>
-              <div class="kv-row">
-                <span class="inline-label">Location:</span>
-                <span class="inline-value">Surat, Gujarat, India</span>
-              </div>
-              <div class="kv-row">
-                <span class="inline-label">Current Role:</span>
-                <span class="inline-value">Security Analyst (VAPT) @ Securis360</span>
-              </div>
-            </div>
-            <div>
-              <div class="kv-row">
-                <span class="inline-label">Core Domains:</span>
-                <span class="inline-value">
-                  VAPT · Web/Mobile/API · Network Security · Cloud Security · Digital Forensics
-                </span>
-              </div>
-              <div class="kv-row">
-                <span class="inline-label">Mindset:</span>
-                <span class="inline-value">Break-first, document properly, help teams fix faster.</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="tagline">
-            <span class="highlight">&gt;</span> If it’s exposed on the internet or inside your network, I can map it,
-            break it, and help you harden it.
-          </p>
-        </div>
-      </section>
-
-      <!-- SKILLS -->
-      <section class="panel" id="section-skills">
-        <div class="panel-header"># <span>skills --all</span></div>
-        <h2 class="panel-title">Skillset & Attack Surface Coverage</h2>
-        <div class="panel-body">
-          <div class="panel-grid-2">
-            <div>
-              <p><span class="inline-label">// VAPT coverage</span></p>
-              <p><span class="list-bullet">&gt;</span> Web application VAPT (auth, access control, input validation, business logic)</p>
-              <p><span class="list-bullet">&gt;</span> Mobile app testing (Android, API flows, auth & storage issues)</p>
-              <p><span class="list-bullet">&gt;</span> API testing (REST, auth tokens, rate-limit, IDOR, injections)</p>
-              <p><span class="list-bullet">&gt;</span> Network & cloud exposure review, misconfiguration hunting</p>
-              <p><span class="list-bullet">&gt;</span> Source code security review (logic flaws, insecure patterns)</p>
-            </div>
-            <div>
-              <p><span class="inline-label">// tools & platforms</span></p>
-              <div>
-                <span class="chip">Burp Suite</span>
-                <span class="chip">Nessus</span>
-                <span class="chip">Nmap</span>
-                <span class="chip">Metasploit</span>
-                <span class="chip">Wireshark</span>
-                <span class="chip">Kali Linux</span>
-              </div>
-
-              <p style="margin-top: 8px;"><span class="inline-label">// forensics stack</span></p>
-              <div>
-                <span class="chip">UFED</span>
-                <span class="chip">EnCase</span>
-                <span class="chip">Talon</span>
-              </div>
-
-              <p style="margin-top: 8px;"><span class="inline-label">// soft-skill but critical</span></p>
-              <div>
-                <span class="chip">Security Reporting & Documentation</span>
-                <span class="chip">Patch Validation</span>
-                <span class="chip">Client Communication</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="command-hint">
-            Try: <span class="command-highlight">vapt --target &lt;app&gt; --mode full-scope</span> &amp;
-            <span class="command-highlight">report --format pdf</span>
-          </p>
-        </div>
-      </section>
-
-      <!-- EXPERIENCE -->
-      <section class="panel" id="section-experience">
-        <div class="panel-header"># <span>tail -n 50 experience.log</span></div>
-        <h2 class="panel-title">Operational Experience</h2>
-        <div class="panel-body">
-          <div class="log-block">
-            <div class="log-entry">
-              <div class="log-meta">[2025 - Present] Securis360, Ahmedabad, Gujarat</div>
-              <div class="log-title">Security Analyst (VAPT)</div>
-              <p><span class="list-bullet">&gt;</span> Performed VAPT on <span class="highlight">20+ applications and network components</span>.</p>
-              <p><span class="list-bullet">&gt;</span> Executed exploitation workflows, increasing validation accuracy by ~<span class="highlight">30%</span>.</p>
-              <p><span class="list-bullet">&gt;</span> Conducted code reviews and documented high-risk security flaws.</p>
-              <p><span class="list-bullet">&gt;</span> Delivered detailed remediation reports, helping reduce fix time by ~<span class="highlight">25%</span>.</p>
-              <p><span class="list-bullet">&gt;</span> Supported remediation and patch validation for hardened environments.</p>
-              <div class="log-tags">tags: VAPT · Web/Mobile/API · Network · Reporting · Patch Validation</div>
-            </div>
-
-            <div class="log-entry">
-              <div class="log-meta">[Oct 2024 - Jan 2025] State Cyber Crime Cell, CID, Gandhinagar</div>
-              <div class="log-title">Cybersecurity & Digital Forensic Intern</div>
-              <p><span class="list-bullet">&gt;</span> Assisted in <span class="highlight">15+ forensic investigations</span> using UFED, EnCase, Talon.</p>
-              <p><span class="list-bullet">&gt;</span> Worked on penetration testing of government systems.</p>
-              <p><span class="list-bullet">&gt;</span> Supported fraud analysis & MO-based pattern identification.</p>
-              <div class="log-tags">tags: DFIR · Govt Systems · Forensics · Fraud Analysis</div>
-            </div>
-
-            <div class="log-entry">
-              <div class="log-meta">[Feb 2022 - Jul 2023] MOROSQ (Game Development)</div>
-              <div class="log-title">Web Developer</div>
-              <p><span class="list-bullet">&gt;</span> Developed secure, performant web modules.</p>
-              <p><span class="list-bullet">&gt;</span> Fixed vulnerabilities improving stability & security by ~<span class="highlight">40%</span>.</p>
-              <p><span class="list-bullet">&gt;</span> Collaborated with backend & design on secure features.</p>
-              <div class="log-tags">tags: Web Dev · Secure Coding · App Hardening</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROJECTS -->
-      <section class="panel" id="section-projects">
-        <div class="panel-header"># <span>ls projects/</span></div>
-        <h2 class="panel-title">Selected Projects</h2>
-        <div class="panel-body">
-          <div class="projects-grid">
-            <article class="project-card">
-              <div class="project-title">Crime Analysis System</div>
-              <div class="project-body">
-                <p>
-                  Tools and logic for phishing detection and password security evaluation, focused on crime
-                  pattern analysis using digital evidence and behavioural links.
-                </p>
-                <p><span class="inline-label">// focus:</span> phishing detection, weak credential discovery, analytics.</p>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-title">Crime Heat Map</div>
-              <div class="project-body">
-                <p>
-                  Real-time heat map for crime density and patterns across regions with visual dashboards for
-                  investigators.
-                </p>
-                <p><span class="inline-label">// focus:</span> spatial visualization, data dashboards, reporting.</p>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-title">Helpline Data System</div>
-              <div class="project-body">
-                <p>
-                  System for processing and visualizing helpline data with MO-wise crime categorization for
-                  faster decision-making.
-                </p>
-                <p><span class="inline-label">// focus:</span> data processing, MO-classification, visual analytics.</p>
-              </div>
-            </article>
-          </div>
-
-          <p class="command-hint">
-            pipeline: <span class="command-highlight">ingest</span> → <span class="command-highlight">analyze</span> →
-            <span class="command-highlight">visualize</span> → <span class="command-highlight">act</span>
-          </p>
-        </div>
-      </section>
-
-      <!-- CERTS -->
-      <section class="panel" id="section-certifications">
-  <div class="panel-header"># <span>cat access_keys.txt</span></div>
-  <h2 class="panel-title">Certifications & Training</h2>
-  <div class="panel-body">
-    <p><span class="inline-label">// access keys</span></p>
-    <ul style="margin-top:4px; list-style:none; font-size:0.86rem;">
-
-      <!-- 🔥 TOP 5 MAJOR CERTIFICATIONS -->
-      <li><span class="list-bullet">&gt;</span><span class="highlight"> Certified Ethical Hacker (CEH) — <span class="highlight">Cisco Networking Academy</span> </span></li>
-      <li><span class="list-bullet">&gt;</span> Certified Network Security Practitioner (CNSP) — <span class="highlight">The SecOps Group</span></li>
-      <li><span class="list-bullet">&gt;</span> Windows Forensics — <span class="highlight">Belkasoft</span></li>
-      <li><span class="list-bullet">&gt;</span> Advanced Digital Forensics Techniques — <span class="highlight">Belkasoft</span></li>
-      <li><span class="list-bullet">&gt;</span> Junior Cybersecurity Analyst — <span class="highlight">Cisco Networking Academy</span></li>
-
-      <!-- ✅ Remaining Certifications -->
-      <li><span class="list-bullet">&gt;</span> Endpoint Security — <span class="highlight">Cisco Networking Academy</span></li>
-      <li><span class="list-bullet">&gt;</span> Cyber Threat Management — <span class="highlight">Cisco Networking Academy</span></li>
-      <li><span class="list-bullet">&gt;</span> Introduction to Cybersecurity — <span class="highlight">Cisco Networking Academy</span></li>
-      <li><span class="list-bullet">&gt;</span> Networking Basics — <span class="highlight">Cisco Networking Academy</span></li>
-      <li><span class="list-bullet">&gt;</span> PHP and MySQL Training — <span class="highlight">IIT Bombay</span></li>
-      <li><span class="list-bullet">&gt;</span> Responsive Web Design — <span class="highlight">freeCodeCamp</span></li>
-      <li><span class="list-bullet">&gt;</span> JavaScript Algorithms and Data Structures — <span class="highlight">freeCodeCamp</span></li>
-      <li><span class="list-bullet">&gt;</span> Analyzing and Visualizing Data with Power BI — <span class="highlight">Parul University</span></li>
-
-    </ul>
-    <p class="command-hint">
-      validating: <span class="command-highlight">creds --sync &amp;&amp; skills --update</span>
-    </p>
+<!-- Taskbar -->
+<div id="taskbar">
+  <button class="taskbar-start" onclick="toggleStartMenu()">⚡ ankesh@parrot</button>
+  <div class="taskbar-sep"></div>
+  <div class="taskbar-tasks" id="taskbarTasks"></div>
+  <div class="taskbar-sep"></div>
+  <div class="taskbar-tray">
+    <span class="tray-icon" title="Network">📶</span>
+    <span class="tray-icon" title="Security">🔒</span>
+    <span class="tray-icon" title="Battery">🔋</span>
   </div>
-</section>
+  <div class="taskbar-clock" id="clock"></div>
+</div>
 
+<!-- Context Menu -->
+<div id="ctxMenu">
+  <div class="ctx-item" onclick="openWindow('terminal');hideCtx()">🖥 Open Terminal</div>
+  <div class="ctx-item" onclick="openWindow('neofetch');hideCtx()">📊 Neofetch</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="openWindow('wallpaper');hideCtx()">🎨 Change Wallpaper</div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-item" onclick="openAllWindows();hideCtx()">📂 Open All</div>
+  <div class="ctx-item" onclick="closeAllWindows();hideCtx()">✕ Close All</div>
+</div>
 
+<!-- WINDOWS -->
 
-      <!-- EDUCATION -->
-      <section class="panel" id="section-education">
-        <div class="panel-header"># <span>cat education.txt</span></div>
-        <h2 class="panel-title">Education</h2>
-        <div class="panel-body">
-          <div class="log-block">
-            <div class="log-entry">
-              <div class="log-meta">[2023 - 2025]</div>
-              <div class="log-title">M.C.A. in Cybersecurity & Digital Forensics</div>
-              <p>Parul University, Vadodara.</p>
-            </div>
-            <div class="log-entry">
-              <div class="log-meta">[2019 - 2022]</div>
-              <div class="log-title">Bachelor of Computer Application (BCA)</div>
-              <p>Veer Narmad South Gujarat University.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CONTACT -->
-      <section class="panel" id="section-contact">
-        <div class="panel-header"># <span>./connect.sh</span></div>
-        <h2 class="panel-title">Connect & Engage</h2>
-        <div class="panel-body">
-          <div class="contact-grid">
-            <div>
-              <p class="contact-item">
-                <span class="inline-label">&gt; email:</span>
-                <a class="link" href="mailto:ankesh@securis360.com">ankesh@securis360.com</a>
-              </p>
-              <p class="contact-item">
-                <span class="inline-label">&gt; phone:</span>
-                <a class="link" href="tel:+919328236503">+91 93282 36503</a>
-              </p>
-              <p class="contact-item">
-                <span class="inline-label">&gt; location:</span>
-                Surat, Gujarat, India
-              </p>
-              <p class="contact-item">
-                <span class="inline-label">&gt; linkedin:</span>
-                <a class="link" href="https://www.linkedin.com/in/ankesh-prajapati-0a87a8249/" target="_blank" rel="noopener noreferrer">
-                  linkedin.com/in/ankesh-prajapati-0a87a8249/
-                </a>
-              </p>
-            </div>
-            <div>
-              <p>// quick commands</p>
-              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode collab</span> &mdash; security assessments, red teaming, consulting.</p>
-              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode hire</span> &mdash; full-time / contract roles in cybersecurity or DFIR.</p>
-              <p><span class="list-bullet">&gt;</span><span class="command-highlight">connect --mode knowledge-share</span> &mdash; talks, workshops, internal trainings.</p>
-              <p class="command-hint">exit 0 // session terminated only when systems are secure.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- SLIDING TERMINAL OVERLAY -->
-  <div class="cli-overlay" id="cliOverlay">
-    <div class="cli-header">
-      <div class="cli-header-left">/dev/pts/1 &mdash; interactive console</div>
-      <button class="cli-close-btn" id="cliClose">exit</button>
+<!-- About Window -->
+<div class="window" id="win-about" style="width:460px;height:430px;top:60px;left:120px;" data-win="about">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-about')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('about')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('about')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('about')"></div>
     </div>
-    <div class="cli-body">
-      <div class="cli-output" id="cliOutput">
-        <div class="cli-output-line">interactive terminal loaded. type <span class="command-highlight">help</span> for available commands.</div>
+    <div class="win-title">👤 about.sh — Profile</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> cat /etc/profile</div>
+      <div class="about-header">
+        <div class="avatar">🧑‍💻</div>
+        <div>
+          <div class="about-name">Ankesh Prajapati</div>
+          <div class="about-role">Cybersecurity Analyst | VAPT Specialist</div>
+          <div class="about-badge">#  India</div>
+          <div class="about-badge" style="margin-left:4px;"># Open to Remote</div>
+        </div>
       </div>
-      <div class="cli-input-row">
-        <span class="cli-input-prefix">ankesh@parrot:~/terminal$</span>
-        <input type="text" class="cli-input" id="cliInput" autocomplete="off" />
+      <div class="about-bio">
+        Offensive security professional with hands-on VAPT expertise across web, mobile, API, network, and cloud environments. Formerly with State Cyber Crime Cell (CID) conducting digital forensic investigations. Currently delivering 50+ security assessments at Securis360.<br><br>
+        Philosophy: <span style="color:var(--accent)">break first, document properly, help teams fix faster.</span>
       </div>
-
-      <div class="cli-auth">
-        <div class="cli-auth-label">root@mainframe password:</div>
-        <input
-          type="password"
-          class="cli-auth-input"
-          id="konamiPassword"
-          placeholder="enter konami code..."
-        />
-        <div class="cli-auth-hint">
-          Konami Code: <span>↑ ↑ ↓ ↓ ← → ← → B A</span> &nbsp; (type in password as: <span>uuddlrlrba</span>)
+      <div class="about-stats">
+        <div class="stat-box">
+          <div class="stat-num">50+</div>
+          <div class="stat-label">VAPT Assessments</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">15+</div>
+          <div class="stat-label">DFIR Investigations</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">3+</div>
+          <div class="stat-label">Years in Security</div>
         </div>
       </div>
     </div>
   </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-about')"></div>
+</div>
 
-  <!-- AUDIO (provide your own small .mp3 files with these names in same folder) -->
-  <audio id="keySound" src="key-click.mp3" preload="auto"></audio>
-  <audio id="alertSound" src="alert-siren.mp3" preload="auto"></audio>
+<!-- Skills Window -->
+<div class="window" id="win-skills" style="width:430px;height:480px;top:80px;left:620px;display:none;" data-win="skills">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-skills')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('skills')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('skills')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('skills')"></div>
+    </div>
+    <div class="win-title">⚡ skills.sh — Skillset</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> cat skills.conf</div>
+      <div class="skill-group">
+        <div class="skill-group-title">▸ VAPT Coverage</div>
+        <div class="skill-item">
+          <div class="skill-name">Web Application Testing <span>95%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="95%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Mobile App Testing (Android) <span>85%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="85%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">API Testing (REST/Auth/IDOR) <span>90%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="90%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Network & Cloud Review <span>80%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="80%"></div></div>
+        </div>
+        <div class="skill-item">
+          <div class="skill-name">Digital Forensics (DFIR) <span>88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="88%"></div></div>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">▸ Tools & Frameworks</div>
+        <div class="chips">
+          <div class="chip">Burp Suite</div><div class="chip">Nessus</div><div class="chip">Nmap</div>
+          <div class="chip">Metasploit</div><div class="chip">Wireshark</div><div class="chip">Kali Linux</div>
+          <div class="chip">UFED</div><div class="chip">EnCase</div><div class="chip">Talon</div>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">▸ Soft Skills</div>
+        <div class="chips">
+          <div class="chip">Security Reporting</div><div class="chip">Remediation Guidance</div>
+          <div class="chip">Patch Validation</div><div class="chip">Client Communication</div>
+          <div class="chip">Forensic Documentation</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-skills')"></div>
+</div>
 
-  <script>
-    /* ===========================
-       BOOT TYPING
-    =========================== */
-    const cmdLineEl = document.getElementById("typedCommand");
-    const staticPart =
-      '<span class="user">ankesh</span>@<span class="host">parrot</span>:<span class="path">~/portfolio</span><span class="symbol">$</span> ';
-    const commandText = "cat profile.txt";
-    let cmdIndex = 0;
+<!-- Experience Window -->
+<div class="window" id="win-experience" style="width:450px;height:450px;top:140px;left:200px;display:none;" data-win="experience">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-experience')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('experience')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('experience')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('experience')"></div>
+    </div>
+    <div class="win-title">📋 experience.log — Work History</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> cat experience.log | grep -v null</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2025 — Present</div>
+          <div class="timeline-role">Security Analyst</div>
+          <div class="timeline-company" style="color:var(--accent)">@ Securis360</div>
+          <div class="timeline-desc">
+            — Conducting 50+ VAPT assessments on web, mobile, API, and network assets<br>
+            — Building exploitation workflows to validate critical findings<br>
+            — Writing detailed security reports with remediation guidance<br>
+            — Performing patch validation and posture hardening
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2024 — 2025</div>
+          <div class="timeline-role">Cybersecurity & DFIR Intern</div>
+          <div class="timeline-company" style="color:var(--highlight)">@ State Cyber Crime Cell (CID)</div>
+          <div class="timeline-desc">
+            — Conducted 15+ forensic investigations using UFED, EnCase, and Talon<br>
+            — Performed pentesting and vulnerability analysis on government systems<br>
+            — Analyzed fraud patterns and MO-based case support
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2022 — 2023</div>
+          <div class="timeline-role">Web Developer</div>
+          <div class="timeline-company" style="color:var(--amber)">@ MOROSQ</div>
+          <div class="timeline-desc">
+            — Developed secure web modules<br>
+            — Identified and patched vulnerabilities in production systems<br>
+            — Stability hardening and code review
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--highlight)"></div>
+          <div class="timeline-date">2023 — 2025</div>
+          <div class="timeline-role">M.C.A. — Cybersecurity & Digital Forensics</div>
+          <div class="timeline-company">Parul University</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background:var(--highlight)"></div>
+          <div class="timeline-date">2019 — 2022</div>
+          <div class="timeline-role">B.C.A.</div>
+          <div class="timeline-company">Veer Narmad South Gujarat University</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-experience')"></div>
+</div>
 
-    function typeCommand() {
-      if (cmdLineEl.getAttribute("data-typed") === "1") return;
-      cmdLineEl.setAttribute("data-typed", "1");
-      function step() {
-        cmdIndex++;
-        const visible = commandText.slice(0, cmdIndex);
-        cmdLineEl.innerHTML =
-          staticPart + '<span class="cmd">' + visible + "</span><span class=\"cursor-blink\"></span>";
-        if (cmdIndex < commandText.length) setTimeout(step, 60);
-      }
-      setTimeout(step, 400);
+<!-- Projects Window -->
+<div class="window" id="win-projects" style="width:500px;height:420px;top:100px;left:350px;display:none;" data-win="projects">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-projects')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('projects')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('projects')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('projects')"></div>
+    </div>
+    <div class="win-title">🛡️ projects/ — Portfolio</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> ls -la projects/</div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-icon">🔍</div>
+          <div class="project-name">Crime Analysis System</div>
+          <div class="project-desc">Phishing detection engine with weak credential analysis and behaviour-driven crime pattern mapping for law enforcement use.</div>
+          <div class="project-tags">
+            <span class="project-tag">DFIR</span><span class="project-tag">ML</span><span class="project-tag">Pattern Analysis</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon">🗺️</div>
+          <div class="project-name">Crime Heat Map</div>
+          <div class="project-desc">Crime density visualization by region with investigator-friendly dashboards and geospatial analytics.</div>
+          <div class="project-tags">
+            <span class="project-tag">GIS</span><span class="project-tag">Data Viz</span><span class="project-tag">Python</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon">📊</div>
+          <div class="project-name">Helpline Data System</div>
+          <div class="project-desc">MO-wise crime data processing with visual analytics dashboard for faster law enforcement decision making.</div>
+          <div class="project-tags">
+            <span class="project-tag">Analytics</span><span class="project-tag">Power BI</span><span class="project-tag">ETL</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-icon">🌐</div>
+          <div class="project-name">VAPT Reports Suite</div>
+          <div class="project-desc">Structured penetration testing report templates and automated finding documentation used across 50+ client assessments.</div>
+          <div class="project-tags">
+            <span class="project-tag">VAPT</span><span class="project-tag">Burp</span><span class="project-tag">Nessus</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-projects')"></div>
+</div>
+
+<!-- Certifications Window -->
+<div class="window" id="win-certs" style="width:420px;height:440px;top:90px;left:500px;display:none;" data-win="certs">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-certs')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('certs')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('certs')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('certs')"></div>
+    </div>
+    <div class="win-title">🎓 certs.db — Certifications</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> select * from certifications order by level desc</div>
+      <div class="cert-item"><div class="cert-icon">🏆</div><div><div class="cert-name">Certified Ethical Hacker (CEH)</div><div class="cert-org">EC-Council</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🔐</div><div><div class="cert-name">Certified Network Security Practitioner (CNSP)</div><div class="cert-org">The SecOps Group</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🔬</div><div><div class="cert-name">Windows Forensics</div><div class="cert-org">Belkasoft</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🔬</div><div><div class="cert-name">Advanced Digital Forensics Techniques</div><div class="cert-org">Belkasoft</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🎓</div><div><div class="cert-name">Junior Cybersecurity Analyst</div><div class="cert-org">Cisco Networking Academy</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🛡️</div><div><div class="cert-name">Endpoint Security</div><div class="cert-org">Cisco Networking Academy</div></div></div>
+      <div class="cert-item"><div class="cert-icon">⚠️</div><div><div class="cert-name">Cyber Threat Management</div><div class="cert-org">Cisco Networking Academy</div></div></div>
+      <div class="cert-item"><div class="cert-icon">📱</div><div><div class="cert-name">PHP and MySQL Training</div><div class="cert-org">IIT Bombay</div></div></div>
+      <div class="cert-item"><div class="cert-icon">💡</div><div><div class="cert-name">Analyzing and Visualizing Data with Power BI</div><div class="cert-org">Parul University</div></div></div>
+      <div class="cert-item"><div class="cert-icon">🌐</div><div><div class="cert-name">Responsive Web Design</div><div class="cert-org">freeCodeCamp</div></div></div>
+      <div class="cert-item"><div class="cert-icon">💻</div><div><div class="cert-name">JavaScript Algorithms and Data Structures</div><div class="cert-org">freeCodeCamp</div></div></div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-certs')"></div>
+</div>
+
+<!-- Contact Window -->
+<div class="window" id="win-contact" style="width:380px;height:320px;top:200px;left:300px;display:none;" data-win="contact">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-contact')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('contact')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('contact')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('contact')"></div>
+    </div>
+    <div class="win-title">📡 contact.txt — Get In Touch</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> cat contact.txt</div>
+      <div class="contact-list">
+        <div class="contact-item">
+          <div class="contact-icon">📧</div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-val"><a href="mailto:ankesh@securis360.com">ankesh@securis360.com</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-label">Phone</div>
+            <div class="contact-val">+91 93282 36503</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🔗</div>
+          <div>
+            <div class="contact-label">LinkedIn</div>
+            <div class="contact-val"><a href="https://linkedin.com/in/ankesh-prajapati-0a87a8249" target="_blank">ankesh-prajapati-0a87a8249</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-label">Location</div>
+            <div class="contact-val"> India</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-contact')"></div>
+</div>
+
+<!-- Terminal Window -->
+<div class="window" id="win-terminal" style="width:560px;height:380px;top:160px;left:250px;display:none;" data-win="terminal">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-terminal')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('terminal')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('terminal')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('terminal')"></div>
+    </div>
+    <div class="win-title">💻 ankesh@parrot: ~/terminal</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="terminal-body">
+      <div class="term-output" id="termOutput"></div>
+      <div class="term-input-row">
+        <span class="term-prompt">ankesh@parrot:~$ </span>
+        <input class="term-input" id="termInput" type="text" placeholder="type 'help' for commands..." autocomplete="off" spellcheck="false"/>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-terminal')"></div>
+</div>
+
+<!-- Neofetch Window -->
+<div class="window" id="win-neofetch" style="width:520px;height:300px;top:180px;left:180px;display:none;" data-win="neofetch">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-neofetch')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('neofetch')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('neofetch')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('neofetch')"></div>
+    </div>
+    <div class="win-title">🖥️ neofetch — System Info</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body" style="overflow-y:auto;">
+    <div class="neofetch-body">
+      <div class="neofetch-logo">
+   ██████╗  █████╗ ██████╗ ██████╗  ██████╗ ████████╗
+   ██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝
+   ██████╔╝███████║██████╔╝██████╔╝██║   ██║   ██║   
+   ██╔═══╝ ██╔══██║██╔══██╗██╔══██╗██║   ██║   ██║   
+   ██║     ██║  ██║██║  ██║██║  ██║╚██████╔╝   ██║   
+   ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝    ╚═╝</div>
+      <div class="neofetch-info">
+        <span class="nf-key" style="color:var(--accent)">ankesh</span>@<span style="color:var(--highlight)">securis360</span><br>
+        ──────────────────────────<br>
+        <span class="nf-key">OS:</span> <span class="nf-val">Kali Linux 2024.2 x86_64</span><br>
+        <span class="nf-key">Host:</span> <span class="nf-val">Ankesh Prajapati</span><br>
+        <span class="nf-key">Role:</span> <span class="nf-val">Security Analyst (VAPT)</span><br>
+        <span class="nf-key">Shell:</span> <span class="nf-val">zsh 5.9 + oh-my-zsh</span><br>
+        <span class="nf-key">WM:</span> <span class="nf-val">i3wm / Openbox</span><br>
+        <span class="nf-key">Terminal:</span> <span class="nf-val">Terminator + tmux</span><br>
+        <span class="nf-key">Location:</span> <span class="nf-val"> India</span><br>
+        <span class="nf-key">Uptime:</span> <span class="nf-val" id="nfUptime">calculating...</span><br>
+        <span class="nf-key">Assessments:</span> <span class="nf-val">50+</span><br>
+        <span class="nf-key">Forensics:</span> <span class="nf-val">15+ investigations</span><br>
+        <br>
+        <span style="background:#ff5f57;padding:0 6px">&nbsp;</span>
+        <span style="background:#febc2e;padding:0 6px">&nbsp;</span>
+        <span style="background:#28c840;padding:0 6px">&nbsp;</span>
+        <span style="background:#00ff9d;padding:0 6px">&nbsp;</span>
+        <span style="background:#58a6ff;padding:0 6px">&nbsp;</span>
+        <span style="background:#ff3355;padding:0 6px">&nbsp;</span>
+      </div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-neofetch')"></div>
+</div>
+
+<!-- Wallpaper Picker Window -->
+<div class="window" id="win-wallpaper" style="width:580px;height:460px;top:200px;left:300px;display:none;" data-win="wallpaper">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-wallpaper')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('wallpaper')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('wallpaper')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('wallpaper')"></div>
+    </div>
+    <div class="win-title">🎨 Wallpaper Settings — gsettings</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body">
+    <div class="win-content">
+      <div class="section-title"><span>$</span> ls /usr/share/backgrounds/kali-parrot/</div>
+      <div style="font-size:0.74rem;color:var(--muted);margin-bottom:14px;">Click any wallpaper to apply:</div>
+      <div class="wp-grid" id="wpGrid"></div>
+    </div>
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-wallpaper')"></div>
+</div>
+
+<script>
+// ===================== MATRIX RAIN =====================
+(function(){
+  const c=document.getElementById("matrixCanvas");
+  const ctx=c.getContext("2d");
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();window.addEventListener("resize",resize);
+  const letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*@<>/\\";
+  const fs=13;let cols,drops;
+  function init(){cols=Math.floor(c.width/fs);drops=Array(cols).fill(1);}
+  init();window.addEventListener("resize",init);
+  setInterval(()=>{
+    ctx.fillStyle="rgba(0,0,0,0.15)";
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle="#00ff9d";ctx.font=fs+"px Fira Code";
+    for(let i=0;i<drops.length;i++){
+      ctx.fillText(letters[Math.floor(Math.random()*letters.length)],i*fs,drops[i]*fs);
+      if(drops[i]*fs>c.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
     }
-    window.addEventListener("load", typeCommand);
+  },50);
+})();
 
-    /* ===========================
-       NAV ACTIVE SCROLL
-    =========================== */
-    const navButtons = document.querySelectorAll(".nav-link[data-target]");
-    const sections = document.querySelectorAll("section.panel");
-    const mainEl = document.querySelector(".main");
+// ===================== BOOT SEQUENCE =====================
+const bootLines=[
+  "[  OK  ] Started Ankesh OS v2.5.1",
+  "[  OK  ] Loading security modules...",
+  "[  OK  ] Initializing VAPT toolkit...",
+  "[ INFO ] Burp Suite Pro — ready",
+  "[ INFO ] Nmap 7.95 — ready",
+  "[ INFO ] Metasploit Framework — ready",
+  "[  OK  ] Mounting forensic drive /dev/sdb1",
+  "[ INFO ] EnCase — connected",
+  "[ INFO ] Loading exploit database — 88,194 entries",
+  "[  OK  ] Firewall rules applied — 2048 entries",
+  "[ INFO ] Stealth mode: ACTIVE",
+  "[ INFO ] VPN tunnel: ESTABLISHED",
+  "[  OK  ] Profile loaded: ankesh@securis360",
+  "[ INFO ] 50+ VAPT assessments on record",
+  "[  OK  ] Desktop environment initializing...",
+  "[ INFO ] Welcome, Ankesh. Stay ethical. 🛡️",
+];
+let bootIdx=0;
+const bootLog=document.getElementById("bootLog");
+function bootTick(){
+  if(bootIdx<bootLines.length){
+    const l=document.createElement("div");
+    l.className="boot-line";
+    const line=bootLines[bootIdx];
+    let color="#00ff9d";
+    if(line.startsWith("[  OK  ]"))color="#28c840";
+    else if(line.startsWith("[ INFO ]"))color="#58a6ff";
+    else if(line.startsWith("[ WARN ]"))color="#febc2e";
+    l.innerHTML=`<span style="color:${color}">${line}</span>`;
+    bootLog.appendChild(l);
+    bootIdx++;
+    setTimeout(bootTick,120+Math.random()*80);
+  } else {
+    setTimeout(()=>{
+      const ls=document.getElementById("loadingScreen");
+      ls.classList.add("hide-loading");
+      setTimeout(()=>ls.remove(),700);
+      initDesktop();
+    },400);
+  }
+}
+setTimeout(bootTick,300);
 
-    navButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const targetSelector = btn.getAttribute("data-target");
-        const target = document.querySelector(targetSelector);
-        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    });
+// ===================== CLOCK =====================
+function updateClock(){
+  const now=new Date();
+  document.getElementById("clock").textContent=
+    now.toLocaleDateString("en-IN",{weekday:"short",month:"short",day:"2-digit"})+" "+
+    now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
+}
+setInterval(updateClock,1000);updateClock();
 
-    function updateActiveNav() {
-      let currentId = "";
-      const offset = 80;
-      const scrollPos = mainEl.scrollTop + offset;
+// ===================== NEOFETCH UPTIME =====================
+const startTime=Date.now();
+setInterval(()=>{
+  const el=document.getElementById("nfUptime");
+  if(!el)return;
+  const s=Math.floor((Date.now()-startTime)/1000);
+  el.textContent=`${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m ${s%60}s`;
+},1000);
 
-      sections.forEach((sec) => {
-        const top = sec.offsetTop;
-        const height = sec.offsetHeight;
-        if (scrollPos >= top && scrollPos < top + height) currentId = "#" + sec.id;
-      });
+// ===================== WINDOW MANAGEMENT =====================
+let activeWindow=null;
+let zCounter=10;
 
-      navButtons.forEach((btn) => {
-        if (btn.getAttribute("data-target") === currentId) btn.classList.add("active");
-        else btn.classList.remove("active");
-      });
-    }
+const windowState={};
 
-    mainEl.addEventListener("scroll", updateActiveNav);
-    window.addEventListener("load", updateActiveNav);
+function initDesktop(){
+  // Open about by default with a slight delay
+  setTimeout(()=>openWindow('about'),200);
+  setTimeout(()=>openWindow('neofetch'),600);
+  animateSkillBars();
+  initTerminal();
+  buildWallpaperPicker();
+}
 
-    /* ===========================
-       MOBILE FULLSCREEN MENU
-    =========================== */
-    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
-    const mobileMenuClose = document.getElementById("mobileMenuClose");
-    const mobileMenuItems = document.querySelectorAll(".mobile-menu-list li[data-target]");
-    const mobileTerminalItem = document.getElementById("mobileTerminal");
+function openWindow(name){
+  const win=document.getElementById("win-"+name);
+  if(!win)return;
+  win.style.display="flex";
+  win.classList.remove("minimized");
+  focusWindow(win,name);
+  updateTaskbar();
+  if(name==="skills")setTimeout(animateSkillBars,100);
+  showNotif("Opened","~/"+name+" loaded successfully");
+}
 
-    function openMobileMenu() {
-      if (mobileMenu) mobileMenu.classList.add("open");
-    }
+function closeWindow(name){
+  const win=document.getElementById("win-"+name);
+  if(!win)return;
+  win.style.display="none";
+  win.classList.remove("minimized","maximized","focused");
+  updateTaskbar();
+}
 
-    function closeMobileMenu() {
-      if (mobileMenu) mobileMenu.classList.remove("open");
-    }
+function minimizeWindow(name){
+  const win=document.getElementById("win-"+name);
+  if(!win)return;
+  win.classList.toggle("minimized");
+  updateTaskbar();
+}
 
-    if (mobileMenuBtn) {
-      mobileMenuBtn.addEventListener("click", openMobileMenu);
-    }
+function toggleMaximize(name){
+  const win=document.getElementById("win-"+name);
+  if(!win)return;
+  if(win.classList.contains("maximized")){
+    win.classList.remove("maximized");
+    const s=windowState[name];
+    if(s){win.style.width=s.w;win.style.height=s.h;win.style.top=s.t;win.style.left=s.l;}
+  } else {
+    windowState[name]={w:win.style.width,h:win.style.height,t:win.style.top,l:win.style.left};
+    win.classList.add("maximized");
+  }
+  focusWindow(win,name);
+}
 
-    if (mobileMenuClose) {
-      mobileMenuClose.addEventListener("click", closeMobileMenu);
-    }
+function focusWindow(win,name){
+  document.querySelectorAll(".window").forEach(w=>w.classList.remove("focused"));
+  win.classList.add("focused");
+  win.style.zIndex=++zCounter;
+  activeWindow=name;
+  updateTaskbar();
+}
 
-    if (mobileMenu) {
-      mobileMenu.addEventListener("click", (e) => {
-        if (e.target === mobileMenu) {
-          closeMobileMenu();
-        }
-      });
-    }
+document.addEventListener("mousedown",(e)=>{
+  const win=e.target.closest(".window");
+  if(win){
+    const name=win.dataset.win;
+    if(name)focusWindow(win,name);
+  }
+});
 
-    mobileMenuItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const targetSelector = item.getAttribute("data-target");
-        const target = document.querySelector(targetSelector);
-        if (target) {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-        closeMobileMenu();
-      });
-    });
-
-    if (mobileTerminalItem) {
-      mobileTerminalItem.addEventListener("click", () => {
-        closeMobileMenu();
-        openCli();
-      });
-    }
-
-    /* ===========================
-       HACKING LOADING SCREEN
-    =========================== */
-    const loadingScreen = document.getElementById("loadingScreen");
-    const loadingText = document.getElementById("loadingText");
-    const loadingStream = document.getElementById("loadingStream");
-
-    const bootMessage = "Hacking into mainframe...";
-    const randomLinesBoot = [
-      "Establishing secure shell...",
-      "Bypassing firewall rules...",
-      "Injecting payload sequence...",
-      "Decrypting hashed credentials...",
-      "Accessing restricted directories...",
-      "Privilege escalation successful...",
-      "Dumping encrypted data packets...",
-      "Tracing network route maps...",
-      "Reconstructing forensic artifacts...",
-      "Extracting volatile memory...",
-      "Reverse engineering API gateway...",
-      "Packet sniffing engaged...",
-      "Monitoring syscalls...",
-      "Executing SIGINT trace...",
-      "Spoofing gateway identity...",
-      "Establishing persistent foothold..."
-    ];
-
-    let bootIndex = 0;
-    loadingText.innerHTML = "";
-
-    function typeBootMsg() {
-      if (bootIndex < bootMessage.length) {
-        loadingText.innerHTML += bootMessage.charAt(bootIndex);
-        bootIndex++;
-        setTimeout(typeBootMsg, 60);
-      }
-    }
-    typeBootMsg();
-
-    function streamRandomLinesBoot() {
-      const line = randomLinesBoot[Math.floor(Math.random() * randomLinesBoot.length)];
-      loadingStream.innerHTML += `> ${line}\n`;
-      loadingStream.scrollTop = loadingStream.scrollHeight;
-    }
-    const streamInterval = setInterval(streamRandomLinesBoot, 90);
-
-    setTimeout(() => {
-      clearInterval(streamInterval);
-      loadingScreen.classList.add("hide-loading");
-      setTimeout(() => (loadingScreen.style.display = "none"), 600);
-    }, 5000);
-
-    /* ===========================
-       SLIDING CLI OVERLAY
-    =========================== */
-    const cliOverlay = document.getElementById("cliOverlay");
-    const openCliBtn = document.getElementById("openCli");
-    const cliCloseBtn = document.getElementById("cliClose");
-    const cliInput = document.getElementById("cliInput");
-    const cliOutput = document.getElementById("cliOutput");
-    const konamiPasswordInput = document.getElementById("konamiPassword");
-    const alertOverlay = document.getElementById("alertOverlay");
-    const terminalShell = document.getElementById("terminalShell");
-
-    const keySound = document.getElementById("keySound");
-    const alertSound = document.getElementById("alertSound");
-
-    function playKeyClick() {
-      if (!keySound) return;
-      try {
-        keySound.currentTime = 0;
-        keySound.play().catch(() => {});
-      } catch (e) {}
-    }
-
-    function playAlertSound() {
-      if (!alertSound) return;
-      try {
-        alertSound.currentTime = 0;
-        alertSound.play().catch(() => {});
-      } catch (e) {}
-    }
-
-    function openCli() {
-      cliOverlay.classList.add("open");
-      cliInput.value = "";
-      cliInput.focus();
-      printToCli("---- interactive terminal session started ----");
-    }
-
-    function closeCli() {
-      cliOverlay.classList.remove("open");
-      printToCli("session closed.");
-    }
-
-    openCliBtn.addEventListener("click", openCli);
-    cliCloseBtn.addEventListener("click", closeCli);
-
-    // Attach key sound to CLI fields
-    [cliInput, konamiPasswordInput].forEach((el) => {
-      el.addEventListener("keydown", (e) => {
-        if (e.key.length === 1 || e.key === "Backspace" || e.key === "Enter") {
-          playKeyClick();
-        }
-      });
-    });
-
-    function printToCli(text, cls = "") {
-      if (!text && text !== 0) return;
-      const line = document.createElement("div");
-      line.className = "cli-output-line" + (cls ? " " + cls : "");
-      line.textContent = text;
-      cliOutput.appendChild(line);
-      cliOutput.scrollTop = cliOutput.scrollHeight;
-    }
-
-    const terminalData = {
-      home: `
-========================
-   PROFILE / HOME
-========================
-Name: Ankesh Prajapati
-Role: Cybersecurity Analyst (VAPT)
-Location: Surat, Gujarat, India
-
-Core Domains:
-  - Web, Mobile, API, Network, Cloud
-  - Digital Forensics (DFIR)
-
-Mindset:
-  Break-first, document properly, help teams fix faster.
-`,
-      skills: `
-========================
-   SKILLSET / COVERAGE
-========================
-VAPT Coverage:
-  - Web application testing
-  - Mobile app testing (Android)
-  - API testing (REST, auth, IDOR, injection)
-  - Network & cloud exposure review
-  - Source code review
-
-Tools:
-  - Burp Suite, Nessus, Nmap
-  - Metasploit, Wireshark, Kali
-
-Forensics Stack:
-  - UFED, EnCase, Talon
-
-Soft Skills:
-  - Security reporting & documentation
-  - Patch validation & remediation support
-  - Client communication
-`,
-      experience: `
-========================
-   EXPERIENCE LOG
-========================
-[2025 - Present] Security Analyst @ Securis360
-  - 20+ VAPT assessments on web, mobile, API, and network assets
-  - Exploitation workflows to validate critical findings
-  - Detailed reporting and remediation guidance
-  - Patch validation and posture hardening
-
-[2024 - 2025] Cybersecurity & DFIR Intern @ State Cyber Crime Cell (CID)
-  - 15+ forensic investigations with UFED, EnCase, Talon
-  - Govt systems pentesting & vulnerability analysis
-  - Fraud pattern analysis and MO-based case support
-
-[2022 - 2023] Web Developer @ MOROSQ
-  - Secure web modules
-  - Vulnerability fixes and stability hardening
-`,
-      projects: `
-========================
-   PROJECTS
-========================
-Crime Analysis System:
-  - Phishing detection
-  - Weak credential analysis
-  - Behaviour-driven crime pattern mapping
-
-Crime Heat Map:
-  - Crime density visualization by region
-  - Investigator-friendly dashboards
-
-Helpline Data System:
-  - MO-wise crime data processing
-  - Visual analytics for faster decisions
-`,
-certs: `
-========================
-   CERTIFICATIONS
-========================
-  - Certified Ethical Hacker (CEH)
-  - Certified Network Security Practitioner (CNSP) — The SecOps Group
-  - Windows Forensics — Belkasoft
-  - Advanced Digital Forensics Techniques — Belkasoft
-  - Junior Cybersecurity Analyst — Cisco Networking Academy
-
-  - Endpoint Security — Cisco Networking Academy
-  - Cyber Threat Management — Cisco Networking Academy
-  - Introduction to Cybersecurity — Cisco Networking Academy
-  - Networking Basics — Cisco Networking Academy
-  - PHP and MySQL Training — IIT Bombay
-  - Responsive Web Design — freeCodeCamp
-  - JavaScript Algorithms and Data Structures — freeCodeCamp
-  - Analyzing and Visualizing Data with Power BI — Parul University
-`,
-
-      education: `
-========================
-   EDUCATION
-========================
-M.C.A. in Cybersecurity & Digital Forensics
-  - Parul University (2023 - 2025)
-
-Bachelor of Computer Application (BCA)
-  - Veer Narmad South Gujarat University (2019 - 2022)
-`,
-      contact: `
-========================
-   CONTACT
-========================
-Email:
-  - ankesh@securis360.com
-
-Phone:
-  - +91 93282 36503
-
-Location:
-  - Surat, Gujarat, India
-
-LinkedIn:
-  - linkedin.com/in/ankesh-prajapati-0a87a8249
-`
+function updateTaskbar(){
+  const tasks=document.getElementById("taskbarTasks");
+  tasks.innerHTML="";
+  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
+  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 wallpaper"};
+  wins.forEach(n=>{
+    const win=document.getElementById("win-"+n);
+    if(!win||win.style.display==="none")return;
+    const btn=document.createElement("button");
+    btn.className="taskbar-task"+(activeWindow===n?" active":"");
+    btn.textContent=labels[n]||n;
+    btn.onclick=()=>{
+      if(win.classList.contains("minimized")){win.classList.remove("minimized");}
+      else if(activeWindow===n){win.classList.add("minimized");}
+      focusWindow(win,n);
     };
+    tasks.appendChild(btn);
+  });
+}
 
-    const breachLogs = [
-      "suspicious login pattern detected...",
-      "analyzing abnormal network flow...",
-      "cross-referencing IOC signatures...",
-      "hash mismatch found in critical binary...",
-      "failed login attempts spiking from remote subnet...",
-      "unauthorized API probe detected...",
-      "privilege escalation attempt logged...",
-      "potential data exfiltration route identified..."
-    ];
+// ===================== DRAG =====================
+let dragState=null;
+function startDrag(e,winId){
+  if(e.target.classList.contains("win-dot"))return;
+  const win=document.getElementById(winId);
+  if(win.classList.contains("maximized"))return;
+  dragState={winId,startX:e.clientX,startY:e.clientY,
+    origLeft:parseInt(win.style.left)||0,origTop:parseInt(win.style.top)||0};
+  document.addEventListener("mousemove",onDrag);
+  document.addEventListener("mouseup",stopDrag);
+  e.preventDefault();
+}
+function onDrag(e){
+  if(!dragState)return;
+  const win=document.getElementById(dragState.winId);
+  const dx=e.clientX-dragState.startX;
+  const dy=e.clientY-dragState.startY;
+  win.style.left=(dragState.origLeft+dx)+"px";
+  win.style.top=Math.max(0,dragState.origTop+dy)+"px";
+}
+function stopDrag(){dragState=null;document.removeEventListener("mousemove",onDrag);document.removeEventListener("mouseup",stopDrag);}
 
-    function runHackSequence(cmd, done) {
-      let step = 0;
-      const totalSteps = 10;
+// ===================== RESIZE =====================
+let resizeState=null;
+function startResize(e,winId){
+  const win=document.getElementById(winId);
+  resizeState={winId,startX:e.clientX,startY:e.clientY,
+    origW:win.offsetWidth,origH:win.offsetHeight};
+  document.addEventListener("mousemove",onResize);
+  document.addEventListener("mouseup",stopResize);
+  e.preventDefault();e.stopPropagation();
+}
+function onResize(e){
+  if(!resizeState)return;
+  const win=document.getElementById(resizeState.winId);
+  const w=Math.max(280,resizeState.origW+(e.clientX-resizeState.startX));
+  const h=Math.max(180,resizeState.origH+(e.clientY-resizeState.startY));
+  win.style.width=w+"px";win.style.height=h+"px";
+}
+function stopResize(){resizeState=null;document.removeEventListener("mousemove",onResize);document.removeEventListener("mouseup",stopResize);}
 
-      function tick() {
-        if (step < totalSteps) {
-          const percent = Math.floor(((step + 1) / totalSteps) * 100);
-          const bars = Math.floor(((step + 1) / totalSteps) * 10);
-          const barStr = "[" + "#".repeat(bars) + ".".repeat(10 - bars) + "] " + percent + "%";
-          printToCli(barStr);
+// ===================== SKILL BARS =====================
+function animateSkillBars(){
+  document.querySelectorAll(".skill-fill").forEach(bar=>{
+    const target=bar.dataset.w;
+    setTimeout(()=>{bar.style.width=target;},100);
+  });
+}
 
-          if (Math.random() < 0.35) {
-            const log = breachLogs[Math.floor(Math.random() * breachLogs.length)];
-            printToCli("log: " + log);
-          }
+// ===================== WALLPAPER SYSTEM =====================
+function makeParticles(count, color, maxY) {
+  return Array.from({length: count}, () => {
+    const x = (Math.random() * 1440) | 0;
+    const y = (Math.random() * (maxY || 900)) | 0;
+    const r = (Math.random() * 1.5 + 0.4).toFixed(1);
+    const d = (Math.random() * 4 + 2).toFixed(1);
+    const b = (Math.random() * 5).toFixed(1);
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"><animate attributeName="opacity" values="0;0.7;0" dur="${d}s" begin="${b}s" repeatCount="indefinite"/></circle>`;
+  }).join("");
+}
 
-          step++;
-          setTimeout(tick, 120);
-        } else {
-          if (done) done();
-        }
-      }
-      tick();
+const wallpapers = [
+  {
+    os: "🐉 Kali Linux", name: "Dragon – Default",
+    bg: "#130020",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <linearGradient id="w0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0533"/><stop offset="55%" stop-color="#220a44"/><stop offset="100%" stop-color="#100022"/></linearGradient>
+        <radialGradient id="w0g1" cx="70%" cy="35%" r="55%"><stop offset="0%" stop-color="#5a10d0" stop-opacity="0.5"/><stop offset="100%" stop-color="#5a10d0" stop-opacity="0"/></radialGradient>
+        <radialGradient id="w0g2" cx="15%" cy="80%" r="40%"><stop offset="0%" stop-color="#00c8ff" stop-opacity="0.08"/><stop offset="100%" stop-color="#00c8ff" stop-opacity="0"/></radialGradient>
+        <filter id="f0"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w0bg)"/>
+      <rect width="1440" height="900" fill="url(#w0g1)"/>
+      <rect width="1440" height="900" fill="url(#w0g2)"/>
+      <!-- Hex grid -->
+      <g opacity="0.1" fill="none" stroke="#9b4fff" stroke-width="0.8">
+        <polygon points="100,50 134,70 134,110 100,130 66,110 66,70"/>
+        <polygon points="168,50 202,70 202,110 168,130 134,110 134,70"/>
+        <polygon points="236,50 270,70 270,110 236,130 202,110 202,70"/>
+        <polygon points="304,50 338,70 338,110 304,130 270,110 270,70"/>
+        <polygon points="372,50 406,70 406,110 372,130 338,110 338,70"/>
+        <polygon points="134,110 168,130 168,170 134,190 100,170 100,130"/>
+        <polygon points="202,110 236,130 236,170 202,190 168,170 168,130"/>
+        <polygon points="270,110 304,130 304,170 270,190 236,170 236,130"/>
+        <polygon points="338,110 372,130 372,170 338,190 304,170 304,130"/>
+      </g>
+      <!-- Kali Dragon -->
+      <g transform="translate(640,60) scale(1.2)" filter="url(#f0)" opacity="0.93">
+        <path d="M220,310 C200,265 178,208 195,155 C207,118 242,100 268,118 C285,130 290,158 276,180 C300,158 322,124 308,86 C338,110 342,158 320,196 C348,174 370,138 355,98 C390,132 386,188 362,218 C390,200 412,162 400,122 C428,162 420,218 392,242 C420,228 440,192 432,152 C454,196 444,256 410,278 C436,268 454,236 446,198 C466,245 452,308 415,330 C440,320 456,290 450,254 C466,302 450,370 410,394 C398,400 382,398 372,386 C368,412 348,428 325,421 C334,402 340,380 332,362 C318,388 296,402 274,390 C285,370 292,346 284,329 C268,352 244,360 224,348 C237,328 246,303 238,285 Z" fill="#7b2fff" opacity="0.92"/>
+        <path d="M178,196 C140,152 72,132 40,166 C20,186 30,220 62,216 C92,212 124,196 154,202 C132,232 110,268 122,306 C134,344 166,332 186,306 Z" fill="#6010e0" opacity="0.88"/>
+        <path d="M318,184 C358,140 428,122 460,156 C480,176 468,212 434,208 C400,204 366,190 334,195 C356,225 378,260 366,298 C354,336 320,324 300,298 Z" fill="#6010e0" opacity="0.88"/>
+        <ellipse cx="230" cy="145" rx="46" ry="36" fill="#5508c8" opacity="0.95"/>
+        <circle cx="244" cy="136" r="12" fill="#00c8ff" opacity="0.9"/>
+        <circle cx="247" cy="133" r="6" fill="#fff" opacity="0.8"/>
+        <path d="M232,148 L258,157 L232,166 Z" fill="#00e5ff"/>
+        <polygon points="195,175 204,132 213,175" fill="#9b4fff" opacity="0.7"/>
+        <polygon points="215,167 226,118 237,167" fill="#9b4fff" opacity="0.7"/>
+        <polygon points="240,164 252,112 263,164" fill="#9b4fff" opacity="0.7"/>
+        <path d="M225,100 C218,68 206,48 208,26" stroke="#7b2fff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M246,96 C250,64 260,44 258,22" stroke="#7b2fff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+        <path d="M290,126 C328,110 372,106 412,120 C444,132 454,156 432,168 C410,180 378,174 346,166 C372,178 384,202 364,214 C344,226 316,216 296,204 C314,214 320,240 300,250 C280,260 255,250 246,234 Z" fill="#ff6600" opacity="0.65"/>
+      </g>
+      <g opacity="0.45">${makeParticles(40,'#c084fc',null)}</g>
+      <rect x="0" y="-2" width="1440" height="2" fill="#9b4fff" opacity="0"><animate attributeName="y" values="-2;902" dur="7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.12;0" dur="7s" repeatCount="indefinite"/></rect>
+      <g transform="translate(56,820)" opacity="0.45"><text font-family="Fira Code,monospace" font-size="19" font-weight="700" fill="#9b4fff" letter-spacing="4">KALI LINUX</text><text y="20" font-family="Fira Code,monospace" font-size="10" fill="#c084fc" letter-spacing="2">By Offensive Security • kali.org</text></g>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0533"/><stop offset="100%" stop-color="#100022"/></linearGradient></defs><rect width="160" height="100" fill="url(#th0)"/><path d="M80,18 C74,10 64,8 58,16 C52,24 60,34 70,32 C62,44 54,56 60,70 C66,84 80,80 86,66 C92,80 106,84 112,70 C118,56 110,44 102,32 C112,34 120,24 114,16 C108,8 98,10 92,18 C88,10 84,6 80,18 Z" fill="#7b2fff" opacity="0.9"/><text x="80" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#c084fc">KALI LINUX</text></svg>`
+  },
+  {
+    os: "🐉 Kali Linux", name: "Purple Hex",
+    bg: "#0d001f",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <radialGradient id="w1bg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#0d001f"/><stop offset="100%" stop-color="#000008"/></radialGradient>
+        <radialGradient id="w1g" cx="50%" cy="45%" r="50%"><stop offset="0%" stop-color="#4a00b0" stop-opacity="0.45"/><stop offset="100%" stop-color="#4a00b0" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w1bg)"/>
+      <rect width="1440" height="900" fill="url(#w1g)"/>
+      <g opacity="0.13" fill="none" stroke="#7b2fff" stroke-width="0.9">
+        ${Array.from({length:7},(_,row)=>Array.from({length:11},(_,col)=>{const x=col*136+(row%2)*68,y=row*116;return `<polygon points="${x+68},${y} ${x+102},${y+20} ${x+102},${y+58} ${x+68},${y+78} ${x+34},${y+58} ${x+34},${y+20}"/>`;}).join("")).join("")}
+      </g>
+      <g transform="translate(430,250)" opacity="0.88">
+        <text font-family="Fira Code,monospace" font-size="96" font-weight="700" fill="none" stroke="#7b2fff" stroke-width="1.5" letter-spacing="4">KALI</text>
+        <text y="68" font-family="Fira Code,monospace" font-size="28" fill="#c084fc" letter-spacing="18" opacity="0.75">LINUX</text>
+        <text y="100" font-family="Fira Code,monospace" font-size="12" fill="#6040a0" letter-spacing="7" opacity="0.8">BY OFFENSIVE SECURITY</text>
+      </g>
+      <ellipse cx="720" cy="420" rx="320" ry="180" fill="#5c00cc" opacity="0.07"/>
+      <path d="M0,0 C60,24 100,90 78,152 C56,214 16,234 0,212 Z" fill="#4a00b0" opacity="0.28"/>
+      <path d="M1440,900 C1382,876 1340,808 1362,748 C1384,688 1424,668 1440,690 Z" fill="#4a00b0" opacity="0.28"/>
+      <g opacity="0.5">${makeParticles(45,'#c084fc',null)}</g>
+      <text x="720" y="874" text-anchor="middle" font-family="Fira Code,monospace" font-size="10" fill="#4a00b0" opacity="0.4">kali.org</text>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="th1" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#0d001f"/><stop offset="100%" stop-color="#000008"/></radialGradient></defs><rect width="160" height="100" fill="url(#th1)"/><g opacity="0.18" fill="none" stroke="#7b2fff" stroke-width="0.7"><polygon points="30,8 50,19 50,43 30,54 10,43 10,19"/><polygon points="80,8 100,19 100,43 80,54 60,43 60,19"/><polygon points="130,8 150,19 150,43 130,54 110,43 110,19"/><polygon points="55,43 75,54 75,78 55,89 35,78 35,54"/><polygon points="105,43 125,54 125,78 105,89 85,78 85,54"/></g><text x="80" y="37" text-anchor="middle" font-family="monospace" font-size="14" font-weight="700" fill="none" stroke="#7b2fff" stroke-width="0.8">KALI</text><text x="80" y="52" text-anchor="middle" font-family="monospace" font-size="6" fill="#c084fc" letter-spacing="3">LINUX</text></svg>`
+  },
+  {
+    os: "🦜 Parrot OS", name: "Cyber Sky",
+    bg: "#001828",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <linearGradient id="w2bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001828"/><stop offset="55%" stop-color="#002038"/><stop offset="100%" stop-color="#000e18"/></linearGradient>
+        <radialGradient id="w2g1" cx="62%" cy="30%" r="55%"><stop offset="0%" stop-color="#00c8ff" stop-opacity="0.15"/><stop offset="100%" stop-color="#00c8ff" stop-opacity="0"/></radialGradient>
+        <radialGradient id="w2g2" cx="14%" cy="78%" r="40%"><stop offset="0%" stop-color="#00ff9d" stop-opacity="0.08"/><stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/></radialGradient>
+        <filter id="f2"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w2bg)"/>
+      <rect width="1440" height="900" fill="url(#w2g1)"/>
+      <rect width="1440" height="900" fill="url(#w2g2)"/>
+      <!-- Parrot bird -->
+      <g transform="translate(820,55) scale(1.35)" filter="url(#f2)" opacity="0.92">
+        <path d="M178,216 C142,162 70,142 36,178 C16,198 28,232 60,226 C92,220 124,204 154,210 C133,238 112,274 124,310 C136,346 168,334 188,310 Z" fill="#00a8e8" opacity="0.92"/>
+        <path d="M208,212 C244,160 318,142 356,176 C376,196 364,230 330,224 C296,218 262,204 232,210 C254,236 275,272 263,308 C251,344 218,332 198,308 Z" fill="#00a8e8" opacity="0.92"/>
+        <path d="M62,192 Q94,180 126,194" stroke="#7fffff" stroke-width="2" fill="none" opacity="0.5"/>
+        <path d="M332,188 Q358,176 382,192" stroke="#7fffff" stroke-width="2" fill="none" opacity="0.5"/>
+        <ellipse cx="193" cy="285" rx="56" ry="80" fill="#0088bb" opacity="0.95"/>
+        <ellipse cx="193" cy="306" rx="36" ry="55" fill="#00aadd" opacity="0.5"/>
+        <circle cx="193" cy="170" r="46" fill="#007aaa" opacity="0.95"/>
+        <circle cx="207" cy="162" r="13" fill="#001a2e"/>
+        <circle cx="210" cy="159" r="8" fill="#00c8ff"/>
+        <circle cx="212" cy="157" r="3.5" fill="#fff" opacity="0.9"/>
+        <path d="M195,172 L224,182 L195,192 Z" fill="#00e0ff"/>
+        <path d="M188,126 C182,98 165,78 170,56 C175,73 190,84 192,126 Z" fill="#00c8ff" opacity="0.75"/>
+        <path d="M196,122 C198,92 210,72 216,56 C212,75 214,98 204,122 Z" fill="#33ddff" opacity="0.65"/>
+        <path d="M204,124 C216,96 232,80 236,60 C228,78 218,96 210,124 Z" fill="#00c8ff" opacity="0.55"/>
+        <path d="M174,342 C154,376 136,412 126,448" stroke="#0088bb" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <path d="M193,347 L191,454" stroke="#00aadd" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <path d="M212,342 C232,376 250,412 262,448" stroke="#0088bb" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
+      </g>
+      <!-- Perspective grid -->
+      <g opacity="0.1" stroke="#00c8ff" stroke-width="0.7">
+        <line x1="720" y1="530" x2="0" y2="900"/><line x1="720" y1="530" x2="288" y2="900"/><line x1="720" y1="530" x2="576" y2="900"/><line x1="720" y1="530" x2="720" y2="900"/><line x1="720" y1="530" x2="864" y2="900"/><line x1="720" y1="530" x2="1152" y2="900"/><line x1="720" y1="530" x2="1440" y2="900"/>
+        <line x1="0" y1="900" x2="1440" y2="900"/><line x1="80" y1="765" x2="1360" y2="765"/><line x1="220" y1="665" x2="1220" y2="665"/><line x1="350" y1="600" x2="1090" y2="600"/><line x1="460" y1="558" x2="980" y2="558"/>
+      </g>
+      <g opacity="0.5">${makeParticles(30,'#00c8ff',null)}</g>
+      <rect x="0" y="-2" width="1440" height="2" fill="#00c8ff" opacity="0"><animate attributeName="y" values="-2;902" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.08;0" dur="9s" repeatCount="indefinite"/></rect>
+      <g transform="translate(56,820)" opacity="0.48"><text font-family="Fira Code,monospace" font-size="20" font-weight="700" fill="#00c8ff" letter-spacing="3">Parrot OS</text><text y="20" font-family="Fira Code,monospace" font-size="10" fill="#00ff9d" letter-spacing="2">Security • Privacy • Freedom</text></g>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001828"/><stop offset="100%" stop-color="#000e18"/></linearGradient></defs><rect width="160" height="100" fill="url(#th2)"/><path d="M80,8 C74,3 66,2 62,8 C58,15 64,24 73,22 C64,32 56,44 60,56 C64,68 76,64 82,54 C88,64 100,68 104,56 C108,44 100,32 91,22 C100,24 106,15 102,8 C98,2 90,3 84,8 C82,3 80,1 80,8 Z" fill="#00c8ff" opacity="0.9"/><path d="M0,100 L0,72 L28,56 L56,68 L84,44 L112,60 L140,36 L160,48 L160,100 Z" fill="#001828" opacity="0.7"/><text x="8" y="96" font-family="monospace" font-size="7" fill="#00c8ff" opacity="0.8">Parrot OS</text></svg>`
+  },
+  {
+    os: "🦜 Parrot OS", name: "Midnight",
+    bg: "#000c18",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <linearGradient id="w3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000810"/><stop offset="55%" stop-color="#000c18"/><stop offset="100%" stop-color="#000408"/></linearGradient>
+        <radialGradient id="w3g" cx="50%" cy="46%" r="58%"><stop offset="0%" stop-color="#003355" stop-opacity="0.48"/><stop offset="100%" stop-color="#003355" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w3bg)"/>
+      <rect width="1440" height="900" fill="url(#w3g)"/>
+      <!-- Wireframe parrot -->
+      <g transform="translate(460,60) scale(1.1)" fill="none" stroke="#00c8ff" stroke-width="1.3" opacity="0.22">
+        <path d="M230,340 C210,280 188,210 204,150 C215,110 254,90 282,110"/>
+        <path d="M176,212 C142,150 68,128 34,164 C14,184 26,220 60,214 C92,208 124,192 156,198"/>
+        <path d="M298,202 C336,142 412,124 450,160 C470,180 458,216 422,210 C388,204 354,188 322,194"/>
+        <ellipse cx="232" cy="275" rx="58" ry="85"/>
+        <circle cx="232" cy="152" r="50"/>
+        <path d="M168,350 C146,388 126,428 116,468"/>
+        <path d="M232,356 L230,472"/>
+        <path d="M296,350 C318,388 338,428 350,468"/>
+      </g>
+      <!-- Parrot logo centered -->
+      <g transform="translate(558,258)">
+        <path d="M162,144 C150,106 130,72 140,36 C146,15 164,6 178,18 C188,26 190,46 180,58 C196,42 208,20 197,0 C216,14 218,46 200,68 C220,52 232,28 224,6 C248,30 244,66 222,82 C244,68 256,44 248,18 C268,44 260,84 236,98 C258,88 270,62 261,34 C278,62 270,102 244,115 Z" fill="#00c8ff" opacity="0.85"/>
+        <text y="192" font-family="Fira Code,monospace" font-size="44" font-weight="700" fill="none" stroke="#00c8ff" stroke-width="1" letter-spacing="2" text-anchor="middle" x="148">Parrot OS</text>
+        <text x="148" y="224" text-anchor="middle" font-family="Fira Code,monospace" font-size="13" fill="#00ff9d" letter-spacing="5" opacity="0.6">SECURITY EDITION</text>
+      </g>
+      <!-- Ripple rings -->
+      <g transform="translate(720,460)" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.07">
+        <circle r="100"/><circle r="180"/><circle r="260"/><circle r="340"/><circle r="420"/>
+      </g>
+      <g opacity="0.55">${makeParticles(55,'#00c8ff',null)}</g>
+      <text x="1400" y="876" text-anchor="end" font-family="Fira Code,monospace" font-size="10" fill="#00c8ff" opacity="0.2">parrotsec.org</text>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000810"/><stop offset="100%" stop-color="#000c18"/></linearGradient></defs><rect width="160" height="100" fill="url(#th3)"/><circle cx="80" cy="48" r="32" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><circle cx="80" cy="48" r="22" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><circle cx="80" cy="48" r="12" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><path d="M80,18 C74,12 65,11 60,18 C55,26 62,36 71,34 C64,44 58,56 63,68 C68,80 80,76 85,64 C90,76 102,80 107,68 C112,56 106,44 99,34 C108,36 115,26 110,18 C105,11 96,12 90,18 C87,12 83,9 80,18 Z" fill="#00c8ff" opacity="0.8"/><text x="80" y="95" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#00c8ff">Parrot OS</text></svg>`
+  },
+  {
+    os: "🐉 Kali Linux", name: "NetHunter",
+    bg: "#080010",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <linearGradient id="w4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a0012"/><stop offset="100%" stop-color="#000008"/></linearGradient>
+        <radialGradient id="w4g" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#2d006f" stop-opacity="0.48"/><stop offset="100%" stop-color="#2d006f" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w4bg)"/>
+      <rect width="1440" height="900" fill="url(#w4g)"/>
+      <!-- PCB traces -->
+      <g stroke="#7b2fff" stroke-width="1.1" fill="none" opacity="0.2">
+        <polyline points="0,140 210,140 210,240 420,240 420,90 720,90"/>
+        <polyline points="720,90 720,280 940,280 940,180 1240,180 1240,380 1440,380"/>
+        <polyline points="0,580 310,580 310,480 620,480 620,680 940,680 940,530 1240,530 1240,680 1440,680"/>
+        <polyline points="0,380 160,380 160,330 370,330 370,430 580,430 580,330 840,330"/>
+        <circle cx="210" cy="140" r="5" fill="#7b2fff"/><circle cx="420" cy="240" r="5" fill="#7b2fff"/>
+        <circle cx="720" cy="90" r="5" fill="#7b2fff"/><circle cx="940" cy="280" r="5" fill="#7b2fff"/>
+        <circle cx="310" cy="580" r="5" fill="#7b2fff"/><circle cx="620" cy="480" r="5" fill="#7b2fff"/>
+        <circle cx="160" cy="380" r="5" fill="#7b2fff"/><circle cx="580" cy="430" r="5" fill="#7b2fff"/>
+      </g>
+      <!-- Shield with dragon -->
+      <g transform="translate(562,100) opacity(0.9)">
+        <path d="M158,16 L294,16 L316,188 L158,274 L0,188 L22,16 Z" fill="#1a004f" stroke="#7b2fff" stroke-width="2.2" opacity="0.92"/>
+        <path d="M158,38 L272,38 L292,178 L158,252 L24,178 L44,38 Z" fill="#0d002e" stroke="#9b4fff" stroke-width="1.2" opacity="0.7"/>
+        <path d="M158,76 C136,54 112,46 104,66 C97,80 106,96 120,92 C109,106 98,122 104,142 C110,162 126,158 138,144 C132,166 136,190 150,198 C164,206 178,192 180,174 C182,192 190,206 204,200 C218,194 220,172 212,152 C224,164 236,168 244,160 C252,152 248,136 238,122 C252,126 264,118 264,104 C264,90 250,82 238,88 C236,72 220,64 206,72 C198,56 176,52 158,76 Z" fill="#7b2fff" opacity="0.92"/>
+        <circle cx="148" cy="108" r="9" fill="#ff3355" opacity="0.92"/>
+        <circle cx="150" cy="106" r="4.5" fill="#ffaaaa"/>
+        <text x="158" y="248" text-anchor="middle" font-family="Fira Code,monospace" font-size="15" font-weight="700" fill="#c084fc" letter-spacing="2">NETHUNTER</text>
+      </g>
+      <rect x="0" y="-2" width="1440" height="2" fill="#7b2fff" opacity="0"><animate attributeName="y" values="-2;902" dur="5.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.14;0" dur="5.5s" repeatCount="indefinite"/></rect>
+      <g opacity="0.45">${makeParticles(38,'#c084fc',null)}</g>
+      <g transform="translate(56,818)" opacity="0.44"><text font-family="Fira Code,monospace" font-size="18" font-weight="700" fill="#7b2fff" letter-spacing="3">KALI NETHUNTER</text><text y="19" font-family="Fira Code,monospace" font-size="9" fill="#c084fc" letter-spacing="2">Mobile Penetration Testing Platform</text></g>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a0012"/><stop offset="100%" stop-color="#000008"/></linearGradient></defs><rect width="160" height="100" fill="url(#th4)"/><g stroke="#7b2fff" stroke-width="0.7" fill="none" opacity="0.28"><polyline points="0,20 32,20 32,40 62,40 62,14 100,14"/><polyline points="0,68 40,68 40,54 78,54 78,74 120,74 120,58 160,58"/></g><path d="M80,12 L112,12 L116,55 L80,74 L44,55 L48,12 Z" fill="#1a004f" stroke="#7b2fff" stroke-width="0.8" opacity="0.9"/><path d="M80,30 C72,22 62,20 58,28 C54,36 60,46 68,44 C62,52 56,62 60,72 C64,82 76,78 80,66 C84,78 96,82 100,72 C104,62 98,52 92,44 C100,46 106,36 102,28 C98,20 88,22 80,30 Z" fill="#7b2fff" opacity="0.88"/><text x="80" y="92" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#c084fc">NETHUNTER</text></svg>`
+  },
+  {
+    os: "🦜 Parrot OS", name: "Home Edition",
+    bg: "#001220",
+    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+      <defs>
+        <linearGradient id="w5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#001422"/><stop offset="60%" stop-color="#002030"/><stop offset="100%" stop-color="#000810"/></linearGradient>
+        <radialGradient id="w5g1" cx="40%" cy="40%" r="60%"><stop offset="0%" stop-color="#004466" stop-opacity="0.32"/><stop offset="100%" stop-color="#004466" stop-opacity="0"/></radialGradient>
+        <radialGradient id="w5g2" cx="76%" cy="72%" r="44%"><stop offset="0%" stop-color="#00ff9d" stop-opacity="0.07"/><stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/></radialGradient>
+        <filter id="f5"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="1440" height="900" fill="url(#w5bg)"/>
+      <rect width="1440" height="900" fill="url(#w5g1)"/>
+      <rect width="1440" height="900" fill="url(#w5g2)"/>
+      <!-- Mountain landscape -->
+      <path d="M0,900 L0,580 L220,380 L440,520 L640,300 L840,480 L1040,260 L1240,460 L1440,340 L1440,900 Z" fill="#001828" opacity="0.75"/>
+      <path d="M0,900 L0,700 L320,535 L530,645 L730,435 L940,595 L1140,415 L1360,570 L1440,490 L1440,900 Z" fill="#001220" opacity="0.88"/>
+      <!-- Stars in sky -->
+      <g opacity="0.5">${makeParticles(65,'#ffffff',460)}</g>
+      <!-- Parrot -->
+      <g transform="translate(590,30) scale(1.15)" filter="url(#f5)" opacity="0.92">
+        <path d="M176,210 C140,158 68,138 34,174 C14,194 26,228 58,222 C90,216 122,200 152,206 C130,234 108,270 120,308 C132,346 165,334 185,308 Z" fill="#00a8e8" opacity="0.92"/>
+        <path d="M212,206 C248,156 322,138 360,172 C380,192 368,226 332,220 C296,214 262,200 230,205 C252,230 274,265 262,303 C250,341 216,330 196,304 Z" fill="#00a8e8" opacity="0.92"/>
+        <path d="M62,188 Q96,176 128,190" stroke="#7fffff" stroke-width="1.8" fill="none" opacity="0.45"/>
+        <path d="M336,184 Q362,172 386,188" stroke="#7fffff" stroke-width="1.8" fill="none" opacity="0.45"/>
+        <ellipse cx="194" cy="280" rx="55" ry="78" fill="#0088bb" opacity="0.95"/>
+        <ellipse cx="194" cy="300" rx="35" ry="54" fill="#00aadd" opacity="0.5"/>
+        <circle cx="194" cy="166" r="46" fill="#007aaa" opacity="0.95"/>
+        <circle cx="208" cy="158" r="13" fill="#001a2e"/>
+        <circle cx="211" cy="155" r="8" fill="#00c8ff"/>
+        <circle cx="213" cy="153" r="3.5" fill="#fff" opacity="0.9"/>
+        <path d="M196,168 L226,178 L196,188 Z" fill="#00e0ff"/>
+        <path d="M188,122 C182,94 165,74 170,52 C175,69 190,80 192,122 Z" fill="#00c8ff" opacity="0.72"/>
+        <path d="M196,118 C198,88 210,68 216,52 C212,71 214,94 204,118 Z" fill="#33ddff" opacity="0.62"/>
+        <path d="M204,120 C216,92 232,76 236,56 C228,74 218,92 210,120 Z" fill="#00c8ff" opacity="0.52"/>
+        <path d="M174,338 C153,372 135,408 125,444" stroke="#0088bb" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <path d="M194,343 L192,450" stroke="#00aadd" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <path d="M214,338 C235,372 253,408 265,444" stroke="#0088bb" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+      </g>
+      <g transform="translate(56,828)" opacity="0.48"><text font-family="Fira Code,monospace" font-size="18" font-weight="700" fill="#00c8ff" letter-spacing="3">Parrot Home</text><text y="18" font-family="Fira Code,monospace" font-size="9" fill="#00ff9d" letter-spacing="1.5">Everyday computing, secured.</text></g>
+    </svg>`,
+    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#001422"/><stop offset="100%" stop-color="#000810"/></linearGradient></defs><rect width="160" height="100" fill="url(#th5)"/><path d="M0,100 L0,68 L24,50 L48,62 L72,36 L96,54 L120,28 L148,48 L160,40 L160,100 Z" fill="#001828" opacity="0.8"/><path d="M80,8 C74,3 66,2 62,8 C58,15 64,24 73,22 C64,32 56,44 60,56 C64,68 76,64 82,54 C88,64 100,68 104,56 C108,44 100,32 91,22 C100,24 106,15 102,8 C98,2 90,3 84,8 C82,3 80,1 80,8 Z" fill="#00c8ff" opacity="0.88"/><text x="8" y="95" font-family="monospace" font-size="6.5" fill="#00c8ff" opacity="0.75">Parrot Home</text></svg>`
+  }
+];
+
+let currentWallpaperIdx = 0;
+
+function applyWallpaper(idx) {
+  const wp = wallpapers[idx];
+  // Swap the SVG wallpaper element
+  const old = document.getElementById("desktopWallpaper");
+  if (old) {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = wp.svg();
+    const newSvg = wrapper.firstElementChild;
+    newSvg.id = "desktopWallpaper";
+    newSvg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;";
+    old.replaceWith(newSvg);
+  }
+  document.getElementById("desktop").style.background = wp.bg;
+  currentWallpaperIdx = idx;
+  document.querySelectorAll(".wp-item").forEach((el, i) => el.classList.toggle("selected", i === idx));
+  showNotif("Wallpaper", `Applied: ${wp.name}`);
+}
+
+function buildWallpaperPicker() {
+  const grid = document.getElementById("wpGrid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  wallpapers.forEach((wp, i) => {
+    const div = document.createElement("div");
+    div.className = "wp-item" + (i === 0 ? " selected" : "");
+    div.title = wp.name;
+    div.innerHTML = `${wp.thumb}<div class="wp-label"><span class="wp-os">${wp.os}</span><span class="wp-name">${wp.name}</span></div>`;
+    div.onclick = () => applyWallpaper(i);
+    grid.appendChild(div);
+  });
+}
+
+// ===================== CONTEXT MENU =====================
+function showCtxMenu(e){
+  e.preventDefault();
+  const m=document.getElementById("ctxMenu");
+  m.style.display="block";
+  m.style.left=e.clientX+"px";
+  m.style.top=e.clientY+"px";
+}
+function hideCtx(){document.getElementById("ctxMenu").style.display="none";}
+document.addEventListener("click",hideCtx);
+document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
+
+function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
+function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"].forEach(closeWindow);}
+
+// ===================== NOTIFICATIONS =====================
+let notifTimeout;
+function showNotif(title,msg){
+  let n=document.querySelector(".notif");
+  if(n)n.remove();
+  clearTimeout(notifTimeout);
+  n=document.createElement("div");
+  n.className="notif";
+  n.innerHTML=`<div class="notif-title">⚡ ${title}</div><div>${msg}</div>`;
+  document.body.appendChild(n);
+  notifTimeout=setTimeout(()=>{if(n.parentNode)n.remove();},2500);
+}
+
+// ===================== TERMINAL =====================
+const termData={
+  home:`<span class="t-green">========================</span>
+<span class="t-green">   PROFILE / HOME</span>
+<span class="t-green">========================</span>
+<span class="t-muted">Name:</span>     Ankesh Prajapati
+<span class="t-muted">Role:</span>     Cybersecurity Analyst (VAPT)
+<span class="t-muted">Org:</span>      Securis360
+<span class="t-muted">Location:</span>  India
+<span class="t-muted">Mindset:</span>  Break-first, document properly.
+`,
+  skills:`<span class="t-yellow">VAPT Coverage:</span>
+  Web / Mobile / API / Network / Cloud
+  Source Code Review / Digital Forensics
+
+<span class="t-yellow">Tools:</span>
+  Burp Suite, Nessus, Nmap, Metasploit
+  Wireshark, Kali Linux
+
+<span class="t-yellow">Forensics:</span>
+  UFED, EnCase, Talon
+`,
+  experience:`<span class="t-blue">[2025-Now]</span> <span class="t-green">Security Analyst @ Securis360</span>
+  50+ VAPT assessments, critical findings exploitation,
+  detailed reporting, patch validation.
+
+<span class="t-blue">[2024-2025]</span> <span class="t-green">DFIR Intern @ State Cyber Crime Cell</span>
+  15+ forensic investigations, govt pentesting,
+  fraud pattern analysis.
+
+<span class="t-blue">[2022-2023]</span> <span class="t-yellow">Web Developer @ MOROSQ</span>
+  Secure web modules, vuln patching.
+`,
+  projects:`<span class="t-green">1. Crime Analysis System</span>
+   Phishing detection, credential analysis,
+   behaviour-driven crime pattern mapping.
+
+<span class="t-green">2. Crime Heat Map</span>
+   Crime density visualization by region,
+   investigator-friendly dashboards.
+
+<span class="t-green">3. Helpline Data System</span>
+   MO-wise crime data, visual analytics.
+`,
+  certs:`<span class="t-green">✓</span> Certified Ethical Hacker (CEH)
+<span class="t-green">✓</span> Certified Network Security Practitioner (CNSP)
+<span class="t-green">✓</span> Windows Forensics — Belkasoft
+<span class="t-green">✓</span> Advanced Digital Forensics — Belkasoft
+<span class="t-green">✓</span> Junior Cybersecurity Analyst — Cisco
+<span class="t-green">✓</span> Endpoint Security — Cisco
+<span class="t-green">✓</span> PHP & MySQL Training — IIT Bombay
+<span class="t-green">✓</span> Power BI — Parul University
+`,
+  contact:`<span class="t-green">Email:</span>    ankesh@securis360.com
+<span class="t-green">Phone:</span>    +91 93282 36503
+<span class="t-green">LinkedIn:</span> linkedin.com/in/ankesh-prajapati-0a87a8249
+<span class="t-green">Location:</span>  India
+`,
+  education:`<span class="t-green">M.C.A.</span> Cybersecurity & Digital Forensics
+  Parul University (2023-2025)
+
+<span class="t-green">B.C.A.</span>
+  Veer Narmad South Gujarat University (2019-2022)
+`
+};
+
+const breachLogs=[
+  "suspicious login pattern detected...",
+  "analyzing abnormal network flow...",
+  "cross-referencing IOC signatures...",
+  "hash mismatch in critical binary...",
+  "failed login attempts spiking from remote subnet...",
+  "unauthorized API probe detected...",
+  "privilege escalation attempt logged...",
+  "potential data exfiltration route identified...",
+  "SSL certificate anomaly detected...",
+  "port scan incoming from 192.168.x.x...",
+];
+
+let cmdHistory=[],histIdx=-1;
+
+function initTerminal(){
+  const out=document.getElementById("termOutput");
+  const inp=document.getElementById("termInput");
+  if(!out||!inp)return;
+  printTerm('<span class="t-green">Ankesh-OS terminal v2.5.1</span>');
+  printTerm('<span class="t-muted">Type</span> <span class="t-green">help</span> <span class="t-muted">for available commands.</span>');
+  printTerm('');
+  inp.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+      const cmd=inp.value.trim();
+      if(cmd){cmdHistory.unshift(cmd);histIdx=-1;handleTermCmd(cmd);}
+      inp.value="";
+    } else if(e.key==="ArrowUp"){
+      histIdx=Math.min(histIdx+1,cmdHistory.length-1);
+      inp.value=cmdHistory[histIdx]||"";
+    } else if(e.key==="ArrowDown"){
+      histIdx=Math.max(histIdx-1,-1);
+      inp.value=histIdx>=0?cmdHistory[histIdx]:"";
     }
+  });
+}
 
-    function handleCliCommand(cmdRaw) {
-      const cmd = cmdRaw.trim().toLowerCase();
-      if (!cmd) return;
+function printTerm(html){
+  const out=document.getElementById("termOutput");
+  if(!out)return;
+  const d=document.createElement("div");
+  d.innerHTML=html;
+  out.appendChild(d);
+  out.scrollTop=out.scrollHeight;
+}
 
-      printToCli(`ankesh@parrot:~/terminal$ ${cmdRaw}`);
-
-      if (cmd === "help") {
-        printToCli("available commands:");
-        printToCli("  home, skills, experience, projects, certs, education, contact");
-        printToCli("  clear, exit, konami, help");
-        return;
-      }
-
-      if (cmd === "clear") {
-        cliOutput.innerHTML = "";
-        return;
-      }
-
-      if (cmd === "exit") {
-        printToCli("closing interactive console...");
-        setTimeout(closeCli, 250);
-        return;
-      }
-
-      if (cmd === "konami") {
-        printToCli("hint: use the root password field below and enter the konami code (uuddlrlrba).");
-        return;
-      }
-
-      if (terminalData[cmd]) {
-        printToCli(`executing hack on '${cmd}'...`);
-        runHackSequence(cmd, () => {
-          printToCli(terminalData[cmd]);
-        });
-        return;
-      }
-
-      printToCli(`command not found: ${cmdRaw}`);
-      printToCli("type 'help' for available commands.");
+function handleTermCmd(cmd){
+  const c=cmd.toLowerCase().trim();
+  printTerm(`<span class="t-green">ankesh@parrot:~$</span> ${cmd}`);
+  if(c==="help"){
+    printTerm(`<span class="t-muted">Commands:</span>
+  <span class="t-green">about, skills, experience, projects, certs, contact, education</span>
+  <span class="t-green">whoami, pwd, ls, clear, exit, scan, konami, open [window]</span>`);
+  } else if(c==="whoami"){
+    printTerm('<span class="t-green">ankesh</span> — Security Analyst | VAPT Specialist');
+  } else if(c==="pwd"){
+    printTerm('<span class="t-muted">/home/ankesh/portfolio</span>');
+  } else if(c==="ls"||c==="ls -la"){
+    printTerm(`<span class="t-blue">drwxr-xr-x</span>  about.sh skills.sh experience.log
+<span class="t-blue">drwxr-xr-x</span>  projects/ certs.db contact.txt
+<span class="t-green">-rwxr-xr-x</span>  terminal neofetch wallpaper`);
+  } else if(c==="clear"){
+    document.getElementById("termOutput").innerHTML="";
+  } else if(c==="exit"){
+    printTerm("Closing terminal...");
+    setTimeout(()=>closeWindow("terminal"),500);
+  } else if(c==="konami"){
+    printTerm('<span class="t-yellow">Hint: Type the Konami code (↑↑↓↓←→←→BA) on your keyboard to trigger RED TEAM mode.</span>');
+  } else if(c==="scan"){
+    runScan();
+  } else if(c.startsWith("open ")){
+    const target=c.replace("open ","").trim();
+    const valid=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
+    if(valid.includes(target)){
+      openWindow(target);
+      printTerm(`<span class="t-green">Opening ${target}...</span>`);
+    } else {
+      printTerm(`<span class="t-red">open: '${target}' not found. Try: ${valid.join(", ")}</span>`);
     }
+  } else if(termData[c]){
+    runHack(c,()=>printTerm(termData[c]));
+  } else {
+    printTerm(`<span class="t-red">command not found: ${cmd}</span> — type <span class="t-green">help</span>`);
+  }
+}
 
-    cliInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        handleCliCommand(cliInput.value);
-        cliInput.value = "";
-      }
-    });
+function runHack(cmd,done){
+  let step=0;const total=8;
+  printTerm(`<span class="t-muted">Executing hack on '${cmd}'...</span>`);
+  function tick(){
+    if(step<total){
+      const pct=Math.floor(((step+1)/total)*100);
+      const bars="#".repeat(step+1)+".".repeat(total-step-1);
+      printTerm(`<span class="t-green">[${bars}]</span> <span class="t-muted">${pct}%</span>${Math.random()<0.4?" <span class='t-muted'>// "+breachLogs[Math.floor(Math.random()*breachLogs.length)]+"</span>":""}`);
+      step++;setTimeout(tick,100);
+    } else {if(done)done();}
+  }tick();
+}
 
-    /* ===========================
-       RED TEAM TAKEOVER (KONAMI)
-    =========================== */
-    function triggerRedAlert(reason) {
-      if (reason) printToCli("ALERT: " + reason);
-      playAlertSound();
-      alertOverlay.classList.add("show");
-      terminalShell.classList.add("hidden-shell");
-
-      setTimeout(() => {
-        alertOverlay.classList.remove("show");
-        terminalShell.classList.remove("hidden-shell");
-      }, 9000);
+function runScan(){
+  const targets=["192.168.1.1","10.0.0.254","172.16.0.1"];
+  const ports=["22 (SSH)","80 (HTTP)","443 (HTTPS)","8080 (HTTP-ALT)","3306 (MySQL)","5432 (PostgreSQL)"];
+  printTerm(`<span class="t-green">Starting Nmap 7.95 ( https://nmap.org )</span>`);
+  let i=0;
+  function tick(){
+    if(i<targets.length){
+      const t=targets[i];
+      const openPorts=ports.filter(()=>Math.random()>0.5);
+      setTimeout(()=>{
+        printTerm(`<span class="t-blue">Scanning ${t}...</span>`);
+        openPorts.forEach(p=>printTerm(`  <span class="t-green">OPEN</span>  ${p}`));
+        i++;tick();
+      },600);
+    } else {
+      printTerm(`<span class="t-green">Scan complete. ${targets.length} hosts scanned.</span>`);
     }
+  }tick();
+}
 
-    konamiPasswordInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        const val = konamiPasswordInput.value.trim().toLowerCase();
-        if (val === "uuddlrlrba") {
-          triggerRedAlert("konami password accepted. red-team mode toggled.");
-          konamiPasswordInput.value = "";
-        } else {
-          printToCli("invalid root password. konami override failed.");
-          konamiPasswordInput.value = "";
-        }
-      }
-    });
-
-    const konamiKeys = [
-      "arrowup", "arrowup", "arrowdown", "arrowdown",
-      "arrowleft", "arrowright", "arrowleft", "arrowright",
-      "b", "a"
-    ];
-    let konamiIndex = 0;
-
-    window.addEventListener("keydown", (e) => {
-      const key = e.key.toLowerCase();
-      if (key === konamiKeys[konamiIndex]) {
-        konamiIndex++;
-        if (konamiIndex === konamiKeys.length) {
-          triggerRedAlert("konami key sequence detected.");
-          konamiIndex = 0;
-        }
-      } else {
-        konamiIndex = 0;
-      }
-    });
-
-    /* ===========================
-       MATRIX CODE RAIN
-    =========================== */
-    function initMatrix() {
-      const canvas = document.getElementById("matrixCanvas");
-      if (!canvas || !canvas.getContext) return;
-      const ctx = canvas.getContext("2d");
-
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      }
-      resize();
-      window.addEventListener("resize", resize);
-
-      const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*@";
-      const fontSize = 14;
-      let columns = Math.floor(canvas.width / fontSize);
-      let drops = Array(columns).fill(1);
-
-      function draw() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#00ff9d";
-        ctx.font = fontSize + "px Fira Code";
-
-        for (let i = 0; i < drops.length; i++) {
-          const text = letters.charAt(Math.floor(Math.random() * letters.length));
-          const x = i * fontSize;
-          const y = drops[i] * fontSize;
-          ctx.fillText(text, x, y);
-
-          if (y > canvas.height && Math.random() > 0.95) {
-            drops[i] = 0;
-          }
-          drops[i]++;
-        }
-
-        requestAnimationFrame(draw);
-      }
-      draw();
+// ===================== KONAMI =====================
+const konamiSeq=["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
+let ki=0;
+window.addEventListener("keydown",(e)=>{
+  if(e.key.toLowerCase()===konamiSeq[ki]){
+    ki++;
+    if(ki===konamiSeq.length){
+      triggerAlert();ki=0;
     }
-    window.addEventListener("load", initMatrix);
-  </script>
+  } else ki=0;
+});
+
+function triggerAlert(){
+  const overlay=document.getElementById("alertOverlay");
+  overlay.classList.add("show");
+  setTimeout(()=>overlay.classList.remove("show"),7000);
+}
+
+// ===================== START MENU =====================
+let startMenuOpen=false;
+function toggleStartMenu(){
+  // Simple: open all windows
+  openAllWindows();
+  showNotif("Start Menu","Opening all applications...");
+}
+</script>
 </body>
 </html>
