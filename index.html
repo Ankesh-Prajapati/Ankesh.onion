@@ -434,6 +434,43 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .ctx-item:hover{background:rgba(0,255,157,0.1);color:var(--accent);}
 .ctx-sep{height:1px;background:var(--border);margin:3px 6px;}
 
+/* Start Menu */
+#startMenu{
+  position:fixed;bottom:50px;left:8px;
+  display:none;flex-direction:column;
+  background:rgba(13,17,22,0.97);
+  border:1px solid var(--border);border-radius:10px;
+  padding:0 0 6px 0;z-index:99990;
+  box-shadow:0 -4px 40px rgba(0,0,0,0.9),0 0 0 1px rgba(0,255,157,0.08);
+  min-width:240px;backdrop-filter:blur(20px);
+  animation:smIn 0.15s ease;
+}
+@keyframes smIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.sm-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px 12px;
+  border-bottom:1px solid var(--border);
+}
+.sm-avatar{font-size:1.8rem;line-height:1;}
+.sm-name{font-size:0.85rem;color:var(--accent);font-weight:600;}
+.sm-role{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+.sm-section{
+  font-size:0.58rem;color:var(--muted);letter-spacing:0.14em;
+  padding:10px 16px 4px;text-transform:uppercase;
+}
+.sm-sep{height:1px;background:var(--border);margin:4px 10px;}
+.sm-item{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 16px;cursor:pointer;font-size:0.8rem;
+  color:var(--text);transition:background 0.15s;border-radius:4px;margin:0 4px;
+}
+.sm-item:hover{background:rgba(0,255,157,0.08);color:var(--accent);}
+.sm-item span{flex:1;font-family:"Fira Code",monospace;}
+.sm-item em{font-size:0.62rem;color:var(--muted);font-style:normal;white-space:nowrap;}
+.sm-item:hover em{color:rgba(0,255,157,0.5);}
+.sm-danger{color:var(--danger)!important;}
+.sm-danger:hover{background:rgba(255,51,85,0.08)!important;color:var(--danger)!important;}
+
 /* Notification */
 .notif{
   position:fixed;right:16px;bottom:60px;
@@ -477,7 +514,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
       <div class="hk-c bl"></div><div class="hk-c br"></div>
       <div class="hk-sweep"></div>
       <div class="hk-label">◈ TARGET ACQUISITION ◈</div>
-      <div class="hk-ip" id="hkIP">000.000.000.000</div>
+      <div class="hk-ip" id="hkIP">0.0.0.0</div>
       <div class="hk-host" id="hkHost">scanning network...</div>
     </div>
     <div class="hk-log" id="hkLog"></div>
@@ -577,6 +614,32 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="openAllWindows();hideCtx()">📂 Open All</div>
   <div class="ctx-item" onclick="closeAllWindows();hideCtx()">✕ Close All</div>
+</div>
+
+<!-- Start Menu -->
+<div id="startMenu">
+  <div class="sm-header">
+    <div class="sm-avatar">🧑‍💻</div>
+    <div>
+      <div class="sm-name">Ankesh Prajapati</div>
+      <div class="sm-role">Security Analyst · VAPT</div>
+    </div>
+  </div>
+  <div class="sm-sep"></div>
+  <div class="sm-section">PORTFOLIO</div>
+  <div class="sm-item" onclick="openWindow('about');hideStart()">👤 <span>about.sh</span><em>Profile</em></div>
+  <div class="sm-item" onclick="openWindow('skills');hideStart()">⚡ <span>skills.sh</span><em>Skillset</em></div>
+  <div class="sm-item" onclick="openWindow('experience');hideStart()">📋 <span>xp.log</span><em>Work History</em></div>
+  <div class="sm-item" onclick="openWindow('projects');hideStart()">🛡️ <span>projects/</span><em>Projects</em></div>
+  <div class="sm-item" onclick="openWindow('certs');hideStart()">🎓 <span>certs.db</span><em>Certifications</em></div>
+  <div class="sm-item" onclick="openWindow('contact');hideStart()">📡 <span>contact</span><em>Get In Touch</em></div>
+  <div class="sm-sep"></div>
+  <div class="sm-section">SYSTEM</div>
+  <div class="sm-item" onclick="openWindow('terminal');hideStart()">💻 <span>terminal</span><em>Shell</em></div>
+  <div class="sm-item" onclick="openWindow('neofetch');hideStart()">🖥️ <span>neofetch</span><em>System Info</em></div>
+  <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>wallpaper</span><em>Appearance</em></div>
+  <div class="sm-sep"></div>
+  <div class="sm-item sm-danger" onclick="closeAllWindows();hideStart()">✕ <span>Close All Windows</span><em></em></div>
 </div>
 
 <!-- WINDOWS -->
@@ -921,31 +984,29 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <div class="win-body" style="background:#000;overflow:hidden;">
     <div class="neofetch-body">
       <div class="neofetch-logo">
-    █████╗ ███╗   ██╗██╗  ██╗███████╗███████╗██╗  ██╗
-   ██╔══██╗████╗  ██║██║ ██╔╝██╔════╝██╔════╝██║  ██║
-   ███████║██╔██╗ ██║█████╔╝ █████╗  ███████╗███████║
-   ██╔══██║██║╚██╗██║██╔═██╗ ██╔══╝  ╚════██║██╔══██║
-   ██║  ██║██║ ╚████║██║  ██╗███████╗███████║██║  ██║
-   ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝</div>
+   █████╗ ███╗   ██╗██╗  ██╗███████╗███████╗██╗  ██╗
+  ██╔══██╗████╗  ██║██║ ██╔╝██╔════╝██╔════╝██║  ██║
+  ███████║██╔██╗ ██║█████╔╝ █████╗  ███████╗███████║
+  ██╔══██║██║╚██╗██║██╔═██╗ ██╔══╝  ╚════██║██╔══██║
+  ██║  ██║██║ ╚████║██║  ██╗███████╗███████║██║  ██║
+  ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝</div>
       <div class="neofetch-info">
-        <span class="nf-key" style="color:var(--accent)">ankesh</span>@<span style="color:var(--highlight)">securis360</span><br>
-        ──────────────────────────<br>
-        <span class="nf-key">OS:</span> <span class="nf-val">Ankesh OS x86_64</span><br>
-        <span class="nf-key">Host:</span> <span class="nf-val">Ankesh Prajapati</span><br>
-        <span class="nf-key">Role:</span> <span class="nf-val">Security Analyst (VAPT)</span><br>
-        <span class="nf-key">Shell:</span> <span class="nf-val">zsh 5.9 + oh-my-zsh</span><br>
-        <span class="nf-key">WM:</span> <span class="nf-val">i3wm / Openbox</span><br>
+        <span class="nf-key" style="color:var(--accent);font-weight:700">ankesh</span><span style="color:#6e7681">@</span><span style="color:var(--highlight);font-weight:700">securis360</span><br>
+        <span style="color:#30363d">────────────────────────────────</span><br>
+        <span class="nf-key">OS:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">Ankesh-OS 2.5.1 x86_64</span><br>
+        <span class="nf-key">Kernel:</span>&nbsp;&nbsp; <span class="nf-val">6.6.9-amd64</span><br>
+        <span class="nf-key">Host:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">Ankesh Prajapati</span><br>
+        <span class="nf-key">Role:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">Security Analyst (VAPT)</span><br>
+        <span class="nf-key">Company:</span> <span class="nf-val">Securis360</span><br>
+        <span class="nf-key">Shell:</span>&nbsp;&nbsp;&nbsp; <span class="nf-val">zsh 5.9 + oh-my-zsh</span><br>
+        <span class="nf-key">WM:</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">i3wm / Openbox</span><br>
         <span class="nf-key">Terminal:</span> <span class="nf-val">Terminator + tmux</span><br>
-        <span class="nf-key">Location:</span> <span class="nf-val"> India</span><br>
-        <span class="nf-key">Uptime:</span> <span class="nf-val" id="nfUptime">calculating...</span><br>
-        <span class="nf-key">Assessments:</span> <span class="nf-val">50+</span><br>
+        <span class="nf-key">Location:</span> <span class="nf-val">Surat, Gujarat, India</span><br>
+        <span class="nf-key">Uptime:</span>&nbsp;&nbsp; <span class="nf-val" id="nfUptime">calculating...</span><br>
+        <span class="nf-key">VAPT:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">50+ Assessments</span><br>
+        <span class="nf-key">DFIR:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">15+ Investigations</span><br>
         <br>
-        <span style="background:#ff5f57;padding:0 6px">&nbsp;</span>
-        <span style="background:#febc2e;padding:0 6px">&nbsp;</span>
-        <span style="background:#28c840;padding:0 6px">&nbsp;</span>
-        <span style="background:#00ff9d;padding:0 6px">&nbsp;</span>
-        <span style="background:#58a6ff;padding:0 6px">&nbsp;</span>
-        <span style="background:#ff3355;padding:0 6px">&nbsp;</span>
+        <span style="background:#ff5f57;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#febc2e;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#28c840;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#00ff9d;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#58a6ff;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#ff3355;padding:0 7px;border-radius:2px">&nbsp;</span>
       </div>
     </div>
   </div>
@@ -1024,8 +1085,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   var cur    = [0,0,0,0];
   var ipDone = false;
 
-  function pad3(n){ var s=String(n); while(s.length<3) s="0"+s; return s; }
-  function showIP(){ ipEl.textContent=pad3(cur[0])+"."+pad3(cur[1])+"."+pad3(cur[2])+"."+pad3(cur[3]); }
+  function showIP(){ ipEl.textContent=cur[0]+"."+cur[1]+"."+cur[2]+"."+cur[3]; }
   showIP();
 
   var ipInterval=setInterval(function(){
@@ -1043,7 +1103,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
       clearInterval(ipInterval);
       cur=[127,0,0,1];
       showIP();
-      if(hostEl){ hostEl.textContent="localhost · ankesh@roo"; }
+      if(hostEl){ hostEl.textContent="localhost · ankesh@securis360"; }
       setTimeout(startBreach, 400);
     }
   }, 30);
@@ -1645,6 +1705,16 @@ function buildWallpaperPicker() {
 }
 
 // ===================== CONTEXT MENU =====================
+function toggleStartMenu(){
+  const m=document.getElementById("startMenu");
+  if(m.style.display==="flex"){hideStart();return;}
+  hideCtx();
+  m.style.display="flex";
+}
+function hideStart(){
+  const m=document.getElementById("startMenu");
+  if(m) m.style.display="none";
+}
 function showCtxMenu(e){
   e.preventDefault();
   const m=document.getElementById("ctxMenu");
@@ -1653,7 +1723,10 @@ function showCtxMenu(e){
   m.style.top=e.clientY+"px";
 }
 function hideCtx(){document.getElementById("ctxMenu").style.display="none";}
-document.addEventListener("click",hideCtx);
+document.addEventListener("click",(e)=>{
+  if(!e.target.closest("#ctxMenu")) hideCtx();
+  if(!e.target.closest("#startMenu")&&!e.target.closest(".taskbar-start")) hideStart();
+});
 document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
 
 function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
