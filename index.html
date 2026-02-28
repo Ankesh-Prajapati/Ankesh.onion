@@ -27,23 +27,11 @@
 html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
 
 /* Matrix canvas */
-#matrixCanvas{position:fixed;inset:0;z-index:0;opacity:0.07;pointer-events:none;}
+/* animated bg canvas */
 
 /* Desktop */
-#desktop{
-  position:fixed;inset:0 0 44px 0;
-  background:
-    radial-gradient(ellipse at 60% 40%, rgba(0,180,255,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 80%, rgba(0,255,157,0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 10%, rgba(100,0,255,0.07) 0%, transparent 50%),
-    linear-gradient(135deg, #020b18 0%, #030d1a 40%, #040f1e 70%, #020a15 100%);
-  overflow:hidden;z-index:1;
-}
-/* SVG wallpaper layer */
-#desktopWallpaper{
-  position:absolute;inset:0;z-index:0;pointer-events:none;
-  width:100%;height:100%;
-}
+#desktop{position:fixed;inset:0 0 44px 0;background:#020a0f;overflow:hidden;z-index:1;}
+#desktopBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;}
 
 /* Icon column scrollbar hidden but functional */
 .desktop-icons::-webkit-scrollbar{display:none;}
@@ -323,26 +311,86 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 /* Neofetch window */
 .neofetch-body{
-  background:#000;padding:12px 16px;font-size:0.76rem;
-  display:flex;gap:20px;
+  background:#000;padding:14px 18px;font-size:0.76rem;
+  display:flex;gap:20px;align-items:flex-start;
+  flex:1;min-height:0;overflow-y:auto;
 }
-.neofetch-logo{color:var(--accent);white-space:pre;line-height:1.3;font-size:0.7rem;flex-shrink:0;}
-.neofetch-info{color:var(--text);line-height:1.8;}
+.neofetch-logo{color:var(--accent);white-space:pre;line-height:1.35;font-size:0.67rem;flex-shrink:0;}
+.neofetch-info{color:var(--text);line-height:1.85;flex:1;}
 .nf-key{color:var(--accent);}
 .nf-val{color:var(--text);}
 
-/* Boot/loading screen */
+/* ═══ HACKING LOADING SCREEN ═══ */
 #loadingScreen{
-  position:fixed;inset:0;background:#000;
-  color:var(--accent);font-family:"Fira Code",monospace;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:40px;font-size:0.85rem;z-index:99999;
+  position:fixed;inset:0;background:#000;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Fira Code",monospace;overflow:hidden;
+  transition:opacity 0.85s ease;
 }
-.boot-header{font-size:1rem;margin-bottom:20px;color:#fff;}
-#bootLog{height:300px;overflow:hidden;opacity:0.9;line-height:1.8;}
-.boot-line{animation:fadeIn 0.1s ease forwards;}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-.hide-loading{opacity:0;transition:opacity 0.6s;pointer-events:none;}
+#hackCanvas{position:absolute;inset:0;width:100%;height:100%;}
+/* Phase wrapper */
+.hk-phase{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:640px;padding:24px;}
+/* Target acquisition box */
+.hk-box{
+  position:relative;width:340px;height:122px;
+  border:1px solid rgba(0,255,157,0.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+}
+.hk-c{position:absolute;width:12px;height:12px;border-color:#00ff9d;border-style:solid;}
+.hk-c.tl{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.hk-c.tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
+.hk-c.bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
+.hk-c.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.hk-sweep{
+  position:absolute;left:0;right:0;height:2px;top:0;
+  background:linear-gradient(90deg,transparent 0%,#00ff9d 50%,transparent 100%);
+  box-shadow:0 0 8px #00ff9d;
+  animation:hkSweep 1.8s linear infinite;
+}
+@keyframes hkSweep{0%{top:0;opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{top:100%;opacity:0;}}
+.hk-label{font-size:0.58rem;color:#00ff9d;letter-spacing:0.2em;opacity:0.6;margin-bottom:2px;}
+.hk-ip{
+  font-size:1.65rem;font-weight:700;color:#00ff9d;letter-spacing:0.05em;
+  text-shadow:0 0 16px rgba(0,255,157,0.9);font-variant-numeric:tabular-nums;
+}
+.hk-host{font-size:0.68rem;color:#6e7681;}
+/* Log stream */
+.hk-log{
+  width:100%;height:148px;overflow:hidden;position:relative;
+  border:1px solid rgba(0,255,157,0.1);background:rgba(0,15,8,0.5);
+  padding:8px 12px;font-size:0.7rem;line-height:1.8;
+}
+.hk-log::after{
+  content:"";position:absolute;bottom:0;left:0;right:0;height:40px;
+  background:linear-gradient(transparent,#000);
+}
+.hkln{animation:hkLnIn 0.12s ease forwards;opacity:0;}
+@keyframes hkLnIn{to{opacity:1;}}
+/* Progress */
+.hk-prog{width:100%;display:flex;flex-direction:column;gap:5px;}
+.hk-prog-title{font-size:0.58rem;color:#00ff9d;letter-spacing:0.16em;opacity:0.5;}
+.hk-track{height:5px;width:100%;background:rgba(0,255,157,0.06);border:1px solid rgba(0,255,157,0.15);border-radius:3px;overflow:hidden;}
+.hk-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff9d,#00c8ff);border-radius:3px;box-shadow:0 0 6px rgba(0,255,157,0.5);transition:width 0.3s ease;}
+.hk-pct{font-size:0.66rem;color:#00ff9d;text-align:right;}
+/* Phase 2: ACCESS GRANTED */
+#hkPhase2{display:none;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2;}
+.ag-ring{
+  position:absolute;border-radius:50%;border:1px solid #00ff9d;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  animation:agPulse 2s ease-out infinite;
+}
+.ag-ring:nth-child(1){width:120px;height:120px;}
+.ag-ring:nth-child(2){width:180px;height:180px;animation-delay:0.3s;opacity:0.5;}
+.ag-ring:nth-child(3){width:240px;height:240px;animation-delay:0.6s;opacity:0.25;}
+@keyframes agPulse{0%{transform:translate(-50%,-50%) scale(0.7);opacity:0;}35%{opacity:1;}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0;}}
+.ag-check{font-size:3rem;color:#00ff9d;text-shadow:0 0 40px #00ff9d;animation:agPop 0.4s ease-out;margin-bottom:8px;}
+@keyframes agPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.ag-title{font-size:1.9rem;font-weight:700;letter-spacing:0.22em;color:#00ff9d;text-shadow:0 0 24px rgba(0,255,157,0.85);min-height:2.3rem;}
+.ag-who{font-size:0.76rem;color:#c9d1d9;letter-spacing:0.1em;margin-top:6px;}
+.ag-role{font-size:0.63rem;color:#6e7681;letter-spacing:0.06em;}
+.ag-wait{font-size:0.68rem;color:#00ff9d;margin-top:18px;opacity:0.6;}
+.ag-dots::after{content:"";animation:agDt 1.2s steps(4,end) infinite;}
+@keyframes agDt{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}100%{content:"";}}
 
 /* Alert overlay (Konami) */
 .alert-overlay{
@@ -418,13 +466,39 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 </head>
 <body>
 
-<!-- Matrix Rain -->
-<canvas id="matrixCanvas"></canvas>
-
-<!-- Boot Screen -->
+<!-- HACKING LOADING SCREEN -->
 <div id="loadingScreen">
-  <div class="boot-header">[ BOOTING ANKESH-OS v2.5.1 ]</div>
-  <div id="bootLog"></div>
+  <canvas id="hackCanvas"></canvas>
+
+  <!-- PHASE 1: TARGET ACQUISITION + BREACH -->
+  <div id="hkPhase1" class="hk-phase">
+    <div class="hk-box">
+      <div class="hk-c tl"></div><div class="hk-c tr"></div>
+      <div class="hk-c bl"></div><div class="hk-c br"></div>
+      <div class="hk-sweep"></div>
+      <div class="hk-label">◈ TARGET ACQUISITION ◈</div>
+      <div class="hk-ip" id="hkIP">000.000.000.000</div>
+      <div class="hk-host" id="hkHost">scanning network...</div>
+    </div>
+    <div class="hk-log" id="hkLog"></div>
+    <div class="hk-prog">
+      <div class="hk-prog-title">BREACH PROGRESS</div>
+      <div class="hk-track"><div class="hk-fill" id="hkFill"></div></div>
+      <div class="hk-pct" id="hkPct">0%</div>
+    </div>
+  </div>
+
+  <!-- PHASE 2: ACCESS GRANTED -->
+  <div id="hkPhase2">
+    <div class="ag-ring"></div>
+    <div class="ag-ring"></div>
+    <div class="ag-ring"></div>
+    <div class="ag-check">&#10003;</div>
+    <div class="ag-title" id="agTitle"></div>
+    <div class="ag-who">IDENTITY VERIFIED &mdash; ANKESH PRAJAPATI</div>
+    <div class="ag-role">Securis360 &middot; Security Analyst &middot; VAPT</div>
+    <div class="ag-wait">Initializing desktop<span class="ag-dots"></span></div>
+  </div>
 </div>
 
 <!-- Alert Overlay (Konami) -->
@@ -436,182 +510,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 <!-- Desktop -->
 <div id="desktop" oncontextmenu="showCtxMenu(event)">
 
-  <!-- Parrot OS / Kali SVG Wallpaper -->
-  <svg id="desktopWallpaper" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <!-- Deep dark background -->
-      <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#020c1b;stop-opacity:1"/>
-        <stop offset="50%" style="stop-color:#030f20;stop-opacity:1"/>
-        <stop offset="100%" style="stop-color:#010810;stop-opacity:1"/>
-      </linearGradient>
-      <!-- Cyan glow -->
-      <radialGradient id="glowCyan" cx="65%" cy="38%" r="45%">
-        <stop offset="0%" style="stop-color:#00c8ff;stop-opacity:0.12"/>
-        <stop offset="100%" style="stop-color:#00c8ff;stop-opacity:0"/>
-      </radialGradient>
-      <!-- Green glow -->
-      <radialGradient id="glowGreen" cx="20%" cy="75%" r="40%">
-        <stop offset="0%" style="stop-color:#00ff9d;stop-opacity:0.09"/>
-        <stop offset="100%" style="stop-color:#00ff9d;stop-opacity:0"/>
-      </radialGradient>
-      <!-- Purple glow -->
-      <radialGradient id="glowPurple" cx="85%" cy="15%" r="35%">
-        <stop offset="0%" style="stop-color:#7b2fff;stop-opacity:0.1"/>
-        <stop offset="100%" style="stop-color:#7b2fff;stop-opacity:0"/>
-      </radialGradient>
-      <!-- Logo glow -->
-      <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" style="stop-color:#00c8ff;stop-opacity:0.25"/>
-        <stop offset="100%" style="stop-color:#00c8ff;stop-opacity:0"/>
-      </radialGradient>
-      <!-- Grid line filter -->
-      <filter id="blur2">
-        <feGaussianBlur stdDeviation="2"/>
-      </filter>
-      <filter id="glow4">
-        <feGaussianBlur stdDeviation="4" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-      <filter id="glow8">
-        <feGaussianBlur stdDeviation="8" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-      <filter id="glow16">
-        <feGaussianBlur stdDeviation="16" result="blur"/>
-        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
-    </defs>
-
-    <!-- Base background -->
-    <rect width="1440" height="900" fill="url(#bgGrad)"/>
-
-    <!-- Ambient glows -->
-    <rect width="1440" height="900" fill="url(#glowCyan)"/>
-    <rect width="1440" height="900" fill="url(#glowGreen)"/>
-    <rect width="1440" height="900" fill="url(#glowPurple)"/>
-
-    <!-- ===== PERSPECTIVE GRID FLOOR ===== -->
-    <g opacity="0.18">
-      <!-- Horizontal lines converging to center-bottom horizon -->
-      <line x1="0" y1="900" x2="1440" y2="900" stroke="#00c8ff" stroke-width="0.5"/>
-      <line x1="180" y1="760" x2="1260" y2="760" stroke="#00c8ff" stroke-width="0.4"/>
-      <line x1="300" y1="660" x2="1140" y2="660" stroke="#00c8ff" stroke-width="0.35"/>
-      <line x1="380" y1="590" x2="1060" y2="590" stroke="#00c8ff" stroke-width="0.3"/>
-      <line x1="440" y1="540" x2="1000" y2="540" stroke="#00c8ff" stroke-width="0.25"/>
-      <line x1="490" y1="505" x2="950" y2="505" stroke="#00c8ff" stroke-width="0.2"/>
-      <line x1="525" y1="480" x2="915" y2="480" stroke="#00c8ff" stroke-width="0.15"/>
-      <!-- Vertical converging lines -->
-      <line x1="720" y1="450" x2="0"    y2="900" stroke="#00c8ff" stroke-width="0.4"/>
-      <line x1="720" y1="450" x2="160"  y2="900" stroke="#00c8ff" stroke-width="0.35"/>
-      <line x1="720" y1="450" x2="320"  y2="900" stroke="#00c8ff" stroke-width="0.3"/>
-      <line x1="720" y1="450" x2="480"  y2="900" stroke="#00c8ff" stroke-width="0.25"/>
-      <line x1="720" y1="450" x2="640"  y2="900" stroke="#00c8ff" stroke-width="0.2"/>
-      <line x1="720" y1="450" x2="800"  y2="900" stroke="#00c8ff" stroke-width="0.2"/>
-      <line x1="720" y1="450" x2="960"  y2="900" stroke="#00c8ff" stroke-width="0.25"/>
-      <line x1="720" y1="450" x2="1120" y2="900" stroke="#00c8ff" stroke-width="0.3"/>
-      <line x1="720" y1="450" x2="1280" y2="900" stroke="#00c8ff" stroke-width="0.35"/>
-      <line x1="720" y1="450" x2="1440" y2="900" stroke="#00c8ff" stroke-width="0.4"/>
-    </g>
-
-    <!-- ===== CIRCUIT TRACES ===== -->
-    <g opacity="0.12" stroke="#00ff9d" stroke-width="0.8" fill="none">
-      <polyline points="0,200 120,200 120,300 280,300 280,180 500,180"/>
-      <polyline points="500,180 500,120 700,120"/>
-      <circle cx="120" cy="200" r="3" fill="#00ff9d" opacity="0.6"/>
-      <circle cx="280" cy="300" r="3" fill="#00ff9d" opacity="0.6"/>
-      <circle cx="500" cy="180" r="3" fill="#00ff9d" opacity="0.6"/>
-
-      <polyline points="1440,350 1300,350 1300,250 1100,250 1100,400 900,400"/>
-      <circle cx="1300" cy="350" r="3" fill="#00ff9d" opacity="0.6"/>
-      <circle cx="1100" cy="250" r="3" fill="#00ff9d" opacity="0.6"/>
-      <circle cx="900"  cy="400" r="3" fill="#00ff9d" opacity="0.6"/>
-
-      <polyline points="0,600 200,600 200,520 400,520"/>
-      <polyline points="1440,700 1200,700 1200,620 1000,620 1000,700 800,700"/>
-      <circle cx="200" cy="600" r="3" fill="#00ff9d" opacity="0.6"/>
-      <circle cx="1200" cy="700" r="3" fill="#00ff9d" opacity="0.6"/>
-    </g>
-
-    <!-- ===== HEXAGON PATTERN (top right) ===== -->
-    <g opacity="0.07" fill="none" stroke="#00c8ff" stroke-width="0.7">
-      <polygon points="1200,20 1230,37 1230,71 1200,88 1170,71 1170,37"/>
-      <polygon points="1260,20 1290,37 1290,71 1260,88 1230,71 1230,37"/>
-      <polygon points="1320,20 1350,37 1350,71 1320,88 1290,71 1290,37"/>
-      <polygon points="1380,20 1410,37 1410,71 1380,88 1350,71 1350,37"/>
-      <polygon points="1230,71 1260,88 1260,122 1230,139 1200,122 1200,88"/>
-      <polygon points="1290,71 1320,88 1320,122 1290,139 1260,122 1260,88"/>
-      <polygon points="1350,71 1380,88 1380,122 1350,139 1320,122 1320,88"/>
-      <polygon points="1410,71 1440,88 1440,122 1410,139 1380,122 1380,88"/>
-      <polygon points="1200,122 1230,139 1230,173 1200,190 1170,173 1170,139"/>
-      <polygon points="1260,122 1290,139 1290,173 1260,190 1230,173 1230,139"/>
-      <polygon points="1320,122 1350,139 1350,173 1320,190 1290,173 1290,139"/>
-      <polygon points="1380,122 1410,139 1410,173 1380,190 1350,173 1350,139"/>
-    </g>
-
-    <!-- ===== PARROT OS LOGO (center-right area) ===== -->
-    <g transform="translate(820,80) scale(0.72)" filter="url(#glow8)">
-      <!-- Parrot body - stylized geometric bird -->
-      <!-- Wings spread -->
-      <path d="M200,180 C160,120 80,100 40,140 C20,160 30,190 60,185 C90,180 120,170 150,175 C130,200 110,230 120,260 C130,290 160,280 180,260 Z" fill="#00c8ff" opacity="0.85"/>
-      <path d="M200,180 C240,120 320,100 360,140 C380,160 370,190 340,185 C310,180 280,170 250,175 C270,200 290,230 280,260 C270,290 240,280 220,260 Z" fill="#00c8ff" opacity="0.85"/>
-      <!-- Body -->
-      <ellipse cx="200" cy="240" rx="55" ry="75" fill="#0099cc" opacity="0.9"/>
-      <!-- Chest lighter -->
-      <ellipse cx="200" cy="260" rx="35" ry="50" fill="#00c8ff" opacity="0.6"/>
-      <!-- Head -->
-      <circle cx="200" cy="155" r="40" fill="#0099cc" opacity="0.9"/>
-      <!-- Eye -->
-      <circle cx="210" cy="148" r="12" fill="#001a2e"/>
-      <circle cx="213" cy="145" r="7" fill="#00c8ff"/>
-      <circle cx="215" cy="143" r="3" fill="#ffffff" opacity="0.9"/>
-      <!-- Beak -->
-      <path d="M200,160 L225,168 L200,176 Z" fill="#00e5ff" opacity="0.95"/>
-      <!-- Crest/feathers on head -->
-      <path d="M195,115 C190,90 175,75 180,60 C185,75 200,80 200,115 Z" fill="#00c8ff" opacity="0.7"/>
-      <path d="M200,112 C200,85 210,68 215,55 C212,70 215,88 205,112 Z" fill="#33ddff" opacity="0.6"/>
-      <path d="M205,115 C215,88 230,76 232,62 C224,78 215,90 210,115 Z" fill="#00c8ff" opacity="0.5"/>
-      <!-- Tail feathers -->
-      <path d="M180,300 C165,330 150,360 140,390 C160,365 175,340 185,310 Z" fill="#0088bb" opacity="0.7"/>
-      <path d="M200,305 C200,340 198,370 195,400 C202,372 205,342 205,308 Z" fill="#00aadd" opacity="0.7"/>
-      <path d="M220,300 C235,330 250,358 260,388 C242,364 228,338 218,308 Z" fill="#0088bb" opacity="0.7"/>
-      <!-- Wing highlights -->
-      <path d="M80,155 C90,145 110,148 130,160" stroke="#33ddff" stroke-width="2" fill="none" opacity="0.5"/>
-      <path d="M270,155 C285,145 310,148 330,160" stroke="#33ddff" stroke-width="2" fill="none" opacity="0.5"/>
-    </g>
-
-    <!-- Parrot glow circle behind -->
-    <circle cx="968" cy="195" r="130" fill="url(#logoGlow)" opacity="0.5"/>
-
-    <!-- ===== KALI DRAGON (left area, subtle) ===== -->
-    <g transform="translate(60,550) scale(0.5)" opacity="0.15" fill="#00ff9d">
-      <path d="M100,200 C80,160 60,120 80,80 C100,40 140,30 160,60 C170,75 165,95 150,100 C180,90 200,70 190,40 C210,60 215,100 195,130 C220,110 240,80 230,50 C260,80 255,130 235,160 C260,145 280,120 275,90 C295,120 285,165 260,190 C280,180 295,160 292,135 C305,165 295,205 272,225 C285,220 295,205 293,188 C300,215 288,250 265,265 C255,270 240,268 232,258 C228,280 210,295 190,290 C195,275 200,258 195,242 C185,262 168,272 150,265 C158,250 162,232 155,218 C140,238 118,244 100,235 C112,220 120,202 115,188 C100,205 80,210 65,200 C78,188 88,172 83,158 C68,172 50,174 38,165 C52,152 65,136 60,120 C45,132 26,130 15,118 C32,106 48,88 44,72 C30,82 12,78 4,64 C24,54 45,38 44,20 C56,35 62,55 55,72 C72,58 88,42 84,22 C96,40 96,65 85,82 C103,68 118,50 115,28 C128,48 126,75 112,92 C132,78 148,58 145,35 C158,58 153,87 137,103 C157,90 172,68 170,44 C183,70 176,102 158,116 C176,105 192,82 190,56 C202,84 193,118 173,130 C190,122 206,98 204,72 C215,102 204,138 182,148 Z"/>
-    </g>
-
-    <!-- ===== FLOATING PARTICLES ===== -->
-    <g opacity="0.5">
-      <circle cx="150" cy="100" r="1.5" fill="#00c8ff"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
-      <circle cx="400" cy="80"  r="1"   fill="#00ff9d"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4s" repeatCount="indefinite"/></circle>
-      <circle cx="650" cy="50"  r="2"   fill="#00c8ff"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/></circle>
-      <circle cx="900" cy="30"  r="1.5" fill="#7b2fff"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3.5s" repeatCount="indefinite"/></circle>
-      <circle cx="1100" cy="70" r="1"   fill="#00c8ff"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="5s" repeatCount="indefinite"/></circle>
-      <circle cx="1350" cy="40" r="2"   fill="#00ff9d"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.2s" repeatCount="indefinite"/></circle>
-      <circle cx="80"  cy="400" r="1.5" fill="#00c8ff"><animate attributeName="opacity" values="0.2;0.8;0.2" dur="4.5s" repeatCount="indefinite"/></circle>
-      <circle cx="1380" cy="500" r="1"  fill="#7b2fff"><animate attributeName="opacity" values="0.3;1;0.3" dur="3.8s" repeatCount="indefinite"/></circle>
-      <circle cx="500" cy="780" r="1.5" fill="#00ff9d"><animate attributeName="opacity" values="0.2;0.7;0.2" dur="4.2s" repeatCount="indefinite"/></circle>
-      <circle cx="950" cy="820" r="2"   fill="#00c8ff"><animate attributeName="opacity" values="0.3;0.9;0.3" dur="3s" repeatCount="indefinite"/></circle>
-    </g>
-
-    <!-- ===== SCAN LINE SWEEP (animated) ===== -->
-    <rect x="0" y="0" width="1440" height="2" fill="#00c8ff" opacity="0">
-      <animate attributeName="y" values="-2;902" dur="8s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values="0;0.08;0" dur="8s" repeatCount="indefinite"/>
-    </rect>
-
-    <!-- ===== TEXT WATERMARK bottom right ===== -->
-    <text x="1400" y="870" text-anchor="end" font-family="Fira Code, monospace" font-size="11" fill="#00c8ff" opacity="0.25">PARROT OS 6.1 // ANKESH-OS 2.5.1</text>
-    <text x="1400" y="885" text-anchor="end" font-family="Fira Code, monospace" font-size="10" fill="#00ff9d" opacity="0.2">stay ethical. stay curious. 🦜</text>
-  </svg>
+  <!-- Animated Desktop Background -->
+  <canvas id="desktopBg"></canvas>
 
   <!-- Desktop Icons -->
   <div class="desktop-icons" style="left:auto;right:0;top:0;bottom:0;width:82px;flex-direction:column;flex-wrap:nowrap;overflow-y:auto;overflow-x:hidden;align-items:center;padding:10px 5px;">
@@ -954,7 +854,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
           <div class="contact-icon">📧</div>
           <div>
             <div class="contact-label">Email</div>
-            <div class="contact-val"><a href="mailto:ankeshprajapati217@gmail.com">ankeshprajapati217@gmail.com</a></div>
+            <div class="contact-val"><a href="/cdn-cgi/l/email-protection#44252a2f21372c3436252e253425302d767573042329252d286a272b29"><span class="__cf_email__" data-cfemail="8aebe4e1eff9e2faf8ebe0ebfaebfee3b8bbbdcaede7ebe3e6a4e9e5e7">[email&#160;protected]</span></a></div>
           </div>
         </div>
         <div class="contact-item">
@@ -1008,7 +908,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 </div>
 
 <!-- Neofetch Window -->
-<div class="window" id="win-neofetch" style="width:520px;height:300px;top:180px;left:180px;display:none;" data-win="neofetch">
+<div class="window" id="win-neofetch" style="width:620px;height:420px;top:180px;left:180px;display:none;" data-win="neofetch">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-neofetch')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('neofetch')"></div>
@@ -1018,7 +918,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
     <div class="win-title">🖥️ neofetch — System Info</div>
     <div class="win-title-right"></div>
   </div>
-  <div class="win-body" style="overflow-y:auto;">
+  <div class="win-body" style="background:#000;overflow:hidden;">
     <div class="neofetch-body">
       <div class="neofetch-logo">
     █████╗ ███╗   ██╗██╗  ██╗███████╗███████╗██╗  ██╗
@@ -1074,72 +974,237 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 </div>
 
 <script>
-// ===================== MATRIX RAIN =====================
+// ══════════════════════════════════════════════════════
+// HACKING LOADING SCREEN
+// ══════════════════════════════════════════════════════
 (function(){
-  const c=document.getElementById("matrixCanvas");
-  const ctx=c.getContext("2d");
-  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
-  resize();window.addEventListener("resize",resize);
-  const letters="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*@<>/\\";
-  const fs=13;let cols,drops;
-  function init(){cols=Math.floor(c.width/fs);drops=Array(cols).fill(1);}
-  init();window.addEventListener("resize",init);
-  setInterval(()=>{
-    ctx.fillStyle="rgba(0,0,0,0.15)";
-    ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle="#00ff9d";ctx.font=fs+"px Fira Code";
-    for(let i=0;i<drops.length;i++){
-      ctx.fillText(letters[Math.floor(Math.random()*letters.length)],i*fs,drops[i]*fs);
-      if(drops[i]*fs>c.height&&Math.random()>0.975)drops[i]=0;
-      drops[i]++;
+
+  // ── Canvas rain ──────────────────────────────────────
+  var cv = document.getElementById("hackCanvas");
+  if(!cv) return;
+  var cx = cv.getContext("2d");
+  function rzCv(){ cv.width=window.innerWidth; cv.height=window.innerHeight; }
+  rzCv();
+  window.addEventListener("resize", rzCv);
+
+  var RC = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@><:/|{}[]";
+  var RFS = 13, rcols, rdrops;
+  function initR(){
+    rcols=Math.floor(cv.width/RFS);
+    rdrops=[];
+    for(var i=0;i<rcols;i++) rdrops.push(-(Math.random()*60|0));
+  }
+  initR();
+  window.addEventListener("resize",initR);
+  var rainID=setInterval(function(){
+    cx.fillStyle="rgba(0,0,0,0.13)";
+    cx.fillRect(0,0,cv.width,cv.height);
+    cx.font=RFS+"px monospace";
+    for(var i=0;i<rcols;i++){
+      var b=Math.random();
+      cx.fillStyle=b>.96?"#ccffee":b>.87?"rgba(0,255,157,0.7)":"rgba(0,255,157,0.35)";
+      cx.fillText(RC[Math.floor(Math.random()*RC.length)],i*RFS,rdrops[i]*RFS);
+      if(rdrops[i]*RFS>cv.height && Math.random()>.97) rdrops[i]=0;
+      rdrops[i]++;
     }
-  },50);
+  },40);
+
+  // ── Elements ─────────────────────────────────────────
+  var ipEl   = document.getElementById("hkIP");
+  var hostEl = document.getElementById("hkHost");
+  var logEl  = document.getElementById("hkLog");
+  var fillEl = document.getElementById("hkFill");
+  var pctEl  = document.getElementById("hkPct");
+
+  if(!ipEl || !logEl){ clearInterval(rainID); initDesktop(); initDesktopBg(); return; }
+
+  // ── Step 1: IP address count-up from 000.000.000.000 ──
+  // Target: 127.0.0.1
+  var TARGET = [127,0,0,1];
+  var cur    = [0,0,0,0];
+  var ipDone = false;
+
+  function pad3(n){ var s=String(n); while(s.length<3) s="0"+s; return s; }
+  function showIP(){ ipEl.textContent=pad3(cur[0])+"."+pad3(cur[1])+"."+pad3(cur[2])+"."+pad3(cur[3]); }
+  showIP();
+
+  var ipInterval=setInterval(function(){
+    var done=true;
+    for(var i=0;i<4;i++){
+      if(cur[i]<TARGET[i]){ cur[i]+=1; done=false; break; }
+    }
+    // Also randomly flicker other octets while incrementing
+    if(!done && Math.random()<0.4){
+      var ri=Math.floor(Math.random()*4);
+      if(cur[ri]<TARGET[ri]) cur[ri]=Math.min(TARGET[ri], cur[ri]+(Math.random()*8|0)+1);
+    }
+    showIP();
+    if(done){
+      clearInterval(ipInterval);
+      cur=[127,0,0,1];
+      showIP();
+      if(hostEl){ hostEl.textContent="localhost · ankesh@roo"; }
+      setTimeout(startBreach, 400);
+    }
+  }, 30);
+
+  // ── Step 2: Hack sequence ─────────────────────────────
+  var STEPS=[
+    {t:"SCAN", c:"#febc2e", m:"Starting Nmap 7.95 (https://nmap.org)"},
+    {t:"SCAN", c:"#febc2e", m:"Scanning 127.0.0.1 for open ports..."},
+    {t:"PORT", c:"#58a6ff", m:"22/tcp   open  ssh     OpenSSH 8.9p1"},
+    {t:"PORT", c:"#58a6ff", m:"80/tcp   open  http    nginx 1.24.0"},
+    {t:"PORT", c:"#58a6ff", m:"443/tcp  open  https   ssl/nginx"},
+    {t:"PORT", c:"#58a6ff", m:"3389/tcp open  rdp     Microsoft RDP"},
+    {t:"WARN", c:"#febc2e", m:"SSH service exposed — checking banner..."},
+    {t:"INFO", c:"#c9d1d9", m:"Banner: SSH-2.0-OpenSSH_8.9p1 Ubuntu"},
+    {t:"WARN", c:"#febc2e", m:"RDP detected — attempting credential bypass"},
+    {t:"EXEC", c:"#ff5f57", m:"hydra -l admin -P /wordlists/rdp.txt rdp://127.0.0.1"},
+    {t:"EXEC", c:"#ff5f57", m:"hydra -l root -P /wordlists/ssh.txt ssh://127.0.0.1"},
+    {t:"HIT!", c:"#ff5f57", m:"[22][ssh] host: 127.0.0.1 login: root pass: ****"},
+    {t:"ROOT", c:"#00ff9d", m:"Privilege escalation complete — uid=0(root)"},
+    {t:"INFO", c:"#c9d1d9", m:"Loading identity registry..."},
+    {t:"OK  ", c:"#00ff9d", m:"Identity: ANKESH PRAJAPATI — SECURIS360"},
+    {t:"OK  ", c:"#00ff9d", m:"✔ ACCESS AUTHORIZED — mounting desktop..."}
+  ];
+
+  var si=0;
+
+  function startBreach(){ nextStep(); }
+
+  function nextStep(){
+    if(si>=STEPS.length){ setTimeout(showAccessGranted,300); return; }
+    var s=STEPS[si++];
+    var d=document.createElement("div");
+    d.className="hkln";
+    d.innerHTML="<span style='color:"+s.c+";font-weight:600'>["+s.t+"]</span>"
+              +" <span style='color:#c9d1d9'>"+s.m+"</span>";
+    logEl.appendChild(d);
+    logEl.scrollTop=99999;
+
+    var pct=Math.min(99,Math.round(si/STEPS.length*100));
+    fillEl.style.width=pct+"%";
+    pctEl.textContent=pct+"%";
+
+    // Glitch flash
+    if(Math.random()<0.18){
+      fillEl.style.background="linear-gradient(90deg,#ff0040,#00c8ff)";
+      setTimeout(function(){fillEl.style.background="";},110);
+    }
+
+    var delay=300+Math.random()*350;
+    if(s.t==="HIT!" || s.t==="ROOT") delay+=400;
+    if(s.t==="OK  ") delay+=250;
+    setTimeout(nextStep,delay);
+  }
+
+  // ── Step 3: ACCESS GRANTED ─────────────────────────────
+  function showAccessGranted(){
+    fillEl.style.width="100%";
+    pctEl.textContent="100%";
+    setTimeout(function(){
+      var p1=document.getElementById("hkPhase1");
+      var p2=document.getElementById("hkPhase2");
+      if(p1) p1.style.display="none";
+      if(p2){ p2.style.display="flex"; p2.style.flexDirection="column"; p2.style.alignItems="center"; }
+
+      var titleEl=document.getElementById("agTitle");
+      if(titleEl){
+        var txt="ACCESS GRANTED", ti=0;
+        var tw=setInterval(function(){
+          titleEl.textContent=txt.slice(0,++ti);
+          if(ti>=txt.length) clearInterval(tw);
+        },68);
+      }
+      setTimeout(finishLoad, 2400);
+    },500);
+  }
+
+  function finishLoad(){
+    clearInterval(rainID);
+    var ls=document.getElementById("loadingScreen");
+    if(!ls) return;
+    ls.style.opacity="0";
+    setTimeout(function(){
+      if(ls.parentNode) ls.parentNode.removeChild(ls);
+      initDesktop();
+      initDesktopBg();
+    },900);
+  }
+
 })();
 
-// ===================== BOOT SEQUENCE =====================
-const bootLines=[
-  "[  OK  ] Started Ankesh OS v2.5.1",
-  "[  OK  ] Loading security modules...",
-  "[  OK  ] Initializing VAPT toolkit...",
-  "[ INFO ] Burp Suite Pro — ready",
-  "[ INFO ] Nmap 7.95 — ready",
-  "[ INFO ] Metasploit Framework — ready",
-  "[  OK  ] Mounting forensic drive /dev/sdb1",
-  "[ INFO ] EnCase — connected",
-  "[ INFO ] Loading exploit database — 88,194 entries",
-  "[  OK  ] Firewall rules applied — 2048 entries",
-  "[ INFO ] Stealth mode: ACTIVE",
-  "[ INFO ] VPN tunnel: ESTABLISHED",
-  "[  OK  ] Profile loaded: ankesh@securis360",
-  "[ INFO ] 50+ VAPT assessments on record",
-  "[  OK  ] Desktop environment initializing...",
-  "[ INFO ] Welcome, Ankesh. Stay ethical. 🛡️",
-];
-let bootIdx=0;
-const bootLog=document.getElementById("bootLog");
-function bootTick(){
-  if(bootIdx<bootLines.length){
-    const l=document.createElement("div");
-    l.className="boot-line";
-    const line=bootLines[bootIdx];
-    let color="#00ff9d";
-    if(line.startsWith("[  OK  ]"))color="#28c840";
-    else if(line.startsWith("[ INFO ]"))color="#58a6ff";
-    else if(line.startsWith("[ WARN ]"))color="#febc2e";
-    l.innerHTML=`<span style="color:${color}">${line}</span>`;
-    bootLog.appendChild(l);
-    bootIdx++;
-    setTimeout(bootTick,120+Math.random()*80);
-  } else {
-    setTimeout(()=>{
-      const ls=document.getElementById("loadingScreen");
-      ls.classList.add("hide-loading");
-      setTimeout(()=>ls.remove(),700);
-      initDesktop();
-    },400);
+// ══════════════════════════════════════════════════════
+// DESKTOP ANIMATED BACKGROUND
+// ══════════════════════════════════════════════════════
+function initDesktopBg(){
+  var c=document.getElementById("desktopBg");
+  if(!c) return;
+  var x=c.getContext("2d");
+  function rz(){c.width=c.offsetWidth||window.innerWidth;c.height=c.offsetHeight||(window.innerHeight-44);}
+  rz(); window.addEventListener("resize",rz);
+
+  var CH="01ABCDEFabcdef#$%@:/|<>[]{}";
+  var FS=13,cols,drops;
+  function initD(){
+    cols=Math.floor(c.width/FS);drops=[];
+    for(var i=0;i<cols;i++) drops.push({y:-(Math.random()*80|0),sp:0.25+Math.random()*0.5,op:0.04+Math.random()*0.07});
   }
+  initD(); window.addEventListener("resize",initD);
+
+  var scans=[0.12,0.35,0.58,0.82].map(function(v){return{pos:v*900,sp:0.2+Math.random()*0.3,op:0.022+Math.random()*0.025};});
+  function rHex(){return"0x"+Math.floor(Math.random()*0xFFFFFF).toString(16).toUpperCase().padStart(6,"0");}
+  var hexes=[];
+  for(var i=0;i<20;i++) hexes.push({x:Math.random(),y:Math.random(),t:rHex(),op:0.018+Math.random()*0.032,dy:(Math.random()-.5)*0.00015});
+  var nodes=[];
+  for(var i=0;i<7;i++) nodes.push({x:0.1+Math.random()*0.8,y:0.1+Math.random()*0.8,ph:Math.random()*6.28,sp:0.015+Math.random()*0.022});
+  var pings=[],pt=0;
+
+  function draw(){
+    var w=c.width,h=c.height;
+    x.fillStyle="rgba(2,10,15,0.9)";x.fillRect(0,0,w,h);
+    x.font=FS+"px monospace";
+    for(var i=0;i<drops.length;i++){
+      var d=drops[i],b=Math.random();
+      x.fillStyle=b>.96?"rgba(180,255,220,"+(d.op*2.5)+")":"rgba(0,255,157,"+d.op+")";
+      x.fillText(CH[Math.floor(Math.random()*CH.length)],i*FS,d.y*FS);
+      d.y+=d.sp;
+      if(d.y*FS>h){d.y=-(Math.random()*20|0);d.op=0.04+Math.random()*0.07;}
+    }
+    for(var i=0;i<scans.length;i++){
+      var s=scans[i];s.pos+=s.sp;if(s.pos>h)s.pos=0;
+      var g=x.createLinearGradient(0,s.pos,w,s.pos);
+      g.addColorStop(0,"transparent");g.addColorStop(0.4,"rgba(0,255,157,"+s.op+")");
+      g.addColorStop(0.5,"rgba(0,180,255,"+(s.op*1.5)+")");g.addColorStop(0.6,"rgba(0,255,157,"+s.op+")");g.addColorStop(1,"transparent");
+      x.fillStyle=g;x.fillRect(0,s.pos-1,w,2);
+    }
+    x.font="10px monospace";
+    for(var i=0;i<hexes.length;i++){
+      var hx=hexes[i];hx.y+=hx.dy;if(hx.y<0)hx.y=1;if(hx.y>1)hx.y=0;
+      if(Math.random()<0.003)hx.t=rHex();
+      x.fillStyle="rgba(0,255,157,"+hx.op+")";x.fillText(hx.t,hx.x*w,hx.y*h);
+    }
+    for(var i=0;i<nodes.length;i++){
+      var n=nodes[i];n.ph+=n.sp;var gl=0.5+0.5*Math.sin(n.ph);
+      for(var j=i+1;j<nodes.length;j++){
+        var m=nodes[j],dx=(n.x-m.x)*w,dy=(n.y-m.y)*h,dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<w*0.3){x.beginPath();x.strokeStyle="rgba(0,150,255,"+(0.035*(1-dist/(w*0.3)))+")";x.lineWidth=0.6;x.moveTo(n.x*w,n.y*h);x.lineTo(m.x*w,m.y*h);x.stroke();}
+      }
+      x.beginPath();x.arc(n.x*w,n.y*h,1.5+gl,0,6.28);x.fillStyle="rgba(0,255,157,"+0.07*gl+")";x.fill();
+      x.beginPath();x.arc(n.x*w,n.y*h,1.2,0,6.28);x.fillStyle="rgba(0,255,157,0.18)";x.fill();
+    }
+    pt++;if(pt>90+Math.random()*120){pt=0;var ni=Math.floor(Math.random()*nodes.length);pings.push({x:nodes[ni].x,y:nodes[ni].y,r:0,mx:0.06+Math.random()*0.08});}
+    for(var i=pings.length-1;i>=0;i--){
+      var p=pings[i];p.r+=0.0018;var fd=1-p.r/p.mx;
+      x.beginPath();x.arc(p.x*w,p.y*h,p.r*w,0,6.28);x.strokeStyle="rgba(0,255,157,"+(0.15*fd)+")";x.lineWidth=1;x.stroke();
+      if(p.r>=p.mx)pings.splice(i,1);
+    }
+    if(Math.random()<0.02){x.fillStyle="rgba(0,255,157,"+(0.03+Math.random()*0.04)+")";x.fillRect(Math.random()*w,Math.random()*h,40+Math.random()*120,1+Math.random()*4);}
+    var vg=x.createRadialGradient(w/2,h/2,h*0.2,w/2,h/2,h*0.85);vg.addColorStop(0,"transparent");vg.addColorStop(1,"rgba(0,0,0,0.5)");x.fillStyle=vg;x.fillRect(0,0,w,h);
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
-setTimeout(bootTick,300);
 
 // ===================== CLOCK =====================
 function updateClock(){
@@ -1808,14 +1873,6 @@ function triggerAlert(){
   const overlay=document.getElementById("alertOverlay");
   overlay.classList.add("show");
   setTimeout(()=>overlay.classList.remove("show"),7000);
-}
-
-// ===================== START MENU =====================
-let startMenuOpen=false;
-function toggleStartMenu(){
-  // Simple: open all windows
-  openAllWindows();
-  showNotif("Start Menu","Opening all applications...");
 }
 </script>
 </body>
