@@ -283,31 +283,50 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 .terminal-body{
   background:#0d1117;flex:1;min-height:0;overflow:hidden;
-  font-size:0.82rem;line-height:1.6;
+  font-size:0.82rem;line-height:1.35;
   font-family:'Fira Code','JetBrains Mono',monospace;
   position:relative;cursor:text;
 }
 .term-scroll{
   position:absolute;inset:0;
   overflow-y:auto;overflow-x:hidden;
-  padding:10px 14px 10px;
-  word-break:break-word;white-space:pre-wrap;
+  padding:8px 12px 8px;
+  white-space:normal;
+  word-break:break-word;
 }
-.term-scroll::-webkit-scrollbar{width:4px;}
+.term-scroll::-webkit-scrollbar{width:3px;}
 .term-scroll::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:2px;}
-.term-line{display:block;min-height:1.55em;color:#c9d1d9;}
-.term-prompt-line{display:block;min-height:1.55em;}
+/* Every output line — no extra margin, no min-height */
+.term-line{
+  display:block;
+  margin:0;padding:0;
+  color:#c9d1d9;
+  white-space:pre-wrap;
+  word-break:break-word;
+  line-height:1.35;
+}
+/* Empty lines (blank output) still take up one line height */
+.term-line:empty::before{content:'\A';white-space:pre;}
+/* Active prompt line */
+.term-prompt-line{
+  display:block;
+  margin:0;padding:0;
+  line-height:1.35;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
 .term-ps1-u{color:var(--accent);}
 .term-ps1-at,.term-ps1-p{color:#6e7681;}
 .term-ps1-h{color:var(--highlight);}
-.term-typed-span{color:#c9d1d9;white-space:pre-wrap;word-break:break-all;}
+.term-typed-span{color:#c9d1d9;}
 .term-cursor{
-  display:inline-block;width:0.52em;height:1em;
-  background:var(--accent);vertical-align:text-bottom;
+  display:inline-block;
+  width:0.52em;height:0.85em;
+  background:var(--accent);
+  vertical-align:text-bottom;
   animation:tblink 1.1s step-end infinite;
 }
 @keyframes tblink{0%,100%{opacity:1}50%{opacity:0}}
-/* Invisible capture textarea — sits on top, fully transparent */
 .term-capture{
   position:absolute;inset:0;opacity:0.001;
   resize:none;border:none;outline:none;
@@ -2050,10 +2069,15 @@ function initTerminal(){
 function printTerm(html){
   var out=document.getElementById("termOutput");
   if(!out)return;
-  var d=document.createElement("div");
-  d.className="term-line";
-  d.innerHTML=html;
-  out.appendChild(d);
+  // Split on literal \n within the html so multi-line strings each get their own div
+  var lines=html.split("\n");
+  for(var i=0;i<lines.length;i++){
+    var d=document.createElement("div");
+    d.className="term-line";
+    // Empty line: use a zero-width space so the div has natural line height
+    d.innerHTML=lines[i]===""?"\u200b":lines[i];
+    out.appendChild(d);
+  }
   termScrollBottom();
 }
 // ═══ END TERMINAL ════════════════════════════════════════════════════════════
@@ -2062,25 +2086,31 @@ function printTerm(html){
 function handleTermCmd(cmd){
   const c=cmd.toLowerCase().trim();
   if(c==="help"){
-    printTerm(`<span class="t-muted">Commands:</span>
-  <span class="t-green">about, skills, experience, projects, certs, contact, education</span>
-  <span class="t-green">whoami, pwd, ls, clear, exit, scan, konami, open [window]</span>
-  <span class="t-green">hack [target]</span>  — <span class="t-muted">e.g. hack nasa.gov</span>`);
+    printTerm('<span class="t-muted">available commands:</span>');
+    printTerm('  <span class="t-green">about</span>  <span class="t-green">skills</span>  <span class="t-green">experience</span>  <span class="t-green">projects</span>  <span class="t-green">certs</span>  <span class="t-green">contact</span>');
+    printTerm('  <span class="t-green">whoami</span>  <span class="t-green">pwd</span>  <span class="t-green">ls</span>  <span class="t-green">clear</span>  <span class="t-green">exit</span>  <span class="t-green">scan</span>');
+    printTerm('  <span class="t-green">hack &lt;target&gt;</span>  <span class="t-muted">e.g. hack nasa.gov</span>');
+    printTerm('  <span class="t-green">open &lt;window&gt;</span>  <span class="t-muted">e.g. open about</span>');
+    printTerm('  <span class="t-muted">Tab</span> autocomplete  ·  <span class="t-muted">↑↓</span> history  ·  <span class="t-muted">Ctrl+C</span> cancel');
   } else if(c==="whoami"){
     printTerm('<span class="t-green">ankesh</span> — Security Analyst | VAPT Specialist');
   } else if(c==="pwd"){
     printTerm('<span class="t-muted">/home/ankesh/portfolio</span>');
   } else if(c==="ls"||c==="ls -la"){
-    printTerm(`<span class="t-blue">drwxr-xr-x</span>  about.sh skills.sh experience.log
-<span class="t-blue">drwxr-xr-x</span>  projects/ certs.db contact.txt
-<span class="t-green">-rwxr-xr-x</span>  terminal neofetch wallpaper`);
+    printTerm('<span class="t-muted">total 48</span>');
+    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   about.sh');
+    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   skills.sh');
+    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   experience.log');
+    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   projects/');
+    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   certs.db');
+    printTerm('<span class="t-green">-rwxr-xr-x</span>  ankesh  staff   contact.txt');
   } else if(c==="clear"){
     document.getElementById("termOutput").innerHTML="";
   } else if(c==="exit"){
     printTerm("Closing terminal...");
     setTimeout(()=>closeWindow("terminal"),500);
   } else if(c==="konami"){
-    printTerm('<span class="t-yellow">Hint: Type the Konami code (↑↑↓↓←→←→BA) on your keyboard to trigger RED TEAM mode.</span>');
+    printTerm('<span class="t-yellow">Hint: Type the Konami code (↑↑↓↓←→←→BA) to trigger RED TEAM mode.</span>');
   } else if(c==="scan"){
     runScan();
   } else if(c.startsWith("open ")){
@@ -2090,11 +2120,11 @@ function handleTermCmd(cmd){
       openWindow(target);
       printTerm(`<span class="t-green">Opening ${target}...</span>`);
     } else {
-      printTerm(`<span class="t-red">open: '${target}' not found. Try: ${valid.join(", ")}</span>`);
+      printTerm(`<span class="t-red">open: '${target}' not found.</span> Try: ${valid.join(", ")}`);
     }
   } else if(c.startsWith("hack ")||c==="hack"){
     const tgt=(c==="hack")?"localhost":c.slice(5).trim();
-    if(!tgt){printTerm('<span class="t-red">Usage: hack &lt;target&gt;</span> e.g. <span class="t-green">hack nasa.gov</span>');}
+    if(!tgt){printTerm('<span class="t-red">Usage: hack &lt;target&gt;</span>');}
     else{runHack(tgt);}
   } else if(termData[c]){
     runHack(c,()=>printTerm(termData[c]));
