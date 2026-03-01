@@ -14,6 +14,7 @@
   --border: #30363d;
   --accent: #00ff9d;
   --accent2: #39ff14;
+  --accent-rgb: 0,255,157;
   --red: #ff5f57;
   --amber: #febc2e;
   --green: #28c840;
@@ -21,7 +22,7 @@
   --muted: #6e7681;
   --highlight: #58a6ff;
   --danger: #ff3355;
-  --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px #30363d;
+  --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb),0.25);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
@@ -59,8 +60,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   width:72px;user-select:none;pointer-events:all;
   flex-shrink:0;
 }
-.icon:hover{background:rgba(0,255,157,0.13);transform:scale(1.06);}
-.icon:active{background:rgba(0,255,157,0.22);transform:scale(0.97);}
+.icon:hover{background:rgba(var(--accent-rgb),0.13);transform:scale(1.06);}
+.icon:active{background:rgba(var(--accent-rgb),0.22);transform:scale(0.97);}
 .icon-img{
   font-size:1.7rem;
   filter:drop-shadow(0 0 6px var(--accent));
@@ -84,11 +85,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 }
 .taskbar-start{
   padding:4px 12px;border-radius:6px;
-  background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.3);
+  background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.3);
   color:var(--accent);font-size:0.78rem;cursor:pointer;
   font-family:inherit;transition:all 0.2s;white-space:nowrap;
 }
-.taskbar-start:hover{background:rgba(0,255,157,0.2);}
+.taskbar-start:hover{background:rgba(var(--accent-rgb),0.2);}
 .taskbar-sep{width:1px;height:24px;background:var(--border);}
 .taskbar-tasks{display:flex;gap:4px;flex:1;overflow-x:auto;}
 .taskbar-task{
@@ -97,7 +98,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   font-family:inherit;transition:all 0.2s;color:var(--muted);background:transparent;
 }
 .taskbar-task:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-.taskbar-task.active{background:rgba(0,255,157,0.1);border-color:rgba(0,255,157,0.3);color:var(--accent);}
+.taskbar-task.active{background:rgba(var(--accent-rgb),0.1);border-color:rgba(var(--accent-rgb),0.3);color:var(--accent);}
 .taskbar-clock{
   font-size:0.75rem;color:var(--muted);white-space:nowrap;
   padding:0 8px;border-left:1px solid var(--border);
@@ -128,7 +129,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   display:flex!important;
   flex-direction:column;
 }
-.window.focused{z-index:100;border-color:rgba(0,255,157,0.4);}
+.window.focused{z-index:100;border-color:rgba(var(--accent-rgb),0.4);}
 
 /* Window title bar */
 .win-titlebar{
@@ -164,13 +165,13 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .win-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
 .win-content{flex:1;overflow-y:auto;padding:16px;min-height:0;}
 .win-content::-webkit-scrollbar{width:5px;}
-.win-content::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.3);border-radius:3px;}
+.win-content::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3);border-radius:3px;}
 
 /* Resize handle */
 .win-resize{
   position:absolute;right:0;bottom:0;width:16px;height:16px;
   cursor:se-resize;z-index:5;
-  background:linear-gradient(135deg,transparent 50%,rgba(0,255,157,0.3) 50%);
+  background:linear-gradient(135deg,transparent 50%,rgba(var(--accent-rgb),0.3) 50%);
   border-radius:0 0 10px 0;
 }
 
@@ -192,19 +193,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   background:radial-gradient(circle at 40% 35%,#1a3a2a,#050f08);
   border:2px solid var(--accent);
   display:flex;align-items:center;justify-content:center;
-  font-size:2rem;box-shadow:0 0 20px rgba(0,255,157,0.3);
+  font-size:2rem;box-shadow:0 0 20px rgba(var(--accent-rgb),0.3);
 }
 .about-name{font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:4px;}
 .about-role{font-size:0.8rem;color:var(--text);}
 .about-badge{
   display:inline-block;margin-top:6px;padding:2px 8px;
-  border-radius:999px;border:1px solid rgba(0,255,157,0.4);
-  font-size:0.68rem;color:var(--accent);background:rgba(0,255,157,0.05);
+  border-radius:999px;border:1px solid rgba(var(--accent-rgb),0.4);
+  font-size:0.68rem;color:var(--accent);background:rgba(var(--accent-rgb),0.05);
 }
 .about-bio{font-size:0.82rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
 .about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
 .stat-box{
-  background:rgba(0,255,157,0.04);border:1px solid var(--border);
+  background:rgba(var(--accent-rgb),0.04);border:1px solid var(--border);
   border-radius:6px;padding:10px 8px;text-align:center;
 }
 .stat-num{font-size:1.1rem;color:var(--accent);font-weight:600;}
@@ -217,7 +218,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .skill-name{font-size:0.76rem;color:var(--text);margin-bottom:3px;display:flex;justify-content:space-between;}
 .skill-name span{color:var(--muted);}
 .skill-bar{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
-.skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),#08f7a3);transition:width 1s ease;}
+.skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent));transition:width 1s ease;}
 .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
 .chip{
   padding:2px 8px;border-radius:4px;font-size:0.68rem;
@@ -227,7 +228,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 /* Experience */
 .timeline{position:relative;padding-left:16px;}
-.timeline::before{content:"";position:absolute;left:4px;top:0;bottom:0;width:1px;background:rgba(0,255,157,0.2);}
+.timeline::before{content:"";position:absolute;left:4px;top:0;bottom:0;width:1px;background:rgba(var(--accent-rgb),0.2);}
 .timeline-item{position:relative;margin-bottom:16px;}
 .timeline-dot{
   position:absolute;left:-16px;top:4px;width:8px;height:8px;
@@ -246,12 +247,12 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   border-radius:8px;padding:12px;
   transition:border-color 0.2s,transform 0.2s;cursor:pointer;
 }
-.project-card:hover{border-color:rgba(0,255,157,0.4);transform:translateY(-2px);}
+.project-card:hover{border-color:rgba(var(--accent-rgb),0.4);transform:translateY(-2px);}
 .project-icon{font-size:1.4rem;margin-bottom:8px;}
 .project-name{font-size:0.82rem;color:var(--accent);margin-bottom:5px;font-weight:500;}
 .project-desc{font-size:0.72rem;color:var(--muted);line-height:1.6;}
 .project-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
-.project-tag{padding:1px 6px;border-radius:3px;font-size:0.62rem;background:rgba(0,255,157,0.08);color:var(--accent);border:1px solid rgba(0,255,157,0.15);}
+.project-tag{padding:1px 6px;border-radius:3px;font-size:0.62rem;background:rgba(var(--accent-rgb),0.08);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.15);}
 
 /* Certs */
 .cert-item{
@@ -272,7 +273,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   background:rgba(0,0,0,0.2);border:1px solid var(--border);
   font-size:0.8rem;transition:border-color 0.2s;
 }
-.contact-item:hover{border-color:rgba(0,255,157,0.3);}
+.contact-item:hover{border-color:rgba(var(--accent-rgb),0.3);}
 .contact-icon{font-size:1.2rem;flex-shrink:0;}
 .contact-label{font-size:0.65rem;color:var(--muted);}
 .contact-val{color:var(--accent);}
@@ -296,7 +297,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   padding-right:4px;line-height:1.5;
 }
 .term-output::-webkit-scrollbar{width:4px;}
-.term-output::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.3);}
+.term-output::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3);}
 .term-input-row{display:flex;align-items:center;gap:6px;border-top:1px solid #1a1a1a;padding-top:6px;}
 .term-prompt{color:var(--accent);white-space:nowrap;}
 .term-input{
@@ -333,7 +334,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 /* Target acquisition box */
 .hk-box{
   position:relative;width:340px;height:122px;
-  border:1px solid rgba(0,255,157,0.2);
+  border:1px solid rgba(var(--accent-rgb),0.2);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
 }
 .hk-c{position:absolute;width:12px;height:12px;border-color:#00ff9d;border-style:solid;}
@@ -357,7 +358,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 /* Log stream */
 .hk-log{
   width:100%;height:148px;overflow:hidden;position:relative;
-  border:1px solid rgba(0,255,157,0.1);background:rgba(0,15,8,0.5);
+  border:1px solid rgba(var(--accent-rgb),0.1);background:rgba(0,15,8,0.5);
   padding:8px 12px;font-size:0.7rem;line-height:1.8;
 }
 .hk-log::after{
@@ -369,8 +370,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 /* Progress */
 .hk-prog{width:100%;display:flex;flex-direction:column;gap:5px;}
 .hk-prog-title{font-size:0.58rem;color:#00ff9d;letter-spacing:0.16em;opacity:0.5;}
-.hk-track{height:5px;width:100%;background:rgba(0,255,157,0.06);border:1px solid rgba(0,255,157,0.15);border-radius:3px;overflow:hidden;}
-.hk-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff9d,#00c8ff);border-radius:3px;box-shadow:0 0 6px rgba(0,255,157,0.5);transition:width 0.3s ease;}
+.hk-track{height:5px;width:100%;background:rgba(var(--accent-rgb),0.06);border:1px solid rgba(var(--accent-rgb),0.15);border-radius:3px;overflow:hidden;}
+.hk-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff9d,#00c8ff);border-radius:3px;box-shadow:0 0 6px rgba(var(--accent-rgb),0.5);transition:width 0.3s ease;}
 .hk-pct{font-size:0.66rem;color:#00ff9d;text-align:right;}
 /* Phase 2: ACCESS GRANTED */
 #hkPhase2{display:none;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2;}
@@ -406,19 +407,59 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .alert-sub{font-size:1rem;}
 
 /* Wallpaper picker */
-.wp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.wp-item{
-  border-radius:8px;cursor:pointer;overflow:hidden;
-  border:2px solid transparent;transition:border-color 0.2s,transform 0.15s;
-  background:#0a0a12;
-  display:flex;flex-direction:column;
+/* ── THEME CUSTOMIZER ── */
+.theme-section{margin-bottom:20px;}
+.theme-section-title{font-size:0.62rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.preset-btn{
+  border-radius:8px;border:2px solid transparent;cursor:pointer;
+  padding:10px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.03);transition:all 0.18s;
 }
-.wp-item:hover{transform:scale(1.04);}
-.wp-item.selected{border-color:var(--accent);}
-.wp-item svg{width:100%;height:80px;display:block;flex-shrink:0;}
-.wp-label{padding:4px 6px;background:rgba(0,0,0,0.5);}
-.wp-os{display:block;font-size:0.58rem;color:var(--muted);}
-.wp-name{display:block;font-size:0.66rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preset-btn:hover{background:rgba(255,255,255,0.07);transform:translateY(-1px);}
+.preset-btn.active{border-color:var(--accent);background:rgba(var(--accent-rgb),0.05);}
+.preset-swatch{width:28px;height:28px;border-radius:50%;box-shadow:0 0 10px currentColor;}
+.preset-name{font-size:0.58rem;color:var(--muted);text-align:center;}
+.color-wheel-wrap{
+  display:flex;gap:20px;align-items:flex-start;
+}
+.wheel-canvas-wrap{position:relative;flex-shrink:0;}
+#themeWheel{border-radius:50%;cursor:crosshair;display:block;}
+#wheelCursor{
+  position:absolute;width:12px;height:12px;border-radius:50%;
+  border:2px solid #fff;pointer-events:none;
+  transform:translate(-50%,-50%);box-shadow:0 0 4px rgba(0,0,0,0.8);
+  transition:left 0.1s,top 0.1s;
+}
+.wheel-controls{flex:1;display:flex;flex-direction:column;gap:12px;}
+.slider-row{display:flex;flex-direction:column;gap:4px;}
+.slider-label{font-size:0.62rem;color:var(--muted);display:flex;justify-content:space-between;}
+.slider-label span{color:var(--text);}
+.theme-slider{
+  -webkit-appearance:none;appearance:none;
+  width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;
+  background:rgba(255,255,255,0.1);
+}
+.theme-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--accent);cursor:pointer;border:2px solid #000;
+  box-shadow:0 0 6px var(--accent);
+}
+.color-preview-wrap{display:flex;gap:10px;align-items:center;margin-top:4px;}
+.color-hex-input{
+  flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  border-radius:6px;padding:6px 10px;font-family:inherit;font-size:0.8rem;
+  color:var(--text);outline:none;
+}
+.color-hex-input:focus{border-color:var(--accent);}
+.color-preview-swatch{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;}
+.apply-theme-btn{
+  width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;
+  background:var(--accent);color:#000;font-family:inherit;font-size:0.78rem;
+  font-weight:700;letter-spacing:0.06em;transition:opacity 0.15s,transform 0.1s;
+}
+.apply-theme-btn:hover{opacity:0.88;transform:translateY(-1px);}
+.apply-theme-btn:active{transform:none;}
 
 /* Context menu */
 #ctxMenu{
@@ -431,7 +472,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   padding:6px 14px;border-radius:4px;font-size:0.78rem;
   cursor:pointer;color:var(--text);
 }
-.ctx-item:hover{background:rgba(0,255,157,0.1);color:var(--accent);}
+.ctx-item:hover{background:rgba(var(--accent-rgb),0.1);color:var(--accent);}
 .ctx-sep{height:1px;background:var(--border);margin:3px 6px;}
 
 /* Start Menu */
@@ -441,7 +482,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   background:rgba(13,17,22,0.97);
   border:1px solid var(--border);border-radius:10px;
   padding:0 0 6px 0;z-index:99990;
-  box-shadow:0 -4px 40px rgba(0,0,0,0.9),0 0 0 1px rgba(0,255,157,0.08);
+  box-shadow:0 -4px 40px rgba(0,0,0,0.9),0 0 0 1px rgba(var(--accent-rgb),0.08);
   min-width:240px;backdrop-filter:blur(20px);
   animation:smIn 0.15s ease;
 }
@@ -464,17 +505,17 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   padding:7px 16px;cursor:pointer;font-size:0.8rem;
   color:var(--text);transition:background 0.15s;border-radius:4px;margin:0 4px;
 }
-.sm-item:hover{background:rgba(0,255,157,0.08);color:var(--accent);}
+.sm-item:hover{background:rgba(var(--accent-rgb),0.08);color:var(--accent);}
 .sm-item span{flex:1;font-family:"Fira Code",monospace;}
 .sm-item em{font-size:0.62rem;color:var(--muted);font-style:normal;white-space:nowrap;}
-.sm-item:hover em{color:rgba(0,255,157,0.5);}
+.sm-item:hover em{color:rgba(var(--accent-rgb),0.5);}
 .sm-danger{color:var(--danger)!important;}
 .sm-danger:hover{background:rgba(255,51,85,0.08)!important;color:var(--danger)!important;}
 
 /* Notification */
 .notif{
   position:fixed;right:16px;bottom:60px;
-  background:var(--panel-header);border:1px solid rgba(0,255,157,0.3);
+  background:var(--panel-header);border:1px solid rgba(var(--accent-rgb),0.3);
   border-radius:8px;padding:10px 14px;
   font-size:0.76rem;color:var(--text);
   box-shadow:0 8px 30px rgba(0,0,0,0.6);
@@ -498,7 +539,31 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 /* Scrollbar global */
 ::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-thumb{background:rgba(0,255,157,0.2);border-radius:3px;}
+::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:3px;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 640px) {
+  .window{
+    position:fixed!important;
+    left:0!important;right:0!important;top:0!important;
+    width:100vw!important;height:calc(100vh - 44px)!important;
+    border-radius:0!important;
+  }
+  .win-resize{display:none;}
+  #win-snake{height:calc(100vh - 44px)!important;}
+  #snakeSidePanel{width:110px!important;}
+  .desktop-icons{width:60px!important;}
+  .icon{width:52px!important;}
+  .icon-img{font-size:1.4rem!important;}
+  .icon-label{font-size:0.52rem!important;}
+  #taskbar{font-size:0.72rem;}
+  .taskbar-start{padding:0 8px!important;font-size:0.72rem!important;}
+}
+@media (max-width: 400px) {
+  #snakeSidePanel{display:none!important;}
+  .desktop-icons{display:none;}
+}
+
 </style>
 
 <!-- Google tag (gtag.js) -->
@@ -563,41 +628,45 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
   <!-- Desktop Icons -->
   <div class="desktop-icons" style="left:auto;right:0;top:0;bottom:0;width:82px;flex-direction:column;flex-wrap:nowrap;overflow-y:auto;overflow-x:hidden;align-items:center;padding:10px 5px;">
-    <div class="icon" ondblclick="openWindow('about')" title="About Me">
+    <div class="icon" ondblclick="openWindow('about')" ontouchend="iconTap(event,'about')" title="About Me">
       <div class="icon-img">👤</div>
       <div class="icon-label">about.sh</div>
     </div>
-    <div class="icon" ondblclick="openWindow('skills')" title="Skills">
+    <div class="icon" ondblclick="openWindow('skills')" ontouchend="iconTap(event,'skills')" title="Skills">
       <div class="icon-img">⚡</div>
       <div class="icon-label">skills.sh</div>
     </div>
-    <div class="icon" ondblclick="openWindow('experience')" title="Experience">
+    <div class="icon" ondblclick="openWindow('experience')" ontouchend="iconTap(event,'experience')" title="Experience">
       <div class="icon-img">📋</div>
       <div class="icon-label">xp.log</div>
     </div>
-    <div class="icon" ondblclick="openWindow('projects')" title="Projects">
+    <div class="icon" ondblclick="openWindow('projects')" ontouchend="iconTap(event,'projects')" title="Projects">
       <div class="icon-img">🛡️</div>
       <div class="icon-label">projects/</div>
     </div>
-    <div class="icon" ondblclick="openWindow('certs')" title="Certifications">
+    <div class="icon" ondblclick="openWindow('certs')" ontouchend="iconTap(event,'certs')" title="Certifications">
       <div class="icon-img">🎓</div>
       <div class="icon-label">certs.db</div>
     </div>
-    <div class="icon" ondblclick="openWindow('contact')" title="Contact">
+    <div class="icon" ondblclick="openWindow('contact')" ontouchend="iconTap(event,'contact')" title="Contact">
       <div class="icon-img">📡</div>
       <div class="icon-label">contact</div>
     </div>
-    <div class="icon" ondblclick="openWindow('terminal')" title="Terminal">
+    <div class="icon" ondblclick="openWindow('terminal')" ontouchend="iconTap(event,'terminal')" title="Terminal">
       <div class="icon-img">💻</div>
       <div class="icon-label">terminal</div>
     </div>
-    <div class="icon" ondblclick="openWindow('neofetch')" title="System Info">
+    <div class="icon" ondblclick="openWindow('neofetch')" ontouchend="iconTap(event,'neofetch')" title="System Info">
       <div class="icon-img">🖥️</div>
       <div class="icon-label">neofetch</div>
     </div>
-    <div class="icon" ondblclick="openWindow('wallpaper')" title="Wallpaper">
+    <div class="icon" ondblclick="openWindow('wallpaper')" ontouchend="iconTap(event,'wallpaper')" title="Theme">
       <div class="icon-img">🎨</div>
-      <div class="icon-label">wallpaper</div>
+      <div class="icon-label">theme</div>
+    </div>
+    <div class="icon" ondblclick="openWindow('snake')" ontouchend="iconTap(event,'snake')" title="Snake Game">
+      <div class="icon-img">🐍</div>
+      <div class="icon-label">snake.exe</div>
     </div>
   </div>
 </div>
@@ -621,7 +690,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <div class="ctx-item" onclick="openWindow('terminal');hideCtx()">🖥 Open Terminal</div>
   <div class="ctx-item" onclick="openWindow('neofetch');hideCtx()">📊 Neofetch</div>
   <div class="ctx-sep"></div>
-  <div class="ctx-item" onclick="openWindow('wallpaper');hideCtx()">🎨 Change Wallpaper</div>
+  <div class="ctx-item" onclick="openWindow('wallpaper');hideCtx()">🎨 Theme</div>
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="openAllWindows();hideCtx()">📂 Open All</div>
   <div class="ctx-item" onclick="closeAllWindows();hideCtx()">✕ Close All</div>
@@ -648,7 +717,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <div class="sm-section">SYSTEM</div>
   <div class="sm-item" onclick="openWindow('terminal');hideStart()">💻 <span>terminal</span><em>Shell</em></div>
   <div class="sm-item" onclick="openWindow('neofetch');hideStart()">🖥️ <span>neofetch</span><em>System Info</em></div>
-  <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>wallpaper</span><em>Appearance</em></div>
+  <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>theme</span><em>Appearance</em></div>
+  <div class="sm-item" onclick="openWindow('snake');hideStart()">🐍 <span>snake.exe</span><em>Leaderboard</em></div>
   <div class="sm-sep"></div>
   <div class="sm-item sm-danger" onclick="closeAllWindows();hideStart()">✕ <span>Close All Windows</span><em></em></div>
 </div>
@@ -657,7 +727,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- About Window -->
 <div class="window" id="win-about" style="width:460px;height:430px;top:60px;left:120px;" data-win="about">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-about')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-about')" ontouchstart="startDragTouch(event,'win-about')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('about')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('about')"></div>
@@ -703,7 +773,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Skills Window -->
 <div class="window" id="win-skills" style="width:430px;height:480px;top:80px;left:620px;display:none;" data-win="skills">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-skills')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-skills')" ontouchstart="startDragTouch(event,'win-skills')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('skills')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('skills')"></div>
@@ -761,7 +831,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Experience Window -->
 <div class="window" id="win-experience" style="width:450px;height:450px;top:140px;left:200px;display:none;" data-win="experience">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-experience')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-experience')" ontouchstart="startDragTouch(event,'win-experience')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('experience')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('experience')"></div>
@@ -828,7 +898,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Projects Window -->
 <div class="window" id="win-projects" style="width:500px;height:420px;top:100px;left:350px;display:none;" data-win="projects">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-projects')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-projects')" ontouchstart="startDragTouch(event,'win-projects')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('projects')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('projects')"></div>
@@ -881,7 +951,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Certifications Window -->
 <div class="window" id="win-certs" style="width:420px;height:440px;top:90px;left:500px;display:none;" data-win="certs">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-certs')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-certs')" ontouchstart="startDragTouch(event,'win-certs')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('certs')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('certs')"></div>
@@ -911,7 +981,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Contact Window -->
 <div class="window" id="win-contact" style="width:380px;height:320px;top:200px;left:300px;display:none;" data-win="contact">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-contact')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-contact')" ontouchstart="startDragTouch(event,'win-contact')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('contact')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('contact')"></div>
@@ -960,7 +1030,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Terminal Window -->
 <div class="window" id="win-terminal" style="width:560px;height:380px;top:160px;left:250px;display:none;" data-win="terminal">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-terminal')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-terminal')" ontouchstart="startDragTouch(event,'win-terminal')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('terminal')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('terminal')"></div>
@@ -983,7 +1053,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 <!-- Neofetch Window -->
 <div class="window" id="win-neofetch" style="width:620px;height:420px;top:180px;left:180px;display:none;" data-win="neofetch">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-neofetch')">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-neofetch')" ontouchstart="startDragTouch(event,'win-neofetch')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('neofetch')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('neofetch')"></div>
@@ -1024,21 +1094,51 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 </div>
 
 <!-- Wallpaper Picker Window -->
-<div class="window" id="win-wallpaper" style="width:580px;height:460px;top:200px;left:300px;display:none;" data-win="wallpaper">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-wallpaper')">
+<div class="window" id="win-wallpaper" style="width:540px;height:520px;top:80px;left:260px;display:none;" data-win="wallpaper">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-wallpaper')" ontouchstart="startDragTouch(event,'win-wallpaper')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('wallpaper')"></div>
       <div class="win-dot minimize" onclick="minimizeWindow('wallpaper')"></div>
       <div class="win-dot maximize" onclick="toggleMaximize('wallpaper')"></div>
     </div>
-    <div class="win-title">🎨 Wallpaper Settings — gsettings</div>
+    <div class="win-title">🎨 Theme Customizer — gsettings set accent</div>
     <div class="win-title-right"></div>
   </div>
   <div class="win-body">
     <div class="win-content">
-      <div class="section-title"><span>$</span> ls /usr/share/backgrounds/kali-parrot/</div>
-      <div style="font-size:0.74rem;color:var(--muted);margin-bottom:14px;">Click any wallpaper to apply:</div>
-      <div class="wp-grid" id="wpGrid"></div>
+      <div class="section-title"><span>$</span> gsettings set org.gnome.desktop accent-color</div>
+
+      <!-- Preset swatches -->
+      <div class="theme-section">
+        <div class="theme-section-title">Color Presets</div>
+        <div class="preset-grid" id="presetGrid"></div>
+      </div>
+
+      <!-- Color wheel + controls -->
+      <div class="theme-section">
+        <div class="theme-section-title">Custom Color</div>
+        <div class="color-wheel-wrap">
+          <div class="wheel-canvas-wrap">
+            <canvas id="themeWheel" width="150" height="150"></canvas>
+            <div id="wheelCursor" style="left:75px;top:75px;"></div>
+          </div>
+          <div class="wheel-controls">
+            <div class="slider-row">
+              <div class="slider-label">Brightness <span id="brtVal">100%</span></div>
+              <input type="range" class="theme-slider" id="brtSlider" min="0" max="100" value="100">
+            </div>
+            <div class="slider-row">
+              <div class="slider-label">Saturation <span id="satVal">100%</span></div>
+              <input type="range" class="theme-slider" id="satSlider" min="0" max="100" value="100">
+            </div>
+            <div class="color-preview-wrap">
+              <input type="text" class="color-hex-input" id="hexInput" value="#00ff9d" maxlength="7" spellcheck="false">
+              <div class="color-preview-swatch" id="previewSwatch" style="background:#00ff9d;"></div>
+            </div>
+            <button class="apply-theme-btn" onclick="applyCustomTheme()">⚡ Apply Theme</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="win-resize" onmousedown="startResize(event,'win-wallpaper')"></div>
@@ -1317,6 +1417,7 @@ function openWindow(name){
   focusWindow(win,name);
   updateTaskbar();
   if(name==="skills")setTimeout(animateSkillBars,100);
+  if(name==="wallpaper"){setTimeout(()=>{buildPresetGrid();initThemeWheel();},60);}
   showNotif("Opened","~/"+name+" loaded successfully");
 }
 
@@ -1368,8 +1469,8 @@ document.addEventListener("mousedown",(e)=>{
 function updateTaskbar(){
   const tasks=document.getElementById("taskbarTasks");
   tasks.innerHTML="";
-  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
-  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 wallpaper"};
+  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake"];
+  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 theme","snake":"🐍 snake"};
   wins.forEach(n=>{
     const win=document.getElementById("win-"+n);
     if(!win||win.style.display==="none")return;
@@ -1446,272 +1547,228 @@ function makeParticles(count, color, maxY) {
   }).join("");
 }
 
-const wallpapers = [
-  {
-    os: "🐉 Kali Linux", name: "Dragon – Default",
-    bg: "#130020",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <linearGradient id="w0bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0533"/><stop offset="55%" stop-color="#220a44"/><stop offset="100%" stop-color="#100022"/></linearGradient>
-        <radialGradient id="w0g1" cx="70%" cy="35%" r="55%"><stop offset="0%" stop-color="#5a10d0" stop-opacity="0.5"/><stop offset="100%" stop-color="#5a10d0" stop-opacity="0"/></radialGradient>
-        <radialGradient id="w0g2" cx="15%" cy="80%" r="40%"><stop offset="0%" stop-color="#00c8ff" stop-opacity="0.08"/><stop offset="100%" stop-color="#00c8ff" stop-opacity="0"/></radialGradient>
-        <filter id="f0"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w0bg)"/>
-      <rect width="1440" height="900" fill="url(#w0g1)"/>
-      <rect width="1440" height="900" fill="url(#w0g2)"/>
-      <!-- Hex grid -->
-      <g opacity="0.1" fill="none" stroke="#9b4fff" stroke-width="0.8">
-        <polygon points="100,50 134,70 134,110 100,130 66,110 66,70"/>
-        <polygon points="168,50 202,70 202,110 168,130 134,110 134,70"/>
-        <polygon points="236,50 270,70 270,110 236,130 202,110 202,70"/>
-        <polygon points="304,50 338,70 338,110 304,130 270,110 270,70"/>
-        <polygon points="372,50 406,70 406,110 372,130 338,110 338,70"/>
-        <polygon points="134,110 168,130 168,170 134,190 100,170 100,130"/>
-        <polygon points="202,110 236,130 236,170 202,190 168,170 168,130"/>
-        <polygon points="270,110 304,130 304,170 270,190 236,170 236,130"/>
-        <polygon points="338,110 372,130 372,170 338,190 304,170 304,130"/>
-      </g>
-      <!-- Kali Dragon -->
-      <g transform="translate(640,60) scale(1.2)" filter="url(#f0)" opacity="0.93">
-        <path d="M220,310 C200,265 178,208 195,155 C207,118 242,100 268,118 C285,130 290,158 276,180 C300,158 322,124 308,86 C338,110 342,158 320,196 C348,174 370,138 355,98 C390,132 386,188 362,218 C390,200 412,162 400,122 C428,162 420,218 392,242 C420,228 440,192 432,152 C454,196 444,256 410,278 C436,268 454,236 446,198 C466,245 452,308 415,330 C440,320 456,290 450,254 C466,302 450,370 410,394 C398,400 382,398 372,386 C368,412 348,428 325,421 C334,402 340,380 332,362 C318,388 296,402 274,390 C285,370 292,346 284,329 C268,352 244,360 224,348 C237,328 246,303 238,285 Z" fill="#7b2fff" opacity="0.92"/>
-        <path d="M178,196 C140,152 72,132 40,166 C20,186 30,220 62,216 C92,212 124,196 154,202 C132,232 110,268 122,306 C134,344 166,332 186,306 Z" fill="#6010e0" opacity="0.88"/>
-        <path d="M318,184 C358,140 428,122 460,156 C480,176 468,212 434,208 C400,204 366,190 334,195 C356,225 378,260 366,298 C354,336 320,324 300,298 Z" fill="#6010e0" opacity="0.88"/>
-        <ellipse cx="230" cy="145" rx="46" ry="36" fill="#5508c8" opacity="0.95"/>
-        <circle cx="244" cy="136" r="12" fill="#00c8ff" opacity="0.9"/>
-        <circle cx="247" cy="133" r="6" fill="#fff" opacity="0.8"/>
-        <path d="M232,148 L258,157 L232,166 Z" fill="#00e5ff"/>
-        <polygon points="195,175 204,132 213,175" fill="#9b4fff" opacity="0.7"/>
-        <polygon points="215,167 226,118 237,167" fill="#9b4fff" opacity="0.7"/>
-        <polygon points="240,164 252,112 263,164" fill="#9b4fff" opacity="0.7"/>
-        <path d="M225,100 C218,68 206,48 208,26" stroke="#7b2fff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-        <path d="M246,96 C250,64 260,44 258,22" stroke="#7b2fff" stroke-width="4.5" fill="none" stroke-linecap="round"/>
-        <path d="M290,126 C328,110 372,106 412,120 C444,132 454,156 432,168 C410,180 378,174 346,166 C372,178 384,202 364,214 C344,226 316,216 296,204 C314,214 320,240 300,250 C280,260 255,250 246,234 Z" fill="#ff6600" opacity="0.65"/>
-      </g>
-      <g opacity="0.45">${makeParticles(40,'#c084fc',null)}</g>
-      <rect x="0" y="-2" width="1440" height="2" fill="#9b4fff" opacity="0"><animate attributeName="y" values="-2;902" dur="7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.12;0" dur="7s" repeatCount="indefinite"/></rect>
-      <g transform="translate(56,820)" opacity="0.45"><text font-family="Fira Code,monospace" font-size="19" font-weight="700" fill="#9b4fff" letter-spacing="4">KALI LINUX</text><text y="20" font-family="Fira Code,monospace" font-size="10" fill="#c084fc" letter-spacing="2">By Offensive Security • kali.org</text></g>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0533"/><stop offset="100%" stop-color="#100022"/></linearGradient></defs><rect width="160" height="100" fill="url(#th0)"/><path d="M80,18 C74,10 64,8 58,16 C52,24 60,34 70,32 C62,44 54,56 60,70 C66,84 80,80 86,66 C92,80 106,84 112,70 C118,56 110,44 102,32 C112,34 120,24 114,16 C108,8 98,10 92,18 C88,10 84,6 80,18 Z" fill="#7b2fff" opacity="0.9"/><text x="80" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#c084fc">KALI LINUX</text></svg>`
-  },
-  {
-    os: "🐉 Kali Linux", name: "Purple Hex",
-    bg: "#0d001f",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <radialGradient id="w1bg" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#0d001f"/><stop offset="100%" stop-color="#000008"/></radialGradient>
-        <radialGradient id="w1g" cx="50%" cy="45%" r="50%"><stop offset="0%" stop-color="#4a00b0" stop-opacity="0.45"/><stop offset="100%" stop-color="#4a00b0" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w1bg)"/>
-      <rect width="1440" height="900" fill="url(#w1g)"/>
-      <g opacity="0.13" fill="none" stroke="#7b2fff" stroke-width="0.9">
-        ${Array.from({length:7},(_,row)=>Array.from({length:11},(_,col)=>{const x=col*136+(row%2)*68,y=row*116;return `<polygon points="${x+68},${y} ${x+102},${y+20} ${x+102},${y+58} ${x+68},${y+78} ${x+34},${y+58} ${x+34},${y+20}"/>`;}).join("")).join("")}
-      </g>
-      <g transform="translate(430,250)" opacity="0.88">
-        <text font-family="Fira Code,monospace" font-size="96" font-weight="700" fill="none" stroke="#7b2fff" stroke-width="1.5" letter-spacing="4">KALI</text>
-        <text y="68" font-family="Fira Code,monospace" font-size="28" fill="#c084fc" letter-spacing="18" opacity="0.75">LINUX</text>
-        <text y="100" font-family="Fira Code,monospace" font-size="12" fill="#6040a0" letter-spacing="7" opacity="0.8">BY OFFENSIVE SECURITY</text>
-      </g>
-      <ellipse cx="720" cy="420" rx="320" ry="180" fill="#5c00cc" opacity="0.07"/>
-      <path d="M0,0 C60,24 100,90 78,152 C56,214 16,234 0,212 Z" fill="#4a00b0" opacity="0.28"/>
-      <path d="M1440,900 C1382,876 1340,808 1362,748 C1384,688 1424,668 1440,690 Z" fill="#4a00b0" opacity="0.28"/>
-      <g opacity="0.5">${makeParticles(45,'#c084fc',null)}</g>
-      <text x="720" y="874" text-anchor="middle" font-family="Fira Code,monospace" font-size="10" fill="#4a00b0" opacity="0.4">kali.org</text>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="th1" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#0d001f"/><stop offset="100%" stop-color="#000008"/></radialGradient></defs><rect width="160" height="100" fill="url(#th1)"/><g opacity="0.18" fill="none" stroke="#7b2fff" stroke-width="0.7"><polygon points="30,8 50,19 50,43 30,54 10,43 10,19"/><polygon points="80,8 100,19 100,43 80,54 60,43 60,19"/><polygon points="130,8 150,19 150,43 130,54 110,43 110,19"/><polygon points="55,43 75,54 75,78 55,89 35,78 35,54"/><polygon points="105,43 125,54 125,78 105,89 85,78 85,54"/></g><text x="80" y="37" text-anchor="middle" font-family="monospace" font-size="14" font-weight="700" fill="none" stroke="#7b2fff" stroke-width="0.8">KALI</text><text x="80" y="52" text-anchor="middle" font-family="monospace" font-size="6" fill="#c084fc" letter-spacing="3">LINUX</text></svg>`
-  },
-  {
-    os: "🦜 Parrot OS", name: "Cyber Sky",
-    bg: "#001828",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <linearGradient id="w2bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001828"/><stop offset="55%" stop-color="#002038"/><stop offset="100%" stop-color="#000e18"/></linearGradient>
-        <radialGradient id="w2g1" cx="62%" cy="30%" r="55%"><stop offset="0%" stop-color="#00c8ff" stop-opacity="0.15"/><stop offset="100%" stop-color="#00c8ff" stop-opacity="0"/></radialGradient>
-        <radialGradient id="w2g2" cx="14%" cy="78%" r="40%"><stop offset="0%" stop-color="#00ff9d" stop-opacity="0.08"/><stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/></radialGradient>
-        <filter id="f2"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w2bg)"/>
-      <rect width="1440" height="900" fill="url(#w2g1)"/>
-      <rect width="1440" height="900" fill="url(#w2g2)"/>
-      <!-- Parrot bird -->
-      <g transform="translate(820,55) scale(1.35)" filter="url(#f2)" opacity="0.92">
-        <path d="M178,216 C142,162 70,142 36,178 C16,198 28,232 60,226 C92,220 124,204 154,210 C133,238 112,274 124,310 C136,346 168,334 188,310 Z" fill="#00a8e8" opacity="0.92"/>
-        <path d="M208,212 C244,160 318,142 356,176 C376,196 364,230 330,224 C296,218 262,204 232,210 C254,236 275,272 263,308 C251,344 218,332 198,308 Z" fill="#00a8e8" opacity="0.92"/>
-        <path d="M62,192 Q94,180 126,194" stroke="#7fffff" stroke-width="2" fill="none" opacity="0.5"/>
-        <path d="M332,188 Q358,176 382,192" stroke="#7fffff" stroke-width="2" fill="none" opacity="0.5"/>
-        <ellipse cx="193" cy="285" rx="56" ry="80" fill="#0088bb" opacity="0.95"/>
-        <ellipse cx="193" cy="306" rx="36" ry="55" fill="#00aadd" opacity="0.5"/>
-        <circle cx="193" cy="170" r="46" fill="#007aaa" opacity="0.95"/>
-        <circle cx="207" cy="162" r="13" fill="#001a2e"/>
-        <circle cx="210" cy="159" r="8" fill="#00c8ff"/>
-        <circle cx="212" cy="157" r="3.5" fill="#fff" opacity="0.9"/>
-        <path d="M195,172 L224,182 L195,192 Z" fill="#00e0ff"/>
-        <path d="M188,126 C182,98 165,78 170,56 C175,73 190,84 192,126 Z" fill="#00c8ff" opacity="0.75"/>
-        <path d="M196,122 C198,92 210,72 216,56 C212,75 214,98 204,122 Z" fill="#33ddff" opacity="0.65"/>
-        <path d="M204,124 C216,96 232,80 236,60 C228,78 218,96 210,124 Z" fill="#00c8ff" opacity="0.55"/>
-        <path d="M174,342 C154,376 136,412 126,448" stroke="#0088bb" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
-        <path d="M193,347 L191,454" stroke="#00aadd" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
-        <path d="M212,342 C232,376 250,412 262,448" stroke="#0088bb" stroke-width="7" fill="none" stroke-linecap="round" opacity="0.75"/>
-      </g>
-      <!-- Perspective grid -->
-      <g opacity="0.1" stroke="#00c8ff" stroke-width="0.7">
-        <line x1="720" y1="530" x2="0" y2="900"/><line x1="720" y1="530" x2="288" y2="900"/><line x1="720" y1="530" x2="576" y2="900"/><line x1="720" y1="530" x2="720" y2="900"/><line x1="720" y1="530" x2="864" y2="900"/><line x1="720" y1="530" x2="1152" y2="900"/><line x1="720" y1="530" x2="1440" y2="900"/>
-        <line x1="0" y1="900" x2="1440" y2="900"/><line x1="80" y1="765" x2="1360" y2="765"/><line x1="220" y1="665" x2="1220" y2="665"/><line x1="350" y1="600" x2="1090" y2="600"/><line x1="460" y1="558" x2="980" y2="558"/>
-      </g>
-      <g opacity="0.5">${makeParticles(30,'#00c8ff',null)}</g>
-      <rect x="0" y="-2" width="1440" height="2" fill="#00c8ff" opacity="0"><animate attributeName="y" values="-2;902" dur="9s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.08;0" dur="9s" repeatCount="indefinite"/></rect>
-      <g transform="translate(56,820)" opacity="0.48"><text font-family="Fira Code,monospace" font-size="20" font-weight="700" fill="#00c8ff" letter-spacing="3">Parrot OS</text><text y="20" font-family="Fira Code,monospace" font-size="10" fill="#00ff9d" letter-spacing="2">Security • Privacy • Freedom</text></g>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#001828"/><stop offset="100%" stop-color="#000e18"/></linearGradient></defs><rect width="160" height="100" fill="url(#th2)"/><path d="M80,8 C74,3 66,2 62,8 C58,15 64,24 73,22 C64,32 56,44 60,56 C64,68 76,64 82,54 C88,64 100,68 104,56 C108,44 100,32 91,22 C100,24 106,15 102,8 C98,2 90,3 84,8 C82,3 80,1 80,8 Z" fill="#00c8ff" opacity="0.9"/><path d="M0,100 L0,72 L28,56 L56,68 L84,44 L112,60 L140,36 L160,48 L160,100 Z" fill="#001828" opacity="0.7"/><text x="8" y="96" font-family="monospace" font-size="7" fill="#00c8ff" opacity="0.8">Parrot OS</text></svg>`
-  },
-  {
-    os: "🦜 Parrot OS", name: "Midnight",
-    bg: "#000c18",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <linearGradient id="w3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000810"/><stop offset="55%" stop-color="#000c18"/><stop offset="100%" stop-color="#000408"/></linearGradient>
-        <radialGradient id="w3g" cx="50%" cy="46%" r="58%"><stop offset="0%" stop-color="#003355" stop-opacity="0.48"/><stop offset="100%" stop-color="#003355" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w3bg)"/>
-      <rect width="1440" height="900" fill="url(#w3g)"/>
-      <!-- Wireframe parrot -->
-      <g transform="translate(460,60) scale(1.1)" fill="none" stroke="#00c8ff" stroke-width="1.3" opacity="0.22">
-        <path d="M230,340 C210,280 188,210 204,150 C215,110 254,90 282,110"/>
-        <path d="M176,212 C142,150 68,128 34,164 C14,184 26,220 60,214 C92,208 124,192 156,198"/>
-        <path d="M298,202 C336,142 412,124 450,160 C470,180 458,216 422,210 C388,204 354,188 322,194"/>
-        <ellipse cx="232" cy="275" rx="58" ry="85"/>
-        <circle cx="232" cy="152" r="50"/>
-        <path d="M168,350 C146,388 126,428 116,468"/>
-        <path d="M232,356 L230,472"/>
-        <path d="M296,350 C318,388 338,428 350,468"/>
-      </g>
-      <!-- Parrot logo centered -->
-      <g transform="translate(558,258)">
-        <path d="M162,144 C150,106 130,72 140,36 C146,15 164,6 178,18 C188,26 190,46 180,58 C196,42 208,20 197,0 C216,14 218,46 200,68 C220,52 232,28 224,6 C248,30 244,66 222,82 C244,68 256,44 248,18 C268,44 260,84 236,98 C258,88 270,62 261,34 C278,62 270,102 244,115 Z" fill="#00c8ff" opacity="0.85"/>
-        <text y="192" font-family="Fira Code,monospace" font-size="44" font-weight="700" fill="none" stroke="#00c8ff" stroke-width="1" letter-spacing="2" text-anchor="middle" x="148">Parrot OS</text>
-        <text x="148" y="224" text-anchor="middle" font-family="Fira Code,monospace" font-size="13" fill="#00ff9d" letter-spacing="5" opacity="0.6">SECURITY EDITION</text>
-      </g>
-      <!-- Ripple rings -->
-      <g transform="translate(720,460)" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.07">
-        <circle r="100"/><circle r="180"/><circle r="260"/><circle r="340"/><circle r="420"/>
-      </g>
-      <g opacity="0.55">${makeParticles(55,'#00c8ff',null)}</g>
-      <text x="1400" y="876" text-anchor="end" font-family="Fira Code,monospace" font-size="10" fill="#00c8ff" opacity="0.2">parrotsec.org</text>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#000810"/><stop offset="100%" stop-color="#000c18"/></linearGradient></defs><rect width="160" height="100" fill="url(#th3)"/><circle cx="80" cy="48" r="32" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><circle cx="80" cy="48" r="22" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><circle cx="80" cy="48" r="12" fill="none" stroke="#00c8ff" stroke-width="0.6" opacity="0.2"/><path d="M80,18 C74,12 65,11 60,18 C55,26 62,36 71,34 C64,44 58,56 63,68 C68,80 80,76 85,64 C90,76 102,80 107,68 C112,56 106,44 99,34 C108,36 115,26 110,18 C105,11 96,12 90,18 C87,12 83,9 80,18 Z" fill="#00c8ff" opacity="0.8"/><text x="80" y="95" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#00c8ff">Parrot OS</text></svg>`
-  },
-  {
-    os: "🐉 Kali Linux", name: "NetHunter",
-    bg: "#080010",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <linearGradient id="w4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a0012"/><stop offset="100%" stop-color="#000008"/></linearGradient>
-        <radialGradient id="w4g" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#2d006f" stop-opacity="0.48"/><stop offset="100%" stop-color="#2d006f" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w4bg)"/>
-      <rect width="1440" height="900" fill="url(#w4g)"/>
-      <!-- PCB traces -->
-      <g stroke="#7b2fff" stroke-width="1.1" fill="none" opacity="0.2">
-        <polyline points="0,140 210,140 210,240 420,240 420,90 720,90"/>
-        <polyline points="720,90 720,280 940,280 940,180 1240,180 1240,380 1440,380"/>
-        <polyline points="0,580 310,580 310,480 620,480 620,680 940,680 940,530 1240,530 1240,680 1440,680"/>
-        <polyline points="0,380 160,380 160,330 370,330 370,430 580,430 580,330 840,330"/>
-        <circle cx="210" cy="140" r="5" fill="#7b2fff"/><circle cx="420" cy="240" r="5" fill="#7b2fff"/>
-        <circle cx="720" cy="90" r="5" fill="#7b2fff"/><circle cx="940" cy="280" r="5" fill="#7b2fff"/>
-        <circle cx="310" cy="580" r="5" fill="#7b2fff"/><circle cx="620" cy="480" r="5" fill="#7b2fff"/>
-        <circle cx="160" cy="380" r="5" fill="#7b2fff"/><circle cx="580" cy="430" r="5" fill="#7b2fff"/>
-      </g>
-      <!-- Shield with dragon -->
-      <g transform="translate(562,100) opacity(0.9)">
-        <path d="M158,16 L294,16 L316,188 L158,274 L0,188 L22,16 Z" fill="#1a004f" stroke="#7b2fff" stroke-width="2.2" opacity="0.92"/>
-        <path d="M158,38 L272,38 L292,178 L158,252 L24,178 L44,38 Z" fill="#0d002e" stroke="#9b4fff" stroke-width="1.2" opacity="0.7"/>
-        <path d="M158,76 C136,54 112,46 104,66 C97,80 106,96 120,92 C109,106 98,122 104,142 C110,162 126,158 138,144 C132,166 136,190 150,198 C164,206 178,192 180,174 C182,192 190,206 204,200 C218,194 220,172 212,152 C224,164 236,168 244,160 C252,152 248,136 238,122 C252,126 264,118 264,104 C264,90 250,82 238,88 C236,72 220,64 206,72 C198,56 176,52 158,76 Z" fill="#7b2fff" opacity="0.92"/>
-        <circle cx="148" cy="108" r="9" fill="#ff3355" opacity="0.92"/>
-        <circle cx="150" cy="106" r="4.5" fill="#ffaaaa"/>
-        <text x="158" y="248" text-anchor="middle" font-family="Fira Code,monospace" font-size="15" font-weight="700" fill="#c084fc" letter-spacing="2">NETHUNTER</text>
-      </g>
-      <rect x="0" y="-2" width="1440" height="2" fill="#7b2fff" opacity="0"><animate attributeName="y" values="-2;902" dur="5.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0.14;0" dur="5.5s" repeatCount="indefinite"/></rect>
-      <g opacity="0.45">${makeParticles(38,'#c084fc',null)}</g>
-      <g transform="translate(56,818)" opacity="0.44"><text font-family="Fira Code,monospace" font-size="18" font-weight="700" fill="#7b2fff" letter-spacing="3">KALI NETHUNTER</text><text y="19" font-family="Fira Code,monospace" font-size="9" fill="#c084fc" letter-spacing="2">Mobile Penetration Testing Platform</text></g>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a0012"/><stop offset="100%" stop-color="#000008"/></linearGradient></defs><rect width="160" height="100" fill="url(#th4)"/><g stroke="#7b2fff" stroke-width="0.7" fill="none" opacity="0.28"><polyline points="0,20 32,20 32,40 62,40 62,14 100,14"/><polyline points="0,68 40,68 40,54 78,54 78,74 120,74 120,58 160,58"/></g><path d="M80,12 L112,12 L116,55 L80,74 L44,55 L48,12 Z" fill="#1a004f" stroke="#7b2fff" stroke-width="0.8" opacity="0.9"/><path d="M80,30 C72,22 62,20 58,28 C54,36 60,46 68,44 C62,52 56,62 60,72 C64,82 76,78 80,66 C84,78 96,82 100,72 C104,62 98,52 92,44 C100,46 106,36 102,28 C98,20 88,22 80,30 Z" fill="#7b2fff" opacity="0.88"/><text x="80" y="92" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#c084fc">NETHUNTER</text></svg>`
-  },
-  {
-    os: "🦜 Parrot OS", name: "Home Edition",
-    bg: "#001220",
-    svg: () => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
-      <defs>
-        <linearGradient id="w5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#001422"/><stop offset="60%" stop-color="#002030"/><stop offset="100%" stop-color="#000810"/></linearGradient>
-        <radialGradient id="w5g1" cx="40%" cy="40%" r="60%"><stop offset="0%" stop-color="#004466" stop-opacity="0.32"/><stop offset="100%" stop-color="#004466" stop-opacity="0"/></radialGradient>
-        <radialGradient id="w5g2" cx="76%" cy="72%" r="44%"><stop offset="0%" stop-color="#00ff9d" stop-opacity="0.07"/><stop offset="100%" stop-color="#00ff9d" stop-opacity="0"/></radialGradient>
-        <filter id="f5"><feGaussianBlur stdDeviation="10" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <rect width="1440" height="900" fill="url(#w5bg)"/>
-      <rect width="1440" height="900" fill="url(#w5g1)"/>
-      <rect width="1440" height="900" fill="url(#w5g2)"/>
-      <!-- Mountain landscape -->
-      <path d="M0,900 L0,580 L220,380 L440,520 L640,300 L840,480 L1040,260 L1240,460 L1440,340 L1440,900 Z" fill="#001828" opacity="0.75"/>
-      <path d="M0,900 L0,700 L320,535 L530,645 L730,435 L940,595 L1140,415 L1360,570 L1440,490 L1440,900 Z" fill="#001220" opacity="0.88"/>
-      <!-- Stars in sky -->
-      <g opacity="0.5">${makeParticles(65,'#ffffff',460)}</g>
-      <!-- Parrot -->
-      <g transform="translate(590,30) scale(1.15)" filter="url(#f5)" opacity="0.92">
-        <path d="M176,210 C140,158 68,138 34,174 C14,194 26,228 58,222 C90,216 122,200 152,206 C130,234 108,270 120,308 C132,346 165,334 185,308 Z" fill="#00a8e8" opacity="0.92"/>
-        <path d="M212,206 C248,156 322,138 360,172 C380,192 368,226 332,220 C296,214 262,200 230,205 C252,230 274,265 262,303 C250,341 216,330 196,304 Z" fill="#00a8e8" opacity="0.92"/>
-        <path d="M62,188 Q96,176 128,190" stroke="#7fffff" stroke-width="1.8" fill="none" opacity="0.45"/>
-        <path d="M336,184 Q362,172 386,188" stroke="#7fffff" stroke-width="1.8" fill="none" opacity="0.45"/>
-        <ellipse cx="194" cy="280" rx="55" ry="78" fill="#0088bb" opacity="0.95"/>
-        <ellipse cx="194" cy="300" rx="35" ry="54" fill="#00aadd" opacity="0.5"/>
-        <circle cx="194" cy="166" r="46" fill="#007aaa" opacity="0.95"/>
-        <circle cx="208" cy="158" r="13" fill="#001a2e"/>
-        <circle cx="211" cy="155" r="8" fill="#00c8ff"/>
-        <circle cx="213" cy="153" r="3.5" fill="#fff" opacity="0.9"/>
-        <path d="M196,168 L226,178 L196,188 Z" fill="#00e0ff"/>
-        <path d="M188,122 C182,94 165,74 170,52 C175,69 190,80 192,122 Z" fill="#00c8ff" opacity="0.72"/>
-        <path d="M196,118 C198,88 210,68 216,52 C212,71 214,94 204,118 Z" fill="#33ddff" opacity="0.62"/>
-        <path d="M204,120 C216,92 232,76 236,56 C228,74 218,92 210,120 Z" fill="#00c8ff" opacity="0.52"/>
-        <path d="M174,338 C153,372 135,408 125,444" stroke="#0088bb" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
-        <path d="M194,343 L192,450" stroke="#00aadd" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
-        <path d="M214,338 C235,372 253,408 265,444" stroke="#0088bb" stroke-width="7.5" fill="none" stroke-linecap="round" opacity="0.75"/>
-      </g>
-      <g transform="translate(56,828)" opacity="0.48"><text font-family="Fira Code,monospace" font-size="18" font-weight="700" fill="#00c8ff" letter-spacing="3">Parrot Home</text><text y="18" font-family="Fira Code,monospace" font-size="9" fill="#00ff9d" letter-spacing="1.5">Everyday computing, secured.</text></g>
-    </svg>`,
-    thumb: `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="th5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#001422"/><stop offset="100%" stop-color="#000810"/></linearGradient></defs><rect width="160" height="100" fill="url(#th5)"/><path d="M0,100 L0,68 L24,50 L48,62 L72,36 L96,54 L120,28 L148,48 L160,40 L160,100 Z" fill="#001828" opacity="0.8"/><path d="M80,8 C74,3 66,2 62,8 C58,15 64,24 73,22 C64,32 56,44 60,56 C64,68 76,64 82,54 C88,64 100,68 104,56 C108,44 100,32 91,22 C100,24 106,15 102,8 C98,2 90,3 84,8 C82,3 80,1 80,8 Z" fill="#00c8ff" opacity="0.88"/><text x="8" y="95" font-family="monospace" font-size="6.5" fill="#00c8ff" opacity="0.75">Parrot Home</text></svg>`
-  }
+// ══ THEME CUSTOMIZER ══════════════════════════════════════
+const PRESETS = [
+  {name:"Hacker",    hex:"#00ff9d"},
+  {name:"Cyber",     hex:"#00c8ff"},
+  {name:"Purple",    hex:"#b06fff"},
+  {name:"Red",       hex:"#ff3355"},
+  {name:"Amber",     hex:"#febc2e"},
+  {name:"Orange",    hex:"#ff6d00"},
+  {name:"Pink",      hex:"#ff5fa0"},
+  {name:"White",     hex:"#e0e0e0"},
 ];
 
-let currentWallpaperIdx = 0;
+let _wheelHue = 150, _wheelSat = 1.0, _wheelBrt = 1.0;
+let _draggingWheel = false;
 
-function applyWallpaper(idx) {
-  const wp = wallpapers[idx];
-  // Swap the SVG wallpaper element
-  const old = document.getElementById("desktopWallpaper");
-  if (old) {
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = wp.svg();
-    const newSvg = wrapper.firstElementChild;
-    newSvg.id = "desktopWallpaper";
-    newSvg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;";
-    old.replaceWith(newSvg);
+function hexToHSB(hex) {
+  let r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
+  let max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+  let h=0, s=max===0?0:d/max, v=max;
+  if(d!==0){
+    if(max===r) h=((g-b)/d)%6;
+    else if(max===g) h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h=Math.round(h*60); if(h<0)h+=360;
   }
-  document.getElementById("desktop").style.background = wp.bg;
-  currentWallpaperIdx = idx;
-  document.querySelectorAll(".wp-item").forEach((el, i) => el.classList.toggle("selected", i === idx));
-  showNotif("Wallpaper", `Applied: ${wp.name}`);
+  return {h,s,v};
+}
+
+function hsbToHex(h,s,v) {
+  let c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
+  let r,g,b;
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  r=Math.round((r+m)*255); g=Math.round((g+m)*255); b=Math.round((b+m)*255);
+  return "#"+r.toString(16).padStart(2,"0")+g.toString(16).padStart(2,"0")+b.toString(16).padStart(2,"0");
+}
+
+function drawWheel(canvas) {
+  const ctx = canvas.getContext("2d");
+  const cx = canvas.width/2, cy = canvas.height/2, r = cx-2;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let angle=0; angle<360; angle++){
+    const startA = (angle-1)*Math.PI/180, endA = (angle+1)*Math.PI/180;
+    const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    grad.addColorStop(0,`hsl(${angle},0%,${_wheelBrt*100}%)`);
+    grad.addColorStop(1,`hsl(${angle},${_wheelSat*100}%,${_wheelBrt*50}%)`);
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,startA,endA);
+    ctx.closePath();
+    ctx.fillStyle=grad;
+    ctx.fill();
+  }
+  // Center white dot
+  const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,r*0.18);
+  cg.addColorStop(0,`rgba(255,255,255,${_wheelBrt})`);
+  cg.addColorStop(1,"rgba(255,255,255,0)");
+  ctx.beginPath();ctx.arc(cx,cy,r*0.18,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
+}
+
+function wheelAngleToXY(hue, sat, canvas) {
+  const cx=canvas.width/2, cy=canvas.height/2, r=(cx-2)*sat;
+  const a=(hue-90)*Math.PI/180;
+  return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)};
+}
+
+function xyToHueSat(x,y,canvas) {
+  const cx=canvas.width/2, cy=canvas.height/2, r=cx-2;
+  const dx=x-cx, dy=y-cy;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const sat=Math.min(1,dist/r);
+  let hue=Math.atan2(dy,dx)*180/Math.PI+90;
+  if(hue<0)hue+=360;
+  return {hue:Math.round(hue)%360, sat};
+}
+
+function updateWheelCursor() {
+  const canvas=document.getElementById("themeWheel");
+  if(!canvas) return;
+  const pos=wheelAngleToXY(_wheelHue,_wheelSat,canvas);
+  const cur=document.getElementById("wheelCursor");
+  cur.style.left=pos.x+"px"; cur.style.top=pos.y+"px";
+  const hex=hsbToHex(_wheelHue,_wheelSat,_wheelBrt);
+  cur.style.background=hex;
+  updateHexPreview(hex);
+}
+
+function updateHexPreview(hex) {
+  const hi=document.getElementById("hexInput");
+  const ps=document.getElementById("previewSwatch");
+  if(hi) hi.value=hex;
+  if(ps) ps.style.background=hex;
+  // Update slider thumb accent
+  document.querySelectorAll(".theme-slider").forEach(s=>s.style.setProperty("--sl-color",hex));
+}
+
+function initThemeWheel() {
+  const canvas=document.getElementById("themeWheel");
+  if(!canvas) return;
+  drawWheel(canvas);
+  updateWheelCursor();
+
+  function handleWheel(e) {
+    const rect=canvas.getBoundingClientRect();
+    const x=e.clientX-rect.left, y=e.clientY-rect.top;
+    const {hue,sat}=xyToHueSat(x,y,canvas);
+    _wheelHue=hue; _wheelSat=sat;
+    updateWheelCursor();
+  }
+  canvas.addEventListener("mousedown",(e)=>{_draggingWheel=true;handleWheel(e);});
+  document.addEventListener("mousemove",(e)=>{if(_draggingWheel)handleWheel(e);});
+  document.addEventListener("mouseup",()=>_draggingWheel=false);
+  // Touch
+  canvas.addEventListener("touchstart",(e)=>{e.preventDefault();_draggingWheel=true;const t=e.touches[0];const rect=canvas.getBoundingClientRect();const x=t.clientX-rect.left,y=t.clientY-rect.top;const {hue,sat}=xyToHueSat(x,y,canvas);_wheelHue=hue;_wheelSat=sat;updateWheelCursor();},{passive:false});
+  canvas.addEventListener("touchmove",(e)=>{e.preventDefault();if(!_draggingWheel)return;const t=e.touches[0];const rect=canvas.getBoundingClientRect();const x=t.clientX-rect.left,y=t.clientY-rect.top;const {hue,sat}=xyToHueSat(x,y,canvas);_wheelHue=hue;_wheelSat=sat;updateWheelCursor();},{passive:false});
+
+  // Brightness slider
+  const brtS=document.getElementById("brtSlider");
+  if(brtS){
+    brtS.addEventListener("input",()=>{
+      _wheelBrt=brtS.value/100;
+      document.getElementById("brtVal").textContent=brtS.value+"%";
+      drawWheel(canvas);updateWheelCursor();
+    });
+  }
+  // Saturation slider
+  const satS=document.getElementById("satSlider");
+  if(satS){
+    satS.addEventListener("input",()=>{
+      _wheelSat=satS.value/100;
+      document.getElementById("satVal").textContent=satS.value+"%";
+      updateWheelCursor();
+    });
+  }
+  // Hex input
+  const hexI=document.getElementById("hexInput");
+  if(hexI){
+    hexI.addEventListener("input",()=>{
+      const v=hexI.value;
+      if(/^#[0-9a-fA-F]{6}$/.test(v)){
+        const {h,s,v:bv}=hexToHSB(v);
+        _wheelHue=h;_wheelSat=s;_wheelBrt=bv;
+        if(brtS){brtS.value=Math.round(bv*100);document.getElementById("brtVal").textContent=Math.round(bv*100)+"%";}
+        if(satS){satS.value=Math.round(s*100);document.getElementById("satVal").textContent=Math.round(s*100)+"%";}
+        drawWheel(canvas);updateWheelCursor();
+        document.getElementById("previewSwatch").style.background=v;
+      }
+    });
+    hexI.addEventListener("keydown",(e)=>{if(e.key==="Enter")applyCustomTheme();});
+  }
+}
+
+function buildPresetGrid() {
+  const grid=document.getElementById("presetGrid");
+  if(!grid) return;
+  grid.innerHTML="";
+  PRESETS.forEach(p=>{
+    const btn=document.createElement("div");
+    btn.className="preset-btn"+(p.hex==="#00ff9d"?" active":"");
+    btn.innerHTML=`<div class="preset-swatch" style="background:${p.hex};box-shadow:0 0 10px ${p.hex};color:${p.hex}"></div><div class="preset-name">${p.name}</div>`;
+    btn.onclick=()=>{
+      document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const {h,s,v}=hexToHSB(p.hex);
+      _wheelHue=h;_wheelSat=s;_wheelBrt=v;
+      const brtS=document.getElementById("brtSlider");
+      const satS=document.getElementById("satSlider");
+      if(brtS){brtS.value=Math.round(v*100);document.getElementById("brtVal").textContent=Math.round(v*100)+"%";}
+      if(satS){satS.value=Math.round(s*100);document.getElementById("satVal").textContent=Math.round(s*100)+"%";}
+      const canvas=document.getElementById("themeWheel");
+      drawWheel(canvas);updateWheelCursor();
+      applyThemeColor(p.hex);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function hexToRgb(hex){
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return r+","+g+","+b;
+}
+function applyThemeColor(hex) {
+  const root=document.documentElement;
+  // Core accent
+  root.style.setProperty("--accent", hex);
+  root.style.setProperty("--accent2", hex);
+  root.style.setProperty("--accent-rgb", hexToRgb(hex));
+  // Window shadow updates automatically via --accent-rgb
+  // Border tint for focused windows - handled by rgba(var(--accent-rgb))
+  // Update slider thumb color
+  const styleId="theme-dynamic-style";
+  let el=document.getElementById(styleId);
+  if(!el){el=document.createElement("style");el.id=styleId;document.head.appendChild(el);}
+  el.textContent=`
+    .theme-slider::-webkit-slider-thumb{background:${hex}!important;box-shadow:0 0 6px ${hex}!important;}
+    .theme-slider::-moz-range-thumb{background:${hex}!important;}
+    .win-resize{background:linear-gradient(135deg,transparent 50%,rgba(var(--accent-rgb),0.3) 50%)!important;}
+    .taskbar-start{background:rgba(var(--accent-rgb),0.1)!important;border:1px solid rgba(var(--accent-rgb),0.3)!important;}
+    .taskbar-start:hover{background:rgba(var(--accent-rgb),0.2)!important;}
+    #startMenu .sm-item:hover{background:rgba(var(--accent-rgb),0.08)!important;color:${hex}!important;}
+    .hk-fill{background:linear-gradient(90deg,${hex},${hex}88)!important;}
+    .hk-sweep,.hack-scan{background:linear-gradient(90deg,transparent,${hex},transparent)!important;box-shadow:0 0 8px ${hex}!important;}
+    .apply-theme-btn{background:${hex}!important;}
+    .preset-btn.active{border-color:${hex}!important;}
+    .about-badge{border-color:rgba(var(--accent-rgb),0.4)!important;color:${hex}!important;}
+    ::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3)!important;}
+  `;
+  showNotif("Theme","Accent → "+hex);
+}
+
+function applyCustomTheme() {
+  const hex=hsbToHex(_wheelHue,_wheelSat,_wheelBrt);
+  document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
+  applyThemeColor(hex);
 }
 
 function buildWallpaperPicker() {
-  const grid = document.getElementById("wpGrid");
-  if (!grid) return;
-  grid.innerHTML = "";
-  wallpapers.forEach((wp, i) => {
-    const div = document.createElement("div");
-    div.className = "wp-item" + (i === 0 ? " selected" : "");
-    div.title = wp.name;
-    div.innerHTML = `${wp.thumb}<div class="wp-label"><span class="wp-os">${wp.os}</span><span class="wp-name">${wp.name}</span></div>`;
-    div.onclick = () => applyWallpaper(i);
-    grid.appendChild(div);
-  });
+  buildPresetGrid();
+  // Delay wheel init until window is visible
+  setTimeout(initThemeWheel, 50);
 }
 
 // ===================== CONTEXT MENU =====================
@@ -1740,7 +1797,7 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
 
 function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
-function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"].forEach(closeWindow);}
+function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake"].forEach(closeWindow);}
 
 // ===================== NOTIFICATIONS =====================
 let notifTimeout;
@@ -1957,6 +2014,365 @@ function triggerAlert(){
   overlay.classList.add("show");
   setTimeout(()=>overlay.classList.remove("show"),7000);
 }
+
+
+// ══ SNAKE GAME ══════════════════════════════════════════════════════════════
+var snakeState={player:"",score:0,hi:0,snake:[],dir:{x:1,y:0},nextDir:{x:1,y:0},
+  food:{x:0,y:0},running:false,paused:false,dead:false,speed:130,tick:null,cols:20,rows:20,cell:16};
+
+var SLB_KEY="snakeLB_v3";
+function snakeGetLb(){try{var d=localStorage.getItem(SLB_KEY);return d?JSON.parse(d):[]}catch(e){return [];}}
+function snakeSaveLb(lb){try{localStorage.setItem(SLB_KEY,JSON.stringify(lb));}catch(e){}}
+function snakeSaveScore(name,score){
+  var lb=snakeGetLb();
+  var ex=lb.find(function(e){return e.name===name;});
+  if(ex){if(score>ex.score)ex.score=score;}else{lb.push({name:name,score:score});}
+  lb.sort(function(a,b){return b.score-a.score;});lb=lb.slice(0,10);snakeSaveLb(lb);return lb;
+}
+
+function startSnakeGame(){
+  var inp=document.getElementById("snakeNameInput");
+  var err=document.getElementById("snakeNameErr");
+  // Strip any non-alphanumeric just in case
+  inp.value=inp.value.replace(/[^a-zA-Z0-9]/g,"");
+  var name=inp.value.trim();
+  if(name.length<2){err.textContent="Min 2 chars required";return;}
+  if(name.length>12){name=name.slice(0,12);inp.value=name;}
+  err.textContent="";
+  snakeState.player=name;
+  var lb=snakeGetLb();var me=lb.find(function(e){return e.name===name;});
+  snakeState.hi=me?me.score:0;
+  document.getElementById("snakePlayerLabel").textContent=name;
+  document.getElementById("snakeHiLabel").textContent=snakeState.hi;
+  document.getElementById("snakeNameModal").style.display="none";
+  document.getElementById("snakeHUD").style.display="flex";
+  document.getElementById("snakeCanvasWrap").style.display="flex";
+  // Show side panel and d-pad
+  var sp=document.getElementById("snakeSidePanel");if(sp)sp.style.display="flex";
+  // Show mobile dpad on touch devices
+  if('ontouchstart' in window){
+    var dp=document.getElementById("snakeDpadBottom");if(dp)dp.style.display="block";
+  }
+  snakeUpdateSidePanel();
+  snakeInit();
+}
+
+function snakeInit(){
+  var st=snakeState;
+  var wrap=document.getElementById("snakeCanvasWrap");
+  var canvas=document.getElementById("snakeCanvas");if(!canvas||!wrap)return;
+  var w=wrap.clientWidth||340, h=wrap.clientHeight||340;
+  // Reserve space for d-pad on mobile
+  var avail=Math.min(w, h);
+  st.cell=Math.max(12,Math.floor(avail/st.cols));
+  canvas.width=st.cell*st.cols;canvas.height=st.cell*st.rows;
+  st.snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  st.dir={x:1,y:0};st.nextDir={x:1,y:0};
+  st.score=0;st.dead=false;st.paused=false;st.speed=130;
+  document.getElementById("snakeScoreLabel").textContent="0";
+  snakePlaceFood();
+  if(st.tick)clearInterval(st.tick);
+  st.running=true;
+  document.getElementById("snakeDeadOverlay").style.display="none";
+  document.getElementById("snakePauseOverlay").style.display="none";
+  st.tick=setInterval(snakeTick,st.speed);
+  requestAnimationFrame(snakeDraw);
+}
+
+function snakePlaceFood(){
+  var st=snakeState,pos;
+  do{pos={x:Math.floor(Math.random()*st.cols),y:Math.floor(Math.random()*st.rows)};}
+  while(st.snake.some(function(s){return s.x===pos.x&&s.y===pos.y;}));
+  st.food=pos;
+}
+
+function snakeTick(){
+  var st=snakeState;if(!st.running||st.paused||st.dead)return;
+  st.dir=st.nextDir;
+  var head={x:st.snake[0].x+st.dir.x,y:st.snake[0].y+st.dir.y};
+  if(head.x<0||head.x>=st.cols||head.y<0||head.y>=st.rows){snakeDie();return;}
+  if(st.snake.some(function(s){return s.x===head.x&&s.y===head.y;})){snakeDie();return;}
+  st.snake.unshift(head);
+  if(head.x===st.food.x&&head.y===st.food.y){
+    st.score+=10;
+    document.getElementById("snakeScoreLabel").textContent=st.score;
+    if(st.score>st.hi){st.hi=st.score;document.getElementById("snakeHiLabel").textContent=st.hi;}
+    snakePlaceFood();
+    if(st.speed>60){st.speed=Math.max(60,st.speed-5);clearInterval(st.tick);st.tick=setInterval(snakeTick,st.speed);}
+  }else{st.snake.pop();}
+}
+
+function snakeRgb(hex){
+  hex=(hex||"#00ff9d").replace(/[^0-9a-fA-F]/g,"");
+  if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+  return parseInt(hex.slice(0,2),16)+","+parseInt(hex.slice(2,4),16)+","+parseInt(hex.slice(4,6),16);
+}
+
+function snakeDraw(){
+  var st=snakeState;
+  var canvas=document.getElementById("snakeCanvas");if(!canvas)return;
+  var ctx=canvas.getContext("2d");
+  var accent=(getComputedStyle(document.documentElement).getPropertyValue("--accent")||"#00ff9d").trim();
+  var rgb=snakeRgb(accent);var c=st.cell;
+  ctx.fillStyle="#000";ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle="rgba(255,255,255,0.03)";ctx.lineWidth=0.5;
+  for(var i=0;i<=st.cols;i++){ctx.beginPath();ctx.moveTo(i*c,0);ctx.lineTo(i*c,canvas.height);ctx.stroke();}
+  for(var j=0;j<=st.rows;j++){ctx.beginPath();ctx.moveTo(0,j*c);ctx.lineTo(canvas.width,j*c);ctx.stroke();}
+  // Food pulse
+  var pulse=0.6+0.4*Math.sin(Date.now()/300);
+  ctx.save();ctx.shadowColor=accent;ctx.shadowBlur=12*pulse;
+  ctx.fillStyle=accent;ctx.beginPath();ctx.arc(st.food.x*c+c/2,st.food.y*c+c/2,c*0.38,0,Math.PI*2);ctx.fill();ctx.restore();
+  // Snake segments
+  for(var i=0;i<st.snake.length;i++){
+    var seg=st.snake[i];var frac=1-i/st.snake.length;
+    ctx.save();if(i===0){ctx.shadowColor=accent;ctx.shadowBlur=14;}
+    ctx.fillStyle=i===0?accent:"rgba("+rgb+","+(0.2+0.8*frac)+")";
+    var pad=i===0?1:2,rr=c*0.18;
+    var x=seg.x*c+pad,y=seg.y*c+pad,w=c-pad*2,h=c-pad*2;
+    ctx.beginPath();ctx.moveTo(x+rr,y);ctx.lineTo(x+w-rr,y);ctx.arcTo(x+w,y,x+w,y+rr,rr);
+    ctx.lineTo(x+w,y+h-rr);ctx.arcTo(x+w,y+h,x+w-rr,y+h,rr);ctx.lineTo(x+rr,y+h);ctx.arcTo(x,y+h,x,y+h-rr,rr);
+    ctx.lineTo(x,y+rr);ctx.arcTo(x,y,x+rr,y,rr);ctx.closePath();ctx.fill();ctx.restore();
+    if(i===0){
+      ctx.fillStyle="#000";
+      var ex1={x:seg.x*c+c/2+st.dir.y*c*0.22+st.dir.x*c*0.25,y:seg.y*c+c/2-st.dir.x*c*0.22+st.dir.y*c*0.25};
+      var ex2={x:seg.x*c+c/2-st.dir.y*c*0.22+st.dir.x*c*0.25,y:seg.y*c+c/2+st.dir.x*c*0.22+st.dir.y*c*0.25};
+      ctx.beginPath();ctx.arc(ex1.x,ex1.y,c*0.09,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(ex2.x,ex2.y,c*0.09,0,Math.PI*2);ctx.fill();
+    }
+  }
+  if(st.running&&!st.dead)requestAnimationFrame(snakeDraw);
+}
+
+function snakeDie(){
+  var st=snakeState;st.dead=true;st.running=false;clearInterval(st.tick);
+  snakeSaveScore(st.player,st.score);
+  snakeUpdateSidePanel();
+  var newBest=st.score>0&&st.score===st.hi;
+  document.getElementById("snakeFinalScore").textContent="Score: "+st.score+(newBest?" 🏆 NEW BEST!":"");
+  document.getElementById("snakeDeadOverlay").style.display="flex";
+  var canvas=document.getElementById("snakeCanvas");
+  if(canvas){var ctx=canvas.getContext("2d");ctx.fillStyle="rgba(255,51,85,0.14)";ctx.fillRect(0,0,canvas.width,canvas.height);}
+}
+
+function snakeUpdateSidePanel(){
+  var list=document.getElementById("snakeSideLbList");if(!list)return;
+  var lb=snakeGetLb();
+  if(!lb.length){list.innerHTML='<div style="color:var(--muted);font-size:0.62rem;padding:12px 8px;text-align:center;">No scores yet</div>';return;}
+  var medals=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
+  list.innerHTML=lb.map(function(e,i){
+    var me=e.name===snakeState.player;
+    return '<div style="padding:7px 8px;border-bottom:1px solid #0f0f0f;display:flex;flex-direction:column;gap:1px;'+(me?"background:rgba(var(--accent-rgb),0.06);":"")+'">'+
+      '<div style="display:flex;align-items:center;gap:5px;">'+
+        '<span style="font-size:'+(i<3?"0.85rem":"0.68rem")+';width:18px;text-align:center;">'+(medals[i]||("#"+(i+1)))+'</span>'+
+        '<span style="font-size:0.7rem;color:'+(me?"var(--accent)":"var(--text)")+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+e.name+'</span>'+
+      '</div>'+
+      '<div style="text-align:right;font-size:0.75rem;color:var(--accent);font-weight:700;padding-right:2px;">'+e.score+'</div>'+
+    '</div>';
+  }).join("");
+}
+
+function snakeRetry(){document.getElementById("snakeDeadOverlay").style.display="none";snakeInit();}
+function snakeChangeUser(){
+  var st=snakeState;if(st.tick)clearInterval(st.tick);st.running=false;
+  document.getElementById("snakeDeadOverlay").style.display="none";
+  document.getElementById("snakeCanvasWrap").style.display="none";
+  document.getElementById("snakeHUD").style.display="none";
+  document.getElementById("snakeNameInput").value="";
+  document.getElementById("snakeNameErr").textContent="";
+  document.getElementById("snakeNameModal").style.display="flex";
+  var dp=document.getElementById("snakeDpadBottom");if(dp)dp.style.display="none";
+}
+function snakeTogglePause(){
+  var st=snakeState;
+  if(!st.running&&!st.paused)return;
+  st.paused=!st.paused;
+  document.getElementById("snakePauseOverlay").style.display=st.paused?"flex":"none";
+}
+function snakeMobileDir(x,y){
+  if(x===0&&y===0){snakeTogglePause();return;}
+  var d=snakeState.nextDir;
+  if(x!==0&&d.x!==0)return;
+  if(y!==0&&d.y!==0)return;
+  snakeState.nextDir={x:x,y:y};
+}
+
+// Keyboard — skip entirely if any input/textarea is focused
+window.addEventListener("keydown",function(e){
+  var win=document.getElementById("win-snake");
+  if(!win||win.style.display==="none")return;
+  // Don't hijack keys when user is typing in an input
+  if(document.activeElement&&(document.activeElement.tagName==="INPUT"||document.activeElement.tagName==="TEXTAREA"))return;
+  var st=snakeState;var d=st.nextDir;
+  if(e.key==="ArrowUp"||e.key==="w"||e.key==="W"){if(d.y===0){st.nextDir={x:0,y:-1};}e.preventDefault();}
+  else if(e.key==="ArrowDown"||e.key==="s"||e.key==="S"){if(d.y===0){st.nextDir={x:0,y:1};}e.preventDefault();}
+  else if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A"){if(d.x===0){st.nextDir={x:-1,y:0};}e.preventDefault();}
+  else if(e.key==="ArrowRight"||e.key==="d"||e.key==="D"){if(d.x===0){st.nextDir={x:1,y:0};}e.preventDefault();}
+  else if(e.key==="p"||e.key==="P"){snakeTogglePause();}
+});
+// ══ END SNAKE ════════════════════════════════════════════════════════════════
+
+// ══ TOUCH & MOBILE ═══════════════════════════════════════════════════════════
+// Touch drag for windows
+function startDragTouch(e,winId){
+  if(e.target.classList.contains("win-dot"))return;
+  var win=document.getElementById(winId);
+  if(!win||win.classList.contains("maximized"))return;
+  var t=e.touches[0];
+  dragState={winId:winId,startX:t.clientX,startY:t.clientY,
+    origLeft:parseInt(win.style.left)||0,origTop:parseInt(win.style.top)||0};
+  document.addEventListener("touchmove",onDragTouch,{passive:false});
+  document.addEventListener("touchend",stopDragTouch);
+  e.preventDefault();
+}
+function onDragTouch(e){
+  if(!dragState)return;
+  var win=document.getElementById(dragState.winId);
+  var t=e.touches[0];
+  win.style.left=(dragState.origLeft+(t.clientX-dragState.startX))+"px";
+  win.style.top=Math.max(0,dragState.origTop+(t.clientY-dragState.startY))+"px";
+  e.preventDefault();
+}
+function stopDragTouch(){
+  dragState=null;
+  document.removeEventListener("touchmove",onDragTouch);
+  document.removeEventListener("touchend",stopDragTouch);
+}
+
+// Touch resize for windows
+function startResizeTouch(e,winId){
+  var win=document.getElementById(winId);
+  var t=e.touches[0];
+  resizeState={winId:winId,startX:t.clientX,startY:t.clientY,
+    origW:win.offsetWidth,origH:win.offsetHeight};
+  document.addEventListener("touchmove",onResizeTouch,{passive:false});
+  document.addEventListener("touchend",stopResizeTouch);
+  e.preventDefault();e.stopPropagation();
+}
+function onResizeTouch(e){
+  if(!resizeState)return;
+  var win=document.getElementById(resizeState.winId);
+  var t=e.touches[0];
+  win.style.width=Math.max(280,resizeState.origW+(t.clientX-resizeState.startX))+"px";
+  win.style.height=Math.max(180,resizeState.origH+(t.clientY-resizeState.startY))+"px";
+  e.preventDefault();
+}
+function stopResizeTouch(){
+  resizeState=null;
+  document.removeEventListener("touchmove",onResizeTouch);
+  document.removeEventListener("touchend",stopResizeTouch);
+}
+
+// Single-tap icons on mobile
+function iconTap(e,name){
+  e.preventDefault();
+  openWindow(name);
+}
+// ══ END TOUCH ════════════════════════════════════════════════════════════════
+
 </script>
+
+<!-- Snake Game Window -->
+<div class="window" id="win-snake" style="width:720px;height:480px;top:50px;left:100px;display:none;" data-win="snake">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-snake')" ontouchstart="startDragTouch(event,'win-snake')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('snake')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('snake')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('snake')"></div>
+    </div>
+    <div class="win-title">🐍 snake.exe</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body" style="background:#000;display:flex;flex-direction:row;position:relative;overflow:hidden;">
+
+    <!-- LEFT: Game area -->
+    <div style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
+
+      <!-- Name modal -->
+      <div id="snakeNameModal" style="position:absolute;inset:0;background:rgba(0,0,0,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;padding:24px;">
+        <div style="font-size:2.5rem;filter:drop-shadow(0 0 20px var(--accent));">🐍</div>
+        <div style="font-size:1.2rem;color:var(--accent);font-weight:700;letter-spacing:0.12em;">SNAKE</div>
+        <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.16em;">ENTER YOUR CALLSIGN</div>
+        <input id="snakeNameInput" type="text" maxlength="12" placeholder="player01" autocomplete="off" spellcheck="false"
+          oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')"
+          onkeydown="if(event.key==='Enter')startSnakeGame()"
+          style="background:rgba(var(--accent-rgb),0.06);border:1px solid var(--accent);border-radius:6px;
+                 padding:10px 16px;font-family:inherit;font-size:1rem;color:var(--accent);
+                 outline:none;text-align:center;width:190px;caret-color:var(--accent);">
+        <div id="snakeNameErr" style="font-size:0.63rem;color:var(--danger);min-height:14px;text-align:center;"></div>
+        <button onclick="startSnakeGame()"
+          style="background:var(--accent);color:#000;border:none;border-radius:6px;
+                 padding:10px 28px;font-family:inherit;font-size:0.82rem;font-weight:700;
+                 cursor:pointer;letter-spacing:0.08em;">▶ START</button>
+        <div style="font-size:0.6rem;color:var(--muted);text-align:center;line-height:2;">
+          Arrow Keys / WASD · P = Pause<br>
+          <span style="color:rgba(var(--accent-rgb),0.5);">Only letters (a-z) and numbers (0-9)</span>
+        </div>
+      </div>
+
+      <!-- HUD -->
+      <div id="snakeHUD" style="display:none;justify-content:space-between;align-items:center;padding:6px 12px;border-bottom:1px solid #151515;flex-shrink:0;font-size:0.67rem;">
+        <span style="color:var(--muted);">👤 <span id="snakePlayerLabel" style="color:var(--accent);font-weight:700;"></span></span>
+        <span style="color:var(--muted);">SCORE <span id="snakeScoreLabel" style="color:var(--accent);font-weight:700;">0</span></span>
+        <span style="color:var(--muted);">BEST <span id="snakeHiLabel" style="color:var(--accent);">0</span></span>
+      </div>
+
+      <!-- Canvas -->
+      <div id="snakeCanvasWrap" style="display:none;flex:1;align-items:center;justify-content:center;background:#000;position:relative;">
+        <canvas id="snakeCanvas" style="display:block;image-rendering:pixelated;image-rendering:crisp-edges;"></canvas>
+        <!-- Pause overlay -->
+        <div id="snakePauseOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.78);align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:5;">
+          <div style="font-size:1.4rem;color:var(--accent);letter-spacing:0.12em;">PAUSED</div>
+          <div style="font-size:0.63rem;color:var(--muted);">Press P to resume</div>
+          <!-- Mobile d-pad -->
+          <div id="snakeDpad" style="display:none;margin-top:10px;user-select:none;">
+            <div style="display:grid;grid-template-columns:40px 40px 40px;grid-template-rows:40px 40px;gap:4px;">
+              <div></div>
+              <button onclick="snakeMobileDir(0,-1)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▲</button>
+              <div></div>
+              <button onclick="snakeMobileDir(-1,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">◀</button>
+              <button onclick="snakeMobileDir(0,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:0.55rem;cursor:pointer;letter-spacing:0">P</button>
+              <button onclick="snakeMobileDir(1,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▶</button>
+              <div></div>
+              <button onclick="snakeMobileDir(0,1)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▼</button>
+              <div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Dead overlay -->
+        <div id="snakeDeadOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:5;padding:20px;">
+          <div style="font-size:1.6rem;color:var(--danger);letter-spacing:0.1em;">GAME OVER</div>
+          <div id="snakeFinalScore" style="font-size:0.85rem;color:var(--accent);text-align:center;"></div>
+          <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
+            <button onclick="snakeRetry()" style="background:var(--accent);color:#000;border:none;border-radius:6px;padding:8px 20px;font-family:inherit;font-size:0.76rem;font-weight:700;cursor:pointer;">↺ Again</button>
+            <button onclick="snakeChangeUser()" style="background:transparent;color:var(--muted);border:1px solid #333;border-radius:6px;padding:7px 14px;font-family:inherit;font-size:0.7rem;cursor:pointer;">Change Player</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile D-pad (always visible during game on mobile) -->
+      <div id="snakeDpadBottom" style="display:none;padding:8px;background:#0a0a0a;border-top:1px solid #1a1a1a;flex-shrink:0;">
+        <div style="display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px;gap:4px;margin:0 auto;width:fit-content;">
+          <div></div>
+          <button ontouchstart="snakeMobileDir(0,-1)" onclick="snakeMobileDir(0,-1)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▲</button>
+          <div></div>
+          <button ontouchstart="snakeMobileDir(-1,0)" onclick="snakeMobileDir(-1,0)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">◀</button>
+          <button ontouchstart="snakeTogglePause()" onclick="snakeTogglePause()" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:0.6rem;cursor:pointer;touch-action:manipulation;letter-spacing:0;">II</button>
+          <button ontouchstart="snakeMobileDir(1,0)" onclick="snakeMobileDir(1,0)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▶</button>
+          <div></div>
+          <button ontouchstart="snakeMobileDir(0,1)" onclick="snakeMobileDir(0,1)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▼</button>
+          <div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Live leaderboard side panel -->
+    <div id="snakeSidePanel" style="display:none;width:160px;flex-shrink:0;border-left:1px solid #1a1a1a;display:flex;flex-direction:column;background:#050505;">
+      <div style="font-size:0.58rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;padding:10px 10px 6px;border-bottom:1px solid #111;">🏆 TOP 10</div>
+      <div id="snakeSideLbList" style="flex:1;overflow-y:auto;"></div>
+    </div>
+
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-snake')" ontouchstart="startResizeTouch(event,'win-snake')"></div>
+</div>
 </body>
 </html>
