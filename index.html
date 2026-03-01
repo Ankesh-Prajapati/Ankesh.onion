@@ -1114,7 +1114,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
       <div class="win-dot minimize" onclick="minimizeWindow('terminal')"></div>
       <div class="win-dot maximize" onclick="toggleMaximize('terminal')"></div>
     </div>
-    <div class="win-title">ankesh@securis360: ~</div>
+    <div class="win-title">ankesh@root: ~</div>
     <div class="win-title-right"></div>
   </div>
   <div class="win-body" style="padding:0;overflow:hidden;">
@@ -1124,7 +1124,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
         spellcheck="false"></textarea>
       <div class="term-scroll" id="termScroll">
         <div id="termOutput"></div>
-        <div class="term-prompt-line" id="termPromptLine"><span class="term-ps1-u">ankesh</span><span class="term-ps1-at">@</span><span class="term-ps1-h">securis360</span><span class="term-ps1-p">:~$&nbsp;</span><span class="term-typed-span" id="termTyped"></span><span class="term-cursor" id="termCursor"></span></div>
+        <div class="term-prompt-line" id="termPromptLine"><span class="term-ps1-u">ankesh</span><span class="term-ps1-at">@</span><span class="term-ps1-h">root</span><span class="term-ps1-p">:~$&nbsp;</span><span class="term-typed-span" id="termTyped"></span><span class="term-cursor" id="termCursor"></span></div>
       </div>
     </div>
   </div>
@@ -1991,7 +1991,7 @@ function termSync(){
   termScrollBottom();
 }
 function termFreeze(){
-  var ps1="<span class=\"t-green\">ankesh</span>"+"<span class=\"t-muted\">@</span>"+"<span class=\"t-blue\">securis360</span>"+"<span class=\"t-muted\">:~$</span> ";
+  var ps1="<span class=\"t-green\">ankesh</span>"+"<span class=\"t-muted\">@</span>"+"<span class=\"t-blue\">root</span>"+"<span class=\"t-muted\">:~$</span> ";
   printTerm(ps1+escHtml(_tv));
 }
 
@@ -1999,7 +1999,7 @@ function initTerminal(){
   var ta=document.getElementById("termCapture");
   if(!ta)return;
   _tv=""; ta.value="";
-  printTerm("<span class=\"t-green\">Ankesh-OS</span> <span class=\"t-muted\">v2.5.1 — ankesh@securis360</span>");
+  printTerm("<span class=\"t-green\">Ankesh-OS</span> <span class=\"t-muted\">v2.5.1 — ankesh@root</span>");
   printTerm("<span class=\"t-muted\">─────────────────────────────────────</span>");
   printTerm("Type <span class=\"t-green\">help</span> for commands. Tab to autocomplete.");
   printTerm("");
@@ -2542,7 +2542,7 @@ function triggerShutdown(onDone){
     {t:640, s:"[ <span style='color:#28c840'>OK</span> ] Saving session state to /var/cache..."},
     {t:860, s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Archiving 50+ VAPT assessment reports...</span>"},
     {t:1080,s:"[ <span style='color:#28c840'>OK</span> ] Unmounting /dev/sda1 ..."},
-    {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Stopping network manager (securis360-net)..."},
+    {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Stopping network manager (root-net)..."},
     {t:1520,s:"[ <span style='color:#28c840'>OK</span> ] All processes terminated."},
     {t:1760,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 3...</span>"},
     {t:2360,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 2...</span>"},
@@ -2559,21 +2559,21 @@ function triggerShutdown(onDone){
   setTimeout(function(){
     log.innerHTML="";
     var bootLines=[
-      {t:0,   s:"<span style='color:#00ff9d;font-size:1.05rem;font-weight:700;letter-spacing:0.08em'>Ankesh-OS 2.5.1 (Securis360 Edition)</span>"},
+      {t:0,   s:"<span style='color:#00ff9d;font-size:1.05rem;font-weight:700;letter-spacing:0.08em'>Ankesh-OS 2.5.1 (Ankesh Edition)</span>"},
       {t:280, s:"<span style='color:#6e7681'>CPU: Intel Core i9-13900K &nbsp; RAM: 32768MB &nbsp; SSD: 1TB NVME</span>"},
       {t:520, s:"[ <span style='color:#28c840'>OK</span> ] Loading kernel modules..."},
       {t:720, s:"[ <span style='color:#28c840'>OK</span> ] Starting udev daemon..."},
       {t:920, s:"[ <span style='color:#28c840'>OK</span> ] Mounting /dev/sda1 on / (ext4, ro)"},
       {t:1100,s:"[ <span style='color:#28c840'>OK</span> ] Mounting virtual filesystems (/proc /sys /dev)"},
-      {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Started Network Manager (securis360-net)"},
+      {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Started Network Manager (root-net)"},
       {t:1500,s:"[ <span style='color:#28c840'>OK</span> ] OpenSSH server running on :22"},
       {t:1700,s:"[ <span style='color:#28c840'>OK</span> ] Firewall rules applied (iptables + nftables)"},
-      {t:1900,s:"[ <span style='color:#28c840'>OK</span> ] Securis360 VPN tunnel up (wg0 — 10.8.0.1)"},
+      {t:1900,s:"[ <span style='color:#28c840'>OK</span> ] VPN tunnel up (wg0 — 10.8.0.1)"},
       {t:2100,s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Security notice: 3 failed SSH attempts since last boot</span>"},
       {t:2340,s:"[ <span style='color:#28c840'>OK</span> ] Starting portfolio renderer (v2.5.1)..."},
       {t:2560,s:"[ <span style='color:#28c840'>OK</span> ] Loading VAPT workspace..."},
       {t:2760,s:"[ <span style='color:#28c840'>OK</span> ] Reached target: Graphical Interface"},
-      {t:3000,s:"<span style='color:#00ff9d;font-weight:700'>ankesh@securis360 login: <span style='animation:blink 1s step-end infinite'>█</span></span>"},
+      {t:3000,s:"<span style='color:#00ff9d;font-weight:700'>ankesh@root login: <span style='animation:blink 1s step-end infinite'>█</span></span>"},
     ];
     bootLines.forEach(function(l){
       setTimeout(function(){
