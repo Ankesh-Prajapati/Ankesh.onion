@@ -3339,25 +3339,42 @@ document.addEventListener('keydown', e => {
     <!-- LEFT: Game area -->
     <div style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
 
-      <!-- Name modal -->
-      <div id="snakeNameModal" style="position:absolute;inset:0;background:rgba(0,0,0,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;padding:24px;">
-        <div style="font-size:2.5rem;filter:drop-shadow(0 0 20px var(--accent));">🐍</div>
-        <div style="font-size:1.2rem;color:var(--accent);font-weight:700;letter-spacing:0.12em;">SNAKE</div>
-        <div style="font-size:0.62rem;color:var(--muted);letter-spacing:0.16em;">ENTER YOUR CALLSIGN</div>
-        <input id="snakeNameInput" type="text" maxlength="12" placeholder="player01" autocomplete="off" spellcheck="false"
-          oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')"
-          onkeydown="if(event.key==='Enter')startSnakeGame()"
-          style="background:rgba(var(--accent-rgb),0.06);border:1px solid var(--accent);border-radius:6px;
-                 padding:10px 16px;font-family:inherit;font-size:1rem;color:var(--accent);
-                 outline:none;text-align:center;width:190px;caret-color:var(--accent);">
-        <div id="snakeNameErr" style="font-size:0.63rem;color:var(--danger);min-height:14px;text-align:center;"></div>
-        <button onclick="startSnakeGame()"
-          style="background:var(--accent);color:#000;border:none;border-radius:6px;
-                 padding:10px 28px;font-family:inherit;font-size:0.82rem;font-weight:700;
-                 cursor:pointer;letter-spacing:0.08em;">▶ START</button>
-        <div style="font-size:0.6rem;color:var(--muted);text-align:center;line-height:2;">
-          Arrow Keys / WASD · P = Pause<br>
-          <span style="color:rgba(var(--accent-rgb),0.5);">Only letters (a-z) and numbers (0-9)</span>
+      <!-- Snake Idle / Name modal -->
+      <div id="snakeNameModal" style="position:absolute;inset:0;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;z-index:10;overflow:hidden;">
+
+        <!-- Animated snake canvas background -->
+        <canvas id="snakeDemoCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.6;"></canvas>
+
+        <!-- Content -->
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;">
+          <div style="font-size:0.65rem;color:var(--accent);letter-spacing:0.28em;opacity:0.7;">— SLITHERING SINCE 1976 —</div>
+          <div style="font-size:2.8rem;font-weight:700;letter-spacing:0.1em;line-height:1;
+                      background:linear-gradient(135deg,#00ff9d 0%,#00f5ff 50%,#28c840 100%);
+                      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+                      filter:drop-shadow(0 0 18px rgba(0,255,157,0.5));">SNAKE</div>
+          <div style="font-size:0.68rem;color:rgba(200,210,220,0.6);letter-spacing:0.1em;">Enter your callsign to play</div>
+
+          <input id="snakeNameInput" type="text" maxlength="12" placeholder="player01" autocomplete="off" spellcheck="false"
+            oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')"
+            onkeydown="if(event.key==='Enter')startSnakeGame()"
+            style="background:rgba(0,255,157,0.06);border:1px solid rgba(0,255,157,0.5);border-radius:6px;
+                   padding:10px 16px;font-family:inherit;font-size:1rem;color:var(--accent);
+                   outline:none;text-align:center;width:190px;caret-color:var(--accent);
+                   box-shadow:0 0 12px rgba(0,255,157,0.15);margin-top:4px;">
+          <div id="snakeNameErr" style="font-size:0.63rem;color:#ff3355;min-height:14px;text-align:center;"></div>
+
+          <button onclick="startSnakeGame()"
+            style="padding:12px 44px;border-radius:6px;font-family:inherit;font-size:0.85rem;font-weight:700;
+                   cursor:pointer;background:var(--accent);color:#000;border:none;letter-spacing:0.1em;
+                   box-shadow:0 0 24px rgba(0,255,157,0.45);transition:transform 0.12s,box-shadow 0.12s;"
+            onmouseover="this.style.transform='scale(1.06)';this.style.boxShadow='0 0 36px rgba(0,255,157,0.7)'"
+            onmouseout="this.style.transform='';this.style.boxShadow='0 0 24px rgba(0,255,157,0.45)'">
+            ▶ START
+          </button>
+
+          <div style="font-size:0.58rem;color:#4a5568;text-align:center;line-height:2;margin-top:2px;">
+            Arrow Keys / WASD &nbsp;·&nbsp; P = Pause
+          </div>
         </div>
       </div>
 
@@ -4289,6 +4306,261 @@ document.addEventListener('keydown', e => {
     if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; }
     var dc = document.getElementById('tetDemoCanvas');
     if(dc){ var c=dc.getContext('2d'); c.clearRect(0,0,dc.width,dc.height); }
+  };
+
+})();
+</script>
+
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// SNAKE DEMO ANIMATION — crawling snake on idle screen
+// ════════════════════════════════════════════════════════════════
+(function(){
+  var demoAnim = null;
+  var snakes   = [];
+  var foods    = [];
+  var CELL     = 18;
+  var dc, dctx, W, H, COLS, ROWS;
+
+  var SNAKE_COLORS = [
+    {head:'#00ff9d', body:'#00cc7a', glow:'rgba(0,255,157,0.6)'},
+    {head:'#00f5ff', body:'#00b8cc', glow:'rgba(0,245,255,0.5)'},
+    {head:'#b06fff', body:'#7a4dcc', glow:'rgba(176,111,255,0.5)'},
+    {head:'#febc2e', body:'#cc960e', glow:'rgba(254,188,46,0.5)'}
+  ];
+
+  function initDemo(){
+    dc = document.getElementById('snakeDemoCanvas');
+    if(!dc) return;
+    var modal = document.getElementById('snakeNameModal');
+    W = modal ? modal.offsetWidth  : 500;
+    H = modal ? modal.offsetHeight : 400;
+    dc.width  = W;
+    dc.height = H;
+    dctx = dc.getContext('2d');
+    COLS = Math.floor(W / CELL);
+    ROWS = Math.floor(H / CELL);
+
+    snakes = [];
+    foods  = [];
+
+    // Spawn 3 snakes crawling around
+    for(var i = 0; i < 3; i++){
+      spawnSnake(i);
+    }
+    // Spawn food pellets
+    for(var f = 0; f < 8; f++){
+      foods.push({
+        x: Math.floor(Math.random() * COLS),
+        y: Math.floor(Math.random() * ROWS)
+      });
+    }
+
+    if(demoAnim) cancelAnimationFrame(demoAnim);
+    var last = 0;
+    var interval = 120; // ms per step
+
+    function loop(ts){
+      var modal = document.getElementById('snakeNameModal');
+      if(!modal || modal.style.display === 'none'){
+        demoAnim = null;
+        return;
+      }
+      demoAnim = requestAnimationFrame(loop);
+      if(ts - last < interval) { drawOnly(); return; }
+      last = ts;
+      stepAll();
+      drawOnly();
+    }
+    demoAnim = requestAnimationFrame(loop);
+  }
+
+  function spawnSnake(colorIdx){
+    var dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+    var dir  = dirs[Math.floor(Math.random()*dirs.length)];
+    var sx   = Math.floor(3 + Math.random()*(COLS-6));
+    var sy   = Math.floor(3 + Math.random()*(ROWS-6));
+    var len  = 6 + Math.floor(Math.random()*8);
+    var segs = [];
+    for(var i=0;i<len;i++){
+      segs.push({
+        x: ((sx - dir.x*i) + COLS*99) % COLS,
+        y: ((sy - dir.y*i) + ROWS*99) % ROWS
+      });
+    }
+    snakes.push({
+      segs: segs,
+      dir:  dir,
+      color: SNAKE_COLORS[colorIdx % SNAKE_COLORS.length],
+      turnTimer: 0,
+      turnEvery: 8 + Math.floor(Math.random()*12),
+      growing: 0
+    });
+  }
+
+  function stepAll(){
+    snakes.forEach(function(s){
+      // Decide if we should turn
+      s.turnTimer++;
+      if(s.turnTimer >= s.turnEvery){
+        s.turnTimer = 0;
+        s.turnEvery = 6 + Math.floor(Math.random()*14);
+        // Turn left or right (not reverse)
+        var turns = [
+          {x: s.dir.y,  y:-s.dir.x},
+          {x:-s.dir.y,  y: s.dir.x}
+        ];
+        // Sometimes go straight
+        if(Math.random() > 0.35){
+          s.dir = turns[Math.floor(Math.random()*2)];
+        }
+      }
+
+      // Avoid hitting own body (simple lookahead)
+      var nx = (s.segs[0].x + s.dir.x + COLS) % COLS;
+      var ny = (s.segs[0].y + s.dir.y + ROWS) % ROWS;
+      var hits = s.segs.some(function(seg,i){ return i > 0 && seg.x===nx && seg.y===ny; });
+      if(hits){
+        // Try alternate turns
+        var alts = [{x:s.dir.y,y:-s.dir.x},{x:-s.dir.y,y:s.dir.x}];
+        for(var a=0;a<alts.length;a++){
+          var ax = (s.segs[0].x + alts[a].x + COLS) % COLS;
+          var ay = (s.segs[0].y + alts[a].y + ROWS) % ROWS;
+          var ahits = s.segs.some(function(seg,i){ return i>0 && seg.x===ax && seg.y===ay; });
+          if(!ahits){ s.dir = alts[a]; nx=ax; ny=ay; break; }
+        }
+      }
+
+      // Move: add new head
+      s.segs.unshift({x: (s.segs[0].x+s.dir.x+COLS)%COLS, y: (s.segs[0].y+s.dir.y+ROWS)%ROWS});
+
+      // Check food
+      var ate = -1;
+      for(var f=0;f<foods.length;f++){
+        if(foods[f].x===s.segs[0].x && foods[f].y===s.segs[0].y){ ate=f; break; }
+      }
+      if(ate >= 0){
+        foods.splice(ate,1);
+        foods.push({x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)});
+        s.growing += 3;
+      }
+
+      // Remove tail unless growing
+      if(s.growing > 0){ s.growing--; }
+      else { s.segs.pop(); }
+    });
+  }
+
+  function drawOnly(){
+    dctx.clearRect(0,0,W,H);
+
+    // Subtle grid
+    dctx.strokeStyle = 'rgba(0,255,157,0.04)';
+    dctx.lineWidth = 0.5;
+    for(var c=0;c<=COLS;c++){ dctx.beginPath(); dctx.moveTo(c*CELL,0); dctx.lineTo(c*CELL,H); dctx.stroke(); }
+    for(var r=0;r<=ROWS;r++){ dctx.beginPath(); dctx.moveTo(0,r*CELL); dctx.lineTo(W,r*CELL); dctx.stroke(); }
+
+    // Food
+    foods.forEach(function(f){
+      var fx = f.x*CELL + CELL/2;
+      var fy = f.y*CELL + CELL/2;
+      dctx.save();
+      dctx.shadowColor = '#ff3355';
+      dctx.shadowBlur  = 10;
+      dctx.fillStyle   = '#ff3355';
+      dctx.beginPath();
+      dctx.arc(fx, fy, CELL*0.28, 0, Math.PI*2);
+      dctx.fill();
+      dctx.restore();
+    });
+
+    // Snakes
+    snakes.forEach(function(s){
+      s.segs.forEach(function(seg, i){
+        var x = seg.x*CELL+1;
+        var y = seg.y*CELL+1;
+        var sz = CELL-2;
+        dctx.save();
+
+        if(i === 0){
+          // Head — brighter + glow
+          dctx.shadowColor = s.color.glow;
+          dctx.shadowBlur  = 14;
+          dctx.fillStyle   = s.color.head;
+        } else {
+          // Body — fade out toward tail
+          var fade = 1 - (i / s.segs.length) * 0.6;
+          dctx.globalAlpha = fade;
+          dctx.shadowColor = s.color.glow;
+          dctx.shadowBlur  = 5;
+          dctx.fillStyle   = s.color.body;
+        }
+
+        // Rounded rect
+        var r2 = 3;
+        dctx.beginPath();
+        dctx.moveTo(x+r2, y);
+        dctx.lineTo(x+sz-r2, y);
+        dctx.quadraticCurveTo(x+sz, y, x+sz, y+r2);
+        dctx.lineTo(x+sz, y+sz-r2);
+        dctx.quadraticCurveTo(x+sz, y+sz, x+sz-r2, y+sz);
+        dctx.lineTo(x+r2, y+sz);
+        dctx.quadraticCurveTo(x, y+sz, x, y+sz-r2);
+        dctx.lineTo(x, y+r2);
+        dctx.quadraticCurveTo(x, y, x+r2, y);
+        dctx.closePath();
+        dctx.fill();
+
+        // Eyes on head
+        if(i === 0){
+          dctx.shadowBlur = 0;
+          dctx.fillStyle = '#000';
+          var ex1, ey1, ex2, ey2;
+          var eyeOff = CELL * 0.22;
+          var eyeIn  = CELL * 0.28;
+          if(s.dir.x===1)       { ex1=x+sz*0.7; ey1=y+eyeOff; ex2=x+sz*0.7; ey2=y+sz-eyeOff; }
+          else if(s.dir.x===-1) { ex1=x+sz*0.3; ey1=y+eyeOff; ex2=x+sz*0.3; ey2=y+sz-eyeOff; }
+          else if(s.dir.y===1)  { ex1=x+eyeOff; ey1=y+sz*0.7; ex2=x+sz-eyeOff; ey2=y+sz*0.7; }
+          else                  { ex1=x+eyeOff; ey1=y+sz*0.3; ex2=x+sz-eyeOff; ey2=y+sz*0.3; }
+          dctx.beginPath(); dctx.arc(ex1,ey1,1.8,0,Math.PI*2); dctx.fill();
+          dctx.beginPath(); dctx.arc(ex2,ey2,1.8,0,Math.PI*2); dctx.fill();
+        }
+
+        dctx.restore();
+      });
+    });
+  }
+
+  // Start demo when snake window opens
+  var _snakeOrigOpen = window.openWindow;
+  window.openWindow = function(name){
+    _snakeOrigOpen(name);
+    if(name === 'snake'){
+      setTimeout(function(){
+        var modal = document.getElementById('snakeNameModal');
+        if(modal && modal.style.display !== 'none') initDemo();
+      }, 80);
+    }
+  };
+
+  // Stop demo when game starts (hook into startSnakeGame)
+  var _origStartSnake = window.startSnakeGame;
+  window.startSnakeGame = function(){
+    if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; }
+    var dc2 = document.getElementById('snakeDemoCanvas');
+    if(dc2){ var c=dc2.getContext('2d'); c.clearRect(0,0,dc2.width,dc2.height); }
+    if(_origStartSnake) _origStartSnake();
+  };
+
+  // Restart demo when player hits "Change Player" (snakeChangeUser goes back to modal)
+  var _origChangeUser = window.snakeChangeUser;
+  window.snakeChangeUser = function(){
+    if(_origChangeUser) _origChangeUser();
+    setTimeout(function(){
+      var modal = document.getElementById('snakeNameModal');
+      if(modal && modal.style.display !== 'none') initDemo();
+    }, 80);
   };
 
 })();
