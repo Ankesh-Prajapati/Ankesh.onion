@@ -646,6 +646,39 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 .notif-title{color:var(--accent);font-size:0.72rem;margin-bottom:4px;}
 @keyframes slideInNotif{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 
+
+/* ── CUSTOM CURSOR ── */
+*, *::before, *::after { cursor: none !important; }
+
+#customCursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 999999;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%);
+}
+/* Outer ring */
+#cursorRing {
+  position: fixed;
+  width: 28px; height: 28px;
+  border: 1.5px solid rgba(0,255,157,0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999998;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%);
+  transition: width 0.15s, height 0.15s, border-color 0.15s, opacity 0.15s;
+}
+#customCursor.clicking #cursorRing,
+body.cursor-click #cursorRing {
+  width: 16px; height: 16px;
+  border-color: rgba(0,255,157,1);
+}
+body.cursor-hover #cursorRing {
+  width: 40px; height: 40px;
+  border-color: rgba(0,255,157,0.9);
+}
+
 /* Tooltip */
 [data-tip]{position:relative;}
 [data-tip]:hover::after{
@@ -728,6 +761,18 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 
 </head>
 <body>
+
+<!-- Custom Cursor -->
+<svg id="customCursor" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+  <!-- crosshair lines -->
+  <line x1="10" y1="0"  x2="10" y2="7"  stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
+  <line x1="10" y1="13" x2="10" y2="20" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
+  <line x1="0"  y1="10" x2="7"  y2="10" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
+  <line x1="13" y1="10" x2="20" y2="10" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
+  <!-- center dot -->
+  <circle cx="10" cy="10" r="1.5" fill="#00ff9d"/>
+</svg>
+<div id="cursorRing"></div>
 
 <!-- HACKING LOADING SCREEN -->
 <div id="loadingScreen">
@@ -854,11 +899,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
       </svg>
     </span>
   </div>
-  <div class="taskbar-sep"></div>
-  <div id="visitorCounter" style="font-size:0.72rem;color:var(--muted);white-space:nowrap;padding:0 8px;display:flex;align-items:center;gap:5px;cursor:default;" title="Total unique visitors">
-    <span style="opacity:0.6;font-size:0.65rem;">👁</span>
-    <span id="visitorCount" style="color:var(--accent);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:0.03em;">...</span>
-  </div>
+
   <div class="taskbar-clock" id="clock"></div>
 </div>
 
@@ -2744,43 +2785,10 @@ function triggerShutdown(onDone){
 }
 
 // ══════════════════════════════════════════════════════════════════
-// VISITOR COUNTER — uses countapi.xyz (free, persistent, no reset)
-// ══════════════════════════════════════════════════════════════════
-(function initVisitorCounter(){
-  const EL = document.getElementById("visitorCount");
-  // countapi.xyz: hit() increments on every page load and returns the new count
-  // namespace = your domain/name, key = unique key for this counter
-  fetch("https://api.countapi.xyz/hit/ankesh-prajapati-portfolio/visitors")
-    .then(r => r.json())
-    .then(data => {
-      const count = data.value || 0;
-      // Animate count up from 0
-      let current = Math.max(0, count - 15);
-      const step = Math.ceil((count - current) / 30);
-      const ticker = setInterval(() => {
-        current = Math.min(count, current + step);
-        if(EL) EL.textContent = current.toLocaleString();
-        if(current >= count){ clearInterval(ticker); if(EL) EL.textContent = count.toLocaleString(); }
-      }, 40);
-      // Fire the intruder alert toast after boot finishes (3.5s delay)
-      setTimeout(() => showIntruderAlert(count), 3600);
-    })
-    .catch(() => {
-      // Fallback: show a plausible number from localStorage if API fails
-      try {
-        let lv = parseInt(localStorage.getItem("_vc") || "0");
-        lv++;
-        localStorage.setItem("_vc", lv);
-        if(EL) EL.textContent = lv.toLocaleString();
-        setTimeout(() => showIntruderAlert(lv), 3600);
-      } catch(e) { if(EL) EL.textContent = "—"; }
-    });
-})();
-
-// ══════════════════════════════════════════════════════════════════
 // INTRUDER ALERT TOAST — cybersec flavoured pop-up on load
 // ══════════════════════════════════════════════════════════════════
-function showIntruderAlert(count) {
+setTimeout(showIntruderAlert, 3600);
+function showIntruderAlert() {
   // Remove if already exists
   const old = document.getElementById("intruderToast");
   if(old) old.remove();
@@ -2793,7 +2801,7 @@ function showIntruderAlert(count) {
       <div style="flex:1;">
         <div style="font-size:0.65rem;color:#ff3355;letter-spacing:0.18em;font-weight:700;margin-bottom:3px;">[ SECURITY ALERT ]</div>
         <div style="font-size:0.78rem;color:#c9d1d9;line-height:1.5;">Intruder detected on network</div>
-        <div style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Total infiltrations: <span style="color:var(--accent);font-weight:600;">${count.toLocaleString()}</span></div>
+        <div style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Origin: <span style="color:var(--accent);font-weight:600;">unknown</span> &nbsp;·&nbsp; Tracing...</div>
         <div style="font-size:0.62rem;color:#6e7681;margin-top:4px;letter-spacing:0.06em;">IP logged · Tracing route...</div>
       </div>
       <div onclick="document.getElementById('intruderToast').remove()" style="cursor:pointer;color:#6e7681;font-size:0.75rem;padding:2px 4px;opacity:0.6;hover:opacity:1;">✕</div>
@@ -3246,6 +3254,328 @@ document.addEventListener('keydown', e => {
     <span id="shutdownMsg">Rebooting...</span>
   </div>
 </div>
+
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CUSTOM CURSOR
+// ══════════════════════════════════════════════════════════════
+(function(){
+  var dot  = document.getElementById('customCursor');
+  var ring = document.getElementById('cursorRing');
+  var rx = 0, ry = 0; // ring lags behind
+  var mx = 0, my = 0;
+
+  document.addEventListener('mousemove', function(e){
+    mx = e.clientX; my = e.clientY;
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
+  });
+
+  // Smooth ring follow
+  function animRing(){
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Click effect
+  document.addEventListener('mousedown', function(){ document.body.classList.add('cursor-click'); });
+  document.addEventListener('mouseup',   function(){ document.body.classList.remove('cursor-click'); });
+
+  // Hover effect on clickable elements
+  var hoverSel = 'a,button,.icon,.win-dot,.taskbar-start,.taskbar-task,.sm-item,.ctx-item,.project-card,.contact-item,.cert-item,.preset-btn';
+  document.addEventListener('mouseover', function(e){
+    if(e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
+  });
+  document.addEventListener('mouseout', function(e){
+    if(e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
+  });
+
+  // Hide when leaving window
+  document.addEventListener('mouseleave', function(){ dot.style.opacity='0'; ring.style.opacity='0'; });
+  document.addEventListener('mouseenter', function(){ dot.style.opacity='1'; ring.style.opacity='1'; });
+
+  // Update cursor color when theme changes
+  var _orig = window.applyThemeColor;
+  if(_orig) window.applyThemeColor = function(hex){
+    _orig(hex);
+    var lines = dot.querySelectorAll('line,circle');
+    lines.forEach(function(el){ 
+      if(el.tagName==='line') el.setAttribute('stroke', hex);
+      else el.setAttribute('fill', hex);
+    });
+    ring.style.borderColor = hex.replace(')', ',0.6)').replace('rgb(','rgba(') || 'rgba(0,255,157,0.6)';
+  };
+})();
+
+// ══════════════════════════════════════════════════════════════
+// DESKTOP ICON GRID — snap grid, drag on desktop only, responsive
+// ══════════════════════════════════════════════════════════════
+(function(){
+  var STORE_KEY  = 'ankesh_icon_grid_v2';
+  var CELL_W     = 82;   // grid cell width
+  var CELL_H     = 86;   // grid cell height
+  var PAD        = 10;   // edge padding
+  var TASKBAR_H  = 44;
+
+  var grid  = document.getElementById('desktopIcons');
+  var icons = Array.from(grid.querySelectorAll('.icon'));
+
+  // ── MOBILE: leave CSS in charge, no JS positioning ──────────
+  function isMobile(){ return window.innerWidth <= 768; }
+
+  function resetMobile(){
+    grid.removeAttribute('style');
+    icons.forEach(function(ic){
+      ic.removeAttribute('style');
+    });
+  }
+
+  // ── DESKTOP: absolute canvas ─────────────────────────────────
+  function setupDesktop(){
+    grid.style.cssText = [
+      'position:fixed',
+      'top:0','right:0','bottom:0','left:0',
+      'width:100%','height:100%',
+      'display:block',
+      'pointer-events:none',
+      'overflow:visible',
+      'z-index:2'
+    ].join(';');
+
+    icons.forEach(function(ic){
+      ic.style.position = 'absolute';
+      ic.style.width    = CELL_W + 'px';
+      ic.style.margin   = '0';
+      ic.style.pointerEvents = 'all';
+    });
+  }
+
+  // ── GRID HELPERS ─────────────────────────────────────────────
+  // Returns {col, row} for a pixel position snapped to nearest cell
+  function pixelToCell(x, y){
+    var cols = availCols();
+    var rows = availRows();
+    var col  = Math.round(x / CELL_W);
+    var row  = Math.round(y / CELL_H);
+    col = Math.max(0, Math.min(cols - 1, col));
+    row = Math.max(0, Math.min(rows - 1, row));
+    return {col:col, row:row};
+  }
+
+  function cellToPixel(col, row){
+    // Default: right-aligned columns counted from right edge
+    var dw = window.innerWidth;
+    var x  = dw - PAD - CELL_W - col * CELL_W;
+    var y  = PAD + row * CELL_H;
+    return {x:x, y:y};
+  }
+
+  function availRows(){ return Math.max(1, Math.floor((window.innerHeight - TASKBAR_H - PAD * 2) / CELL_H)); }
+  function availCols(){ return Math.max(1, Math.floor((window.innerWidth  - PAD * 2) / CELL_W)); }
+
+  // Default grid cell for icon index i (right-side columns)
+  function defaultCell(i){
+    var rows = availRows();
+    var col  = Math.floor(i / rows);
+    var row  = i % rows;
+    return {col:col, row:row};
+  }
+
+  // ── SAVED POSITIONS ──────────────────────────────────────────
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){}
+
+  function saveCell(key, col, row){
+    try {
+      saved[key] = {col:col, row:row};
+      localStorage.setItem(STORE_KEY, JSON.stringify(saved));
+    } catch(e){}
+  }
+
+  function getKey(icon, i){
+    var t = icon.getAttribute('title') || ('icon'+i);
+    return 'ic_' + t.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  }
+
+  // ── POSITION ALL ICONS ───────────────────────────────────────
+  // occupiedCells tracks which {col,row} are taken to prevent overlap
+  function layoutIcons(keepSaved){
+    var occupied = {};  // "col_row" → true
+
+    icons.forEach(function(icon, i){
+      var key  = getKey(icon, i);
+      var cell;
+
+      if(keepSaved && saved[key]){
+        // Clamp to current screen size
+        var rows = availRows();
+        var cols = availCols();
+        cell = {
+          col: Math.min(saved[key].col, cols - 1),
+          row: Math.min(saved[key].row, rows - 1)
+        };
+        // If that cell is taken, find next free one
+        var cellKey = cell.col + '_' + cell.row;
+        if(occupied[cellKey]){ cell = nextFreeCell(occupied); }
+      } else {
+        // Use default column layout, skip occupied
+        cell = defaultCell(i);
+        var cellKey = cell.col + '_' + cell.row;
+        if(occupied[cellKey]){ cell = nextFreeCell(occupied); }
+      }
+
+      var ck = cell.col + '_' + cell.row;
+      occupied[ck] = true;
+
+      var px = cellToPixel(cell.col, cell.row);
+      icon.style.left = px.x + 'px';
+      icon.style.top  = px.y + 'px';
+      icon._gridCol = cell.col;
+      icon._gridRow = cell.row;
+    });
+  }
+
+  function nextFreeCell(occupied){
+    var rows = availRows();
+    var cols = availCols();
+    for(var c = 0; c < cols; c++){
+      for(var r = 0; r < rows; r++){
+        var ck = c + '_' + r;
+        if(!occupied[ck]) return {col:c, row:r};
+      }
+    }
+    return {col:0, row:0};
+  }
+
+  // ── DRAG ─────────────────────────────────────────────────────
+  function makeDraggable(icon, i){
+    var key = getKey(icon, i);
+    var dragging = false, moved = false;
+    var startX, startY, origLeft, origTop;
+
+    icon.addEventListener('mousedown', function(e){
+      if(e.button !== 0) return;
+      dragging = true; moved = false;
+      startX = e.clientX; startY = e.clientY;
+      origLeft = parseInt(icon.style.left) || 0;
+      origTop  = parseInt(icon.style.top)  || 0;
+      icon.style.zIndex    = '9999';
+      icon.style.opacity   = '0.85';
+      icon.style.transform = 'scale(1.1)';
+      icon.style.transition = 'none';
+      e.stopPropagation();
+    });
+
+    document.addEventListener('mousemove', function(e){
+      if(!dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if(Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+
+      var dw = window.innerWidth;
+      var dh = window.innerHeight - TASKBAR_H;
+      var nx = Math.max(PAD, Math.min(dw - CELL_W - PAD, origLeft + dx));
+      var ny = Math.max(PAD, Math.min(dh - CELL_H,       origTop  + dy));
+      icon.style.left = nx + 'px';
+      icon.style.top  = ny + 'px';
+    });
+
+    document.addEventListener('mouseup', function(e){
+      if(!dragging) return;
+      dragging = false;
+      icon.style.zIndex    = '';
+      icon.style.opacity   = '1';
+      icon.style.transform = '';
+      icon.style.transition = '';
+
+      if(moved){
+        // Snap to nearest free grid cell
+        var cx = parseInt(icon.style.left);
+        var cy = parseInt(icon.style.top);
+
+        // Convert pixel back to cell (relative to right edge)
+        var dw   = window.innerWidth;
+        var colFromRight = Math.round((dw - PAD - CELL_W - cx) / CELL_W);
+        var row  = Math.round((cy - PAD) / CELL_H);
+        var rows = availRows();
+        var cols = availCols();
+        colFromRight = Math.max(0, Math.min(cols - 1, colFromRight));
+        row = Math.max(0, Math.min(rows - 1, row));
+
+        // Check if that cell is occupied by another icon
+        var targetCell = {col: colFromRight, row: row};
+        var conflict = icons.find(function(ic2){
+          return ic2 !== icon && ic2._gridCol === targetCell.col && ic2._gridRow === targetCell.row;
+        });
+
+        if(conflict){
+          // Swap positions
+          var tempCol = icon._gridCol, tempRow = icon._gridRow;
+          conflict._gridCol = tempCol; conflict._gridRow = tempRow;
+          var conflictKey = getKey(conflict, icons.indexOf(conflict));
+          saveCell(conflictKey, tempCol, tempRow);
+          var cp = cellToPixel(tempCol, tempRow);
+          conflict.style.transition = 'left 0.2s, top 0.2s';
+          conflict.style.left = cp.x + 'px';
+          conflict.style.top  = cp.y + 'px';
+          setTimeout(function(){ conflict.style.transition=''; }, 220);
+        }
+
+        icon._gridCol = targetCell.col;
+        icon._gridRow = targetCell.row;
+        saveCell(key, targetCell.col, targetCell.row);
+
+        var sp = cellToPixel(targetCell.col, targetCell.row);
+        icon.style.transition = 'left 0.15s, top 0.15s';
+        icon.style.left = sp.x + 'px';
+        icon.style.top  = sp.y + 'px';
+        setTimeout(function(){ icon.style.transition=''; }, 160);
+
+        // Suppress accidental dblclick after drag
+        icon._suppress = true;
+        setTimeout(function(){ icon._suppress = false; }, 200);
+      }
+    });
+
+    icon.addEventListener('dblclick', function(e){
+      if(icon._suppress) e.stopImmediatePropagation();
+    });
+
+    // Right-click → reset to default cell
+    icon.addEventListener('contextmenu', function(e){
+      e.preventDefault(); e.stopPropagation();
+      delete saved[key];
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(saved)); } catch(ex){}
+      layoutIcons(true);
+    });
+  }
+
+  // ── RESIZE: reflow icons that are now out of bounds ──────────
+  function onResize(){
+    if(isMobile()){ resetMobile(); return; }
+    setupDesktop();
+    layoutIcons(true); // keep saved cells but clamp to new screen
+  }
+
+  // ── INIT ─────────────────────────────────────────────────────
+  function init(){
+    if(isMobile()){ resetMobile(); return; }
+    setupDesktop();
+    layoutIcons(true);
+    icons.forEach(function(icon, i){ makeDraggable(icon, i); });
+  }
+
+  window.addEventListener('resize', onResize);
+  // Run after boot screen clears
+  document.addEventListener('DOMContentLoaded', function(){ setTimeout(init, 200); });
+
+})();
+</script>
 
 </body>
 </html>
