@@ -1,0 +1,15 @@
+@keyframes agDt{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}100%{content:"";}}
+
+/* Alert overlay (Konami) */
+.alert-overlay{
+  position:fixed;inset:0;
+  background:radial-gradient(circle at center,rgba(255,30,60,0.7),rgba(0,0,0,0.97));
+  z-index:99998;display:none;align-items:center;justify-content:center;
+  flex-direction:column;color:#ffeaea;text-align:center;font-family:"Fira Code",monospace;
+}
+.alert-overlay.show{display:flex;animation:alertPulse 0.9s infinite,glitchShift 0.3s infinite;}
+@keyframes alertPulse{0%,100%{box-shadow:0 0 40px rgba(255,0,0,0.6);}50%{box-shadow:0 0 100px rgba(255,0,0,1);}}
+@keyframes glitchShift{0%{transform:translate(1px,-1px);}50%{transform:translate(-1px,1px);}100%{transform:translate(0,0);}}
+.alert-title{font-size:2rem;letter-spacing:0.2em;margin-bottom:10px;}
+.alert-sub{font-size:1rem;}
+

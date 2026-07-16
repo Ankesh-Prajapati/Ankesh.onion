@@ -1,0 +1,39 @@
+:root {
+  --bg: #0d1117;
+  --taskbar: #161b22;
+  --panel: #0d1117;
+  --panel-header: #161b22;
+  --border: #30363d;
+  --accent: #00ff9d;
+  --accent2: #39ff14;
+  --accent-rgb: 0,255,157;
+  --red: #ff5f57;
+  --amber: #febc2e;
+  --green: #28c840;
+  --text: #c9d1d9;
+  --muted: #6e7681;
+  --highlight: #58a6ff;
+  --danger: #ff3355;
+  --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb),0.25);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
+
+
+/* Tooltip */
+[data-tip]{position:relative;}
+[data-tip]:hover::after{
+  content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
+  background:#111;border:1px solid var(--border);color:var(--text);
+  font-size:0.65rem;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:9999;
+}
+
+/* Blink cursor */
+@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+.blink{animation:blink 1s steps(1) infinite;}
+
+/* Scrollbar global */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:3px;}
+
+/* ── MOBILE RESPONSIVE ── */

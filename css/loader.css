@@ -1,0 +1,44 @@
+/* ── FAST TERMINAL BOOT SCREEN ──
+   A quick, lightweight boot sequence (~1-1.5s) instead of the old
+   multi-second hacking animation. No canvas rain, no multi-phase
+   overlay — just a terminal box printing a few boot lines. */
+#loadingScreen {
+  position: fixed; inset: 0; z-index: 999999;
+  background: #0d1117;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.25s ease;
+}
+.boot-box {
+  width: min(92vw, 460px);
+  border: 1px solid rgba(var(--accent-rgb), 0.35);
+  border-radius: 8px;
+  background: rgba(13, 17, 22, 0.9);
+  box-shadow: 0 0 40px rgba(var(--accent-rgb), 0.12);
+  padding: 16px 18px;
+  font-family: "Fira Code", monospace;
+}
+.boot-titlebar {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 10px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.boot-dot { width: 9px; height: 9px; border-radius: 50%; }
+.boot-dot.r { background: var(--red); }
+.boot-dot.a { background: var(--amber); }
+.boot-dot.g { background: var(--green); }
+.boot-label { margin-left: 8px; font-size: 0.65rem; color: var(--muted); }
+.boot-lines {
+  min-height: 108px;
+  font-size: 0.74rem; line-height: 1.6;
+  color: var(--text);
+}
+.boot-line { opacity: 0; animation: bootLineIn 0.15s ease forwards; }
+.boot-ok { color: var(--accent); }
+.boot-cursor {
+  display: inline-block; width: 6px; height: 12px;
+  background: var(--accent); margin-left: 2px;
+  animation: bootBlink 0.8s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes bootLineIn { from { opacity: 0; transform: translateY(2px); } to { opacity: 1; transform: none; } }
+@keyframes bootBlink { 50% { opacity: 0; } }

