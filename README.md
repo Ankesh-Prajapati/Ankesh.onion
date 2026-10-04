@@ -51,15 +51,4 @@ Static site — deploy directly to **GitHub Pages**, Netlify, Vercel, or any sta
 - 🔗 [LinkedIn](https://linkedin.com/in/ankesh-prajapati-0a87a8249)
 - 🐙 [GitHub](https://github.com/Ankesh-Prajapati)
 
-## SEO
 
-- **Live URL:** https://ankesh-prajapati.github.io/Ankesh.onion/
-- `index.html` — optimized `<title>`, meta description, canonical URL, robots directives, Open Graph + Twitter cards, and JSON-LD (`WebSite`, `ProfilePage`, `Person`) so Google can connect the name *Ankesh Prajapati* to this site, Securis360, LinkedIn and GitHub.
-- A visually-hidden, crawlable text version of every window (About, Skills, Experience, Projects, Certifications, Contact) with a single `<h1>` and proper `<h2>` sections.
-- `sitemap.xml`, `robots.txt`, `og-image.png` (1200×630 share preview) and a full favicon set (`favicon.ico`, `favicon.svg`, 48/180/192/512 px PNGs).
-
-### After every deploy
-1. Google Search Console → add the URL-prefix property `https://ankesh-prajapati.github.io/Ankesh.onion/` and verify it.
-2. Sitemaps → submit `sitemap.xml`.
-3. URL Inspection → paste the live URL → **Request Indexing**.
-4. Link to the portfolio from your LinkedIn (Contact info + Featured), GitHub profile README / website field, and the Securis360 team page if possible.
