@@ -6,10 +6,13 @@ window.addEventListener("keydown",function(e){
   }
 });
 
+var _rebooting=false;
 function triggerShutdown(onDone){
+  if(_rebooting)return;
   var overlay=document.getElementById("shutdownOverlay");
   var log=document.getElementById("shutdownLog");
   if(!overlay)return;
+  _rebooting=true;
   overlay.style.display="flex";log.innerHTML="";
 
   var shutLines=[
