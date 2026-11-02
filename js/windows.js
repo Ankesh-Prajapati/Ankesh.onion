@@ -14,7 +14,10 @@ let cascadeIndex = 0;
 
 function initDesktop() {
   // about.sh and neofetch cover the same intro info, so only open one on load.
-  setTimeout(() => openWindow('about'), 150);
+  setTimeout(() => {
+    openWindow('about');
+    decryptReveal(document.querySelector('.about-name'), 600);
+  }, 150);
   animateSkillBars();
   initTerminal();
   buildWallpaperPicker();

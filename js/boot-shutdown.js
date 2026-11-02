@@ -70,8 +70,53 @@ function triggerShutdown(onDone){
   },4000);
 }
 // ══════════════════════════════════════════════════════════════════
-// INTRUDER ALERT TOAST — cybersec flavoured pop-up on load
+// INTRUDER ALERT TOAST — cybersec flavoured pop-up on load, backed by
+// the visitor's real browser/OS and an approximate IP-geolocation
+// lookup so it reads as an actual recon hit, not flavour text.
 // ══════════════════════════════════════════════════════════════════
+function detectClient(){
+  var ua=navigator.userAgent;
+  var browser="Unknown browser";
+  if(/Edg\//.test(ua))browser="Edge";
+  else if(/OPR\//.test(ua))browser="Opera";
+  else if(/Chrome\//.test(ua)&&!/Chromium/.test(ua))browser="Chrome";
+  else if(/Firefox\//.test(ua))browser="Firefox";
+  else if(/Safari\//.test(ua)&&!/Chrome/.test(ua))browser="Safari";
+  var os="Unknown OS";
+  if(/Windows/.test(ua))os="Windows";
+  else if(/Mac OS X/.test(ua))os="macOS";
+  else if(/Android/.test(ua))os="Android";
+  else if(/iPhone|iPad|iOS/.test(ua))os="iOS";
+  else if(/Linux/.test(ua))os="Linux";
+  return {browser:browser,os:os};
+}
+
+function applyIntruderRecon(loc,client){
+  var toast=document.getElementById("intruderToast");
+  if(!toast)return;
+  var originEl=toast.querySelector(".intruder-origin");
+  var traceEl=toast.querySelector(".intruder-trace");
+  if(originEl)originEl.innerHTML='Origin: <span style="color:var(--accent);font-weight:600;">'+escHtml(loc)+'</span>';
+  if(traceEl)traceEl.textContent=client.browser+" · "+client.os+" · IP logged";
+}
+
+function lookupIntruderRecon(){
+  var client=detectClient();
+  var controller=new AbortController();
+  var timer=setTimeout(function(){controller.abort();},2500);
+  fetch("https://get.geojs.io/v1/ip/geo.json",{signal:controller.signal})
+    .then(function(r){return r.json();})
+    .then(function(data){
+      clearTimeout(timer);
+      var loc=[data.city,data.country].filter(Boolean).join(", ")||"concealed (VPN/Proxy)";
+      applyIntruderRecon(loc,client);
+    })
+    .catch(function(){
+      clearTimeout(timer);
+      applyIntruderRecon("concealed (VPN/Proxy)",client);
+    });
+}
+
 setTimeout(showIntruderAlert, 3600);
 function showIntruderAlert() {
   // Remove if already exists
@@ -86,8 +131,8 @@ function showIntruderAlert() {
       <div style="flex:1;">
         <div style="font-size:0.65rem;color:#ff3355;letter-spacing:0.18em;font-weight:700;margin-bottom:3px;">[ SECURITY ALERT ]</div>
         <div style="font-size:0.78rem;color:#c9d1d9;line-height:1.5;">Intruder detected on network</div>
-        <div style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Origin: <span style="color:var(--accent);font-weight:600;">unknown</span> &nbsp;·&nbsp; Tracing...</div>
-        <div style="font-size:0.62rem;color:#6e7681;margin-top:4px;letter-spacing:0.06em;">IP logged · Tracing route...</div>
+        <div class="intruder-origin" style="font-size:0.7rem;color:#6e7681;margin-top:2px;">Origin: <span style="color:var(--accent);font-weight:600;">tracing...</span></div>
+        <div class="intruder-trace" style="font-size:0.62rem;color:#6e7681;margin-top:4px;letter-spacing:0.06em;">IP logged · Tracing route...</div>
       </div>
       <div onclick="document.getElementById('intruderToast').remove()" style="cursor:pointer;color:#6e7681;font-size:0.75rem;padding:2px 4px;opacity:0.6;hover:opacity:1;">✕</div>
     </div>
@@ -118,6 +163,7 @@ function showIntruderAlert() {
   }
 
   document.body.appendChild(toast);
+  lookupIntruderRecon();
 
   // Shrink progress bar over 5 seconds then auto dismiss
   const bar = document.getElementById("toastProgress");

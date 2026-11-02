@@ -23,7 +23,10 @@ document.addEventListener("click",(e)=>{
 });
 document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
 
-function showIdCard(){document.getElementById("idCardOverlay").classList.add("show");}
+function showIdCard(){
+  document.getElementById("idCardOverlay").classList.add("show");
+  decryptReveal(document.querySelector("#idTicket .it-title"),600);
+}
 function hideIdCard(){document.getElementById("idCardOverlay").classList.remove("show");}
 document.addEventListener("keydown",(e)=>{if(e.key==="Escape")hideIdCard();});
 
