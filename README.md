@@ -1,54 +1,79 @@
-# Ankesh Prajapati — Cybersecurity Portfolio
+<div align="center">
 
-An interactive, terminal/desktop-OS-styled personal portfolio for **Ankesh Prajapati**, a Security Analyst & Penetration Tester at Securis360. The site simulates a Linux desktop environment — complete with draggable windows, a working terminal, a theme customizer, and a few playable mini-games — to present skills, experience, and projects in a way that fits the security/hacker aesthetic.
+# Ankesh Prajapati
 
-**Live look & feel:** boot sequence → desktop with app icons → click an icon to open a window (About, Skills, Experience, Projects, Certifications, Contact, Terminal, Neofetch) → drag, resize, minimize, or maximize like a real OS.
+### Security Analyst &nbsp;|&nbsp; Penetration Tester
 
-## Features
+Offensive security professional at **Securis360**, India — break first, document properly, help teams fix faster.
 
-- 🖥️ **Desktop environment** — draggable/resizable windows, taskbar, start menu, right-click context menu
-- 💻 **Working terminal** — type commands like `about`, `skills`, `projects`, `certs`, `experience`, `help`
-- 🎨 **Theme customizer** — switch the entire UI's accent color via presets or a color wheel
-- 🐍 **Mini-games** — Snake (with leaderboard), Tetris, and a hacker-style typing challenge
-- 🖼️ **Neofetch-style system info panel** — a fun, familiar way to show role/company/stack at a glance
-- 📱 **Responsive** — adapted layouts and touch controls for mobile/tablet
-- ⚡ **Fast load** — lightweight terminal-style boot sequence, no build step required
+[![Portfolio](https://img.shields.io/badge/portfolio-ankesh--prajapati.github.io-00ff9d?style=flat-square&logo=githubpages&logoColor=black)](https://ankesh-prajapati.github.io/Ankesh.onion/)
+[![LinkedIn](https://img.shields.io/badge/linkedin-ankesh--prajapati-00ff9d?style=flat-square&logo=linkedin&logoColor=black)](https://linkedin.com/in/ankesh-prajapati-0a87a8249)
+[![Open to Remote](https://img.shields.io/badge/status-open%20to%20remote-00ff9d?style=flat-square)](https://linkedin.com/in/ankesh-prajapati-0a87a8249)
 
-## Sections
+</div>
 
-- **About** — who I am and what I do
-- **Skills** — VAPT coverage areas and tools
-- **Experience** — work history and education
-- **Projects** — real, currently-maintained tools and repos (Warden, GhostRecon, GhostRecon v2, PhishAware)
-- **Certifications** — CEH, CNSP, and other credentials
-- **Contact** — email, phone, LinkedIn, GitHub
+---
 
-## Tech Stack
+## About
 
-Plain HTML, CSS, and JavaScript — no frameworks, no build tools, no dependencies. Just open `index.html` in a browser or serve the folder statically.
+I deliver VAPT engagements across web, network, mobile, thick-client, cloud, and source code — **100+** assessments so far — and build internal tooling to speed up the parts of the job that shouldn't take as long as they do. Previously spent time with the State Cyber Crime Cell. I write reports people actually want to read, and I'd rather find the root cause than patch the symptom.
 
-## Project Structure
-portfolio/
-├── index.html          # Markup only
-├── css/                 # Modular stylesheets (base, windows, terminal, theme, games, etc.)
-└── js/                  # Modular scripts (windows, terminal, theme, games, etc.)
+- 🔭 Currently: Security Analyst & Pentester @ **Securis360**
+- 🧰 Building: internal VAPT tooling & automation
+- 🎓 M.C.A. — Cybersecurity & Digital Forensics, Parul University
+- 📍 India · open to remote work
 
+## VAPT Coverage
 
-## Running Locally
+`Web Application Security` `API Security Testing` `Network Security` `Cloud Security` `Mobile (Android)` `Thick-Client Security` `Source Code Review` `OSINT`
+
+**Tools:** Burp Suite · Nessus · Nmap · Metasploit · Wireshark · Kali Linux · Python
+
+## Certifications
+
+- Certified Ethical Hacker (CEH)
+- Certified Network Security Practitioner (CNSP)
+- Junior Cybersecurity Analyst — Cisco
+- Endpoint Security — Cisco
+- PHP & MySQL Training — IIT Bombay
+- Power BI — Parul University
+
+## Projects
+
+| Project | What it does |
+|---|---|
+| **Warden** *(private)* | Static security analysis for Windows thick-client apps — secrets exposure, DLL hijack risk, code-signing verification, RE exposure |
+| **GhostRecon** | Zero-dependency OSINT dork engine — builds and runs search-engine dorks across Google, Bing, DuckDuckGo, Brave, and Yandex |
+| **GhostRecon v2** | Passive OSINT correlation console — 7 recon modules rolled into a single exposure score |
+| **PhishAware** | Frontend-only phishing awareness simulation platform, runs entirely client-side on GitHub Pages |
+
+## Get in touch
+
+- 🔗 [linkedin.com/in/ankesh-prajapati-0a87a8249](https://linkedin.com/in/ankesh-prajapati-0a87a8249)
+
+---
+
+<details>
+<summary><strong>About this repo</strong> — source for the portfolio site above</summary>
+
+<br>
+
+This repo is the source for [ankesh-prajapati.github.io/Ankesh.onion](https://ankesh-prajapati.github.io/Ankesh.onion/) — an interactive, desktop-OS-styled personal site (draggable windows, a working terminal, a theme customizer, a couple of mini-games) built in plain HTML/CSS/JS, no framework, no build step.
+
+```
+├── index.html       markup
+├── 404.html         themed not-found page
+├── css/             modular stylesheets
+├── js/              modular scripts
+└── assets/          icons & images
+```
+
+Run locally:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Deploys as a static site — GitHub Pages, Netlify, Vercel, or any static host.
 
-## Deployment
-
-Static site — deploy directly to **GitHub Pages**, Netlify, Vercel, or any static host. No build step needed.
-
-## Contact
-- 📧 ankeshprajapati217@gmail.com
-- 🔗 [LinkedIn](https://linkedin.com/in/ankesh-prajapati-0a87a8249)
-- 🐙 [GitHub](https://github.com/Ankesh-Prajapati)
-
-
+</details>

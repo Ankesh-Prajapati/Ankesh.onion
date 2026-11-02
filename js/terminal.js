@@ -55,7 +55,6 @@ const termData={
 <span class="t-green">✓</span> Power BI — Parul University
 `,
   contact:`<span class="t-green">Email:</span>    ankeshprajapati217@gmail.com
-<span class="t-green">Phone:</span>    +91 93282 36503
 <span class="t-green">LinkedIn:</span> linkedin.com/in/ankesh-prajapati-0a87a8249
 <span class="t-green">Location:</span>  India
 `,
