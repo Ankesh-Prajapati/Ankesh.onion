@@ -70,9 +70,13 @@ function drawWheel(canvas) {
   ctx.beginPath();ctx.arc(cx,cy,r*0.18,0,Math.PI*2);ctx.fillStyle=cg;ctx.fill();
 }
 
+// NOTE: drawWheel() colors each wedge using the raw canvas arc angle (0 =
+// +x axis) directly as the hue value, so these conversions must use the
+// same convention with no rotation offset or the cursor/preview drifts
+// from the color actually under the cursor.
 function wheelAngleToXY(hue, sat, canvas) {
   const cx=canvas.width/2, cy=canvas.height/2, r=(cx-2)*sat;
-  const a=(hue-90)*Math.PI/180;
+  const a=hue*Math.PI/180;
   return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)};
 }
 
@@ -81,7 +85,7 @@ function xyToHueSat(x,y,canvas) {
   const dx=x-cx, dy=y-cy;
   const dist=Math.sqrt(dx*dx+dy*dy);
   const sat=Math.min(1,dist/r);
-  let hue=Math.atan2(dy,dx)*180/Math.PI+90;
+  let hue=Math.atan2(dy,dx)*180/Math.PI;
   if(hue<0)hue+=360;
   return {hue:Math.round(hue)%360, sat};
 }
@@ -109,6 +113,9 @@ function updateHexPreview(hex) {
 function initThemeWheel() {
   const canvas=document.getElementById("themeWheel");
   if(!canvas) return;
+  const brtS0=document.getElementById("brtSlider"), satS0=document.getElementById("satSlider");
+  if(brtS0){brtS0.value=Math.round(_wheelBrt*100);document.getElementById("brtVal").textContent=Math.round(_wheelBrt*100)+"%";}
+  if(satS0){satS0.value=Math.round(_wheelSat*100);document.getElementById("satVal").textContent=Math.round(_wheelSat*100)+"%";}
   drawWheel(canvas);
   updateWheelCursor();
 
@@ -168,7 +175,7 @@ function buildPresetGrid() {
   grid.innerHTML="";
   PRESETS.forEach(p=>{
     const btn=document.createElement("div");
-    btn.className="preset-btn"+(p.hex==="#00ff9d"?" active":"");
+    btn.className="preset-btn"+(p.hex.toLowerCase()===_currentAccentHex.toLowerCase()?" active":"");
     btn.innerHTML=`<div class="preset-swatch" style="background:${p.hex};box-shadow:0 0 10px ${p.hex};color:${p.hex}"></div><div class="preset-name">${p.name}</div>`;
     btn.onclick=()=>{
       document.querySelectorAll(".preset-btn").forEach(b=>b.classList.remove("active"));
@@ -193,7 +200,9 @@ function hexToRgb(hex){
   const b=parseInt(hex.slice(5,7),16);
   return r+","+g+","+b;
 }
-function applyThemeColor(hex) {
+let _currentAccentHex="#00ff9d";
+function applyThemeColor(hex, silent) {
+  _currentAccentHex=hex;
   const root=document.documentElement;
   // Core accent
   root.style.setProperty("--accent", hex);
@@ -219,9 +228,19 @@ function applyThemeColor(hex) {
     .about-badge{border-color:rgba(var(--accent-rgb),0.4)!important;color:${hex}!important;}
     ::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.3)!important;}
   `;
-  showNotif("Theme","Accent → "+hex);
+  if(!silent){
+    try{localStorage.setItem("accentColor",hex);}catch(e){}
+    showNotif("Theme","Accent → "+hex);
+  }
   window.dispatchEvent(new CustomEvent("themechange", { detail: { hex: hex } }));
 }
+
+(function(){
+  try{
+    const saved=localStorage.getItem("accentColor");
+    if(saved&&/^#[0-9a-fA-F]{6}$/.test(saved))applyThemeColor(saved,true);
+  }catch(e){}
+})();
 
 function applyCustomTheme() {
   const hex=hsbToHex(_wheelHue,_wheelSat,_wheelBrt);
@@ -229,7 +248,49 @@ function applyCustomTheme() {
   applyThemeColor(hex);
 }
 
+const WALLPAPER_STYLES = [
+  {id:"matrix",  name:"Matrix",  icon:`<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <text x="1" y="8" font-family="monospace" font-size="7" fill="#00ff9d">1</text>
+    <text x="1" y="17" font-family="monospace" font-size="7" fill="#00ff9d" opacity="0.4">0</text>
+    <text x="8" y="6" font-family="monospace" font-size="7" fill="#00ff9d" opacity="0.8">0</text>
+    <text x="8" y="14" font-family="monospace" font-size="7" fill="#00ff9d">1</text>
+    <text x="14" y="10" font-family="monospace" font-size="7" fill="#00ff9d" opacity="0.6">0</text>
+    <text x="14" y="18" font-family="monospace" font-size="7" fill="#00ff9d" opacity="0.3">1</text>
+  </svg>`},
+  {id:"network", name:"Network", icon:`<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <line x1="3" y1="4" x2="16" y2="7" stroke="#00ff9d" stroke-width="1" opacity="0.6"/>
+    <line x1="16" y1="7" x2="9" y2="16" stroke="#00ff9d" stroke-width="1" opacity="0.6"/>
+    <line x1="9" y1="16" x2="3" y2="4" stroke="#00ff9d" stroke-width="1" opacity="0.6"/>
+    <line x1="16" y1="7" x2="18" y2="17" stroke="#00ff9d" stroke-width="1" opacity="0.4"/>
+    <circle cx="3" cy="4" r="1.6" fill="#00ff9d"/>
+    <circle cx="16" cy="7" r="1.6" fill="#00ff9d"/>
+    <circle cx="9" cy="16" r="1.6" fill="#00ff9d"/>
+    <circle cx="18" cy="17" r="1.3" fill="#00ff9d" opacity="0.7"/>
+  </svg>`},
+];
+function buildWallpaperStyleGrid() {
+  const grid=document.getElementById("wallpaperStyleGrid");
+  if(!grid) return;
+  grid.innerHTML="";
+  const current=(typeof localStorage!=="undefined"&&localStorage.getItem("wallpaperStyle"))||"matrix";
+  WALLPAPER_STYLES.forEach(s=>{
+    const btn=document.createElement("div");
+    btn.className="preset-btn"+(s.id===current?" active":"");
+    btn.innerHTML=`<div class="preset-swatch" style="display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);box-shadow:none;border-radius:6px;">${s.icon}</div><div class="preset-name">${s.name}</div>`;
+    btn.onclick=()=>{
+      document.querySelectorAll("#wallpaperStyleGrid .preset-btn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      setWallpaperStyle(s.id);
+      showNotif("Wallpaper","Style → "+s.name);
+    };
+    grid.appendChild(btn);
+  });
+}
+
 function buildWallpaperPicker() {
+  const {h,s,v}=hexToHSB(_currentAccentHex);
+  _wheelHue=h;_wheelSat=s;_wheelBrt=v;
+  buildWallpaperStyleGrid();
   buildPresetGrid();
   // Delay wheel init until window is visible
   setTimeout(initThemeWheel, 50);

@@ -305,12 +305,21 @@
       <div class="icon-label">contact</div>
     </div>
     <div class="icon" ondblclick="openWindow('terminal')" ontouchend="iconTap(event,'terminal')" title="Terminal">
-      <div class="icon-img">💻</div>
+      <div class="icon-img" style="font-size:0;line-height:0;">
+        <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="28" height="26" rx="3" fill="#0d1117" stroke="#00ff9d" stroke-width="1.5"/>
+          <text x="6" y="21" font-family="monospace" font-size="13" font-weight="bold" fill="#00ff9d">&gt;_</text>
+        </svg>
+      </div>
       <div class="icon-label">terminal</div>
     </div>
     <div class="icon" ondblclick="openWindow('neofetch')" ontouchend="iconTap(event,'neofetch')" title="System Info">
       <div class="icon-img">🖥️</div>
       <div class="icon-label">neofetch</div>
+    </div>
+    <div class="icon" ondblclick="showIdCard()" ontouchend="event.preventDefault();showIdCard()" title="Access Pass">
+      <div class="icon-img">&#x1FAAA;</div>
+      <div class="icon-label">id.card</div>
     </div>
     <div class="icon" ondblclick="openWindow('wallpaper')" ontouchend="iconTap(event,'wallpaper')" title="Theme">
       <div class="icon-img">🎨</div>
@@ -326,7 +335,7 @@
     </div>
     <div class="icon" ondblclick="openWindow('tetris')" ontouchend="iconTap(event,'tetris')" title="Tetris">
       <div class="icon-img" style="font-size:0;line-height:0;">
-        <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 6px #00ff9d)">
+        <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
           <!-- T-piece in cyan/green blocks -->
           <rect x="2"  y="2"  width="8" height="8" rx="1.5" fill="#00f5ff" opacity="0.95"/>
           <rect x="12" y="2"  width="8" height="8" rx="1.5" fill="#00ff9d" opacity="0.95"/>
@@ -416,7 +425,7 @@
 
 <!-- Context Menu -->
 <div id="ctxMenu">
-  <div class="ctx-item" onclick="openWindow('terminal');hideCtx()">🖥 Open Terminal</div>
+  <div class="ctx-item" onclick="openWindow('terminal');hideCtx()">&gt;_ Open Terminal</div>
   <div class="ctx-item" onclick="openWindow('neofetch');hideCtx()">📊 Neofetch</div>
   <div class="ctx-sep"></div>
   <div class="ctx-item" onclick="openWindow('wallpaper');hideCtx()">🎨 Change Theme</div>
@@ -444,8 +453,9 @@
   <div class="sm-item" onclick="openWindow('contact');hideStart()">📡 <span>contact</span><em>Get In Touch</em></div>
   <div class="sm-sep"></div>
   <div class="sm-section">SYSTEM</div>
-  <div class="sm-item" onclick="openWindow('terminal');hideStart()">💻 <span>terminal</span><em>Shell</em></div>
+  <div class="sm-item" onclick="openWindow('terminal');hideStart()">&gt;_ <span>terminal</span><em>Shell</em></div>
   <div class="sm-item" onclick="openWindow('neofetch');hideStart()">🖥️ <span>neofetch</span><em>System Info</em></div>
+  <div class="sm-item" onclick="showIdCard();hideStart()">&#x1FAAA; <span>id.card</span><em>Access Pass</em></div>
   <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>theme</span><em>Appearance</em></div>
   <div class="sm-item" onclick="openWindow('snake');hideStart()">🐍 <span>snake.exe</span><em>Leaderboard</em></div>
   <div class="sm-item" onclick="openWindow('typingtest');hideStart()">⌨️ <span>hack.exe</span><em>Typing Test</em></div>
@@ -830,6 +840,48 @@
   <div class="win-resize" onmousedown="startResize(event,'win-neofetch')" ontouchstart="startResizeTouch(event,'win-neofetch')"></div>
 </div>
 
+<!-- ID Card Overlay (not a window — just the card, click outside or × to close) -->
+<div class="id-card-overlay" id="idCardOverlay" onclick="if(event.target===this)hideIdCard()">
+  <div class="id-ticket-wrapper" id="idTicket">
+    <button class="id-card-close" onclick="hideIdCard()" aria-label="Close">&times;</button>
+    <div class="it-ticket">
+      <div class="it-main">
+        <div class="it-content">
+          <div class="it-header">
+            <div class="it-logo">
+              <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              ANKESH-OS
+            </div>
+            <div class="it-type">Access Pass</div>
+          </div>
+          <div class="it-title">Ankesh<br>Prajapati</div>
+          <div class="it-subtitle">Security Analyst &middot; VAPT</div>
+          <div class="it-details">
+            <div class="it-detail-item"><span class="it-label">Org</span><span class="it-value">Securis360</span></div>
+            <div class="it-detail-item"><span class="it-label">Role</span><span class="it-value">VAPT Specialist</span></div>
+            <div class="it-detail-item"><span class="it-label">Access</span><span class="it-value">Root</span></div>
+            <div class="it-detail-item"><span class="it-label">Location</span><span class="it-value">India</span></div>
+          </div>
+        </div>
+        <div class="it-perforation" style="position:absolute;bottom:0;left:0;width:100%;transform:translateY(50%);">
+          <div class="it-perf-line"></div>
+        </div>
+      </div>
+      <div class="it-stub">
+        <div class="it-barcode-container">
+          <div class="it-barcode"></div>
+          <div class="it-barcode-id">in/ankesh-prajapati-0a87a8249</div>
+        </div>
+        <div class="it-admit">
+          <div class="it-admit-text">Access#</div>
+          <div class="it-admit-num" id="itAccessNum">0000</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>document.getElementById("itAccessNum").textContent=String(Math.floor(1000+Math.random()*9000));</script>
+
 <!-- Wallpaper Picker Window -->
 
 <!-- Wallpaper Picker Window -->
@@ -846,6 +898,12 @@
   <div class="win-body">
     <div class="win-content">
       <div class="section-title"><span>$</span> gsettings set org.gnome.desktop accent-color</div>
+
+      <!-- Wallpaper style -->
+      <div class="theme-section">
+        <div class="theme-section-title">Background Style</div>
+        <div class="preset-grid" id="wallpaperStyleGrid" style="grid-template-columns:repeat(2,1fr);"></div>
+      </div>
 
       <!-- Preset swatches -->
       <div class="theme-section">

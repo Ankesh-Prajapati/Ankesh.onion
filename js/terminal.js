@@ -227,9 +227,9 @@ function handleTermCmd(cmd){
     const valid=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
     if(valid.includes(target)){
       openWindow(target);
-      printTerm(`<span class="t-green">Opening ${target}...</span>`);
+      printTerm(`<span class="t-green">Opening ${escHtml(target)}...</span>`);
     } else {
-      printTerm(`<span class="t-red">open: '${target}' not found.</span> Try: ${valid.join(", ")}`);
+      printTerm(`<span class="t-red">open: '${escHtml(target)}' not found.</span> Try: ${valid.join(", ")}`);
     }
   } else if(c.startsWith("hack ")||c==="hack"){
     const tgt=(c==="hack")?"localhost":c.slice(5).trim();
@@ -251,13 +251,13 @@ function handleTermCmd(cmd){
   } else if(termData[c]){
     printTerm(termData[c]);
   } else {
-    printTerm(`<span class="t-red">command not found: ${cmd}</span> — type <span class="t-green">help</span>`);
+    printTerm(`<span class="t-red">command not found: ${escHtml(cmd)}</span> — type <span class="t-green">help</span>`);
   }
 }
 
 function runHack(target, done){
   // Parse target from "hack target.com" or just "target.com"
-  const tgt = target.replace(/^hack\s+/i,'').trim() || "unknown.target";
+  const tgt = escHtml(target.replace(/^hack\s+/i,'').trim() || "unknown.target");
   const ip = Array.from({length:4},()=>Math.floor(Math.random()*254)+1).join(".");
 
   const phases = [

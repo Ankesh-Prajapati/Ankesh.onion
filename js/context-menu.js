@@ -23,6 +23,10 @@ document.addEventListener("click",(e)=>{
 });
 document.addEventListener("contextmenu",(e)=>{if(e.target===document.body||e.target===document.getElementById("desktop")||e.target.id==="desktop")return;hideCtx();});
 
+function showIdCard(){document.getElementById("idCardOverlay").classList.add("show");}
+function hideIdCard(){document.getElementById("idCardOverlay").classList.remove("show");}
+document.addEventListener("keydown",(e)=>{if(e.key==="Escape")hideIdCard();});
+
 function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
 function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest","tetris"].forEach(closeWindow);}
 

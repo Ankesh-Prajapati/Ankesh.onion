@@ -13,10 +13,8 @@ const CASCADE_STEP = 34;
 let cascadeIndex = 0;
 
 function initDesktop() {
-  // Open the two "welcome" windows staggered and pre-positioned so they
-  // never overlap on startup.
+  // about.sh and neofetch cover the same intro info, so only open one on load.
   setTimeout(() => openWindow('about'), 150);
-  setTimeout(() => openWindow('neofetch'), 450);
   animateSkillBars();
   initTerminal();
   buildWallpaperPicker();
