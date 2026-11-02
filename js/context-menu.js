@@ -42,3 +42,8 @@ function showNotif(title,msg){
   document.body.appendChild(n);
   notifTimeout=setTimeout(()=>{if(n.parentNode)n.remove();},2500);
 }
+
+function copyPgpFingerprint(el){
+  const fp=el.textContent.replace(/\s+/g," ").trim();
+  navigator.clipboard.writeText(fp).then(()=>showNotif("PGP","Fingerprint copied"));
+}

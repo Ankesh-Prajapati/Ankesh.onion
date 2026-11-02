@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>404 — Process Not Found | Ankesh Prajapati</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="robots" content="noindex"/>
+<meta name="theme-color" content="#0d1117"/>
+
+<link rel="icon" href="favicon.ico" sizes="48x48"/>
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg"/>
+<link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png"/>
+
+<link rel="stylesheet" href="css/base.css">
+
+<style>
+  #desktopBg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block;}
+  #desktop404{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .err-window{
+    width:100%;max-width:480px;background:var(--panel);border:1px solid var(--border);
+    border-radius:10px;box-shadow:var(--window-shadow);overflow:hidden;
+  }
+  .err-titlebar{
+    display:flex;align-items:center;gap:10px;padding:10px 14px;
+    background:var(--panel-header);border-bottom:1px solid var(--border);
+  }
+  .err-dots{display:flex;gap:7px;}
+  .err-dot{width:11px;height:11px;border-radius:50%;}
+  .err-dot.r{background:var(--red);} .err-dot.a{background:var(--amber);} .err-dot.g{background:var(--green);}
+  .err-title{flex:1;text-align:center;font-size:0.72rem;color:var(--muted);margin-right:40px;}
+  .err-body{padding:22px 24px 26px;font-size:0.85rem;line-height:1.7;}
+  .err-line{white-space:pre-wrap;word-break:break-word;}
+  .err-prompt{color:var(--accent);}
+  .err-path{color:var(--highlight);}
+  .err-fail{color:var(--danger);}
+  .err-big{
+    font-size:2.6rem;font-weight:700;color:var(--accent);line-height:1;
+    margin:14px 0 6px;text-shadow:0 0 20px rgba(var(--accent-rgb),0.4);
+  }
+  .err-msg{color:var(--text);margin-bottom:18px;}
+  .err-home{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(var(--accent-rgb),0.1);border:1px solid rgba(var(--accent-rgb),0.4);
+    color:var(--accent);text-decoration:none;font-family:inherit;font-size:0.8rem;
+    padding:8px 14px;border-radius:6px;transition:background 0.15s,transform 0.15s;
+  }
+  .err-home:hover{background:rgba(var(--accent-rgb),0.2);transform:translateY(-1px);}
+  .err-cursor{display:inline-block;width:7px;height:1em;background:var(--accent);vertical-align:text-bottom;animation:blink 1s steps(1) infinite;}
+</style>
+</head>
+<body>
+
+<canvas id="desktopBg"></canvas>
+
+<div id="desktop404">
+  <div class="err-window">
+    <div class="err-titlebar">
+      <div class="err-dots"><div class="err-dot r"></div><div class="err-dot a"></div><div class="err-dot g"></div></div>
+      <div class="err-title">ankesh@root: ~ 404</div>
+    </div>
+    <div class="err-body">
+      <div class="err-line"><span class="err-prompt">$</span> cd <span class="err-path" id="reqPath">/unknown</span></div>
+      <div class="err-line err-fail">bash: cd: no such file or directory</div>
+      <div class="err-big">404</div>
+      <div class="err-msg">Process not found. This path doesn't exist, was moved, or never did.</div>
+      <div class="err-line"><span class="err-prompt">$</span> <span class="err-cursor"></span></div>
+      <br>
+      <a class="err-home" href="index.html">&gt;_ cd ~ &amp;&amp; return home</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/desktop-bg.js"></script>
+<script>
+  initDesktopBg();
+  document.getElementById("reqPath").textContent = location.pathname || "/unknown";
+</script>
+</body>
+</html>

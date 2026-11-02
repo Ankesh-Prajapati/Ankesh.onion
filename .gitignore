@@ -1,0 +1,7 @@
+# Private key material — never commit, local only
+keys/
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
