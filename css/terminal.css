@@ -11,8 +11,6 @@
   white-space:normal;
   word-break:break-word;
 }
-.term-scroll::-webkit-scrollbar{width:3px;}
-.term-scroll::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:2px;}
 /* Every output line — no extra margin, no min-height */
 .term-line{
   display:block;

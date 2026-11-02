@@ -21,7 +21,7 @@ const termData={
   Internal VAPT tooling & automation
 `,
   experience:`<span class="t-blue">[2025-Now]</span> <span class="t-green">Security Analyst & Pentester @ Securis360</span>
-  60+ VAPT engagements, internal tooling,
+  100+ VAPT engagements, internal tooling,
   detailed reporting, patch validation.
 
 <span class="t-blue">[2024-2025]</span> <span class="t-green">Cybersecurity Intern @ State Cyber Crime Cell</span>

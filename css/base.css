@@ -16,7 +16,7 @@
   --danger: #ff3355;
   --window-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(var(--accent-rgb),0.25);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:rgba(var(--accent-rgb),0.3) transparent;}
 html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospace;background:var(--bg);color:var(--text);}
 
 
@@ -32,9 +32,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
 .blink{animation:blink 1s steps(1) infinite;}
 
-/* Scrollbar global */
+/* Scrollbar global (fallback for anything js/scrollbars.js doesn't manage) */
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:3px;}
+
+/* Custom scrollbars — js/scrollbars.js hides the native one on elements it
+   manages and paints this instead, because Edge's Fluent scrollbar ignores
+   ::-webkit-scrollbar / scrollbar-color entirely and always draws its own
+   native-themed bar regardless of page CSS. */
+.csb-managed{scrollbar-width:none;-ms-overflow-style:none;}
+.csb-managed::-webkit-scrollbar{width:0;height:0;display:none;}
+.csb-track{position:absolute;top:2px;bottom:2px;right:2px;width:5px;z-index:5;}
+.csb-thumb{position:absolute;left:0;width:100%;border-radius:3px;background:rgba(var(--accent-rgb),0.3);cursor:pointer;transition:background 0.15s;}
+.csb-thumb:hover,.csb-thumb.dragging{background:rgba(var(--accent-rgb),0.55);}
 
 /* ── MOBILE RESPONSIVE ── */
 

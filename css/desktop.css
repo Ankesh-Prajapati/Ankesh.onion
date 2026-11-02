@@ -156,15 +156,18 @@
   position:fixed;inset:0;z-index:99985;
   background:rgba(0,0,0,0.55);backdrop-filter:blur(2px);
   display:none;align-items:center;justify-content:center;
+  padding:24px;overflow-y:auto;box-sizing:border-box;
 }
 .id-card-overlay.show{display:flex;}
 
 /* ID ticket — adapted from the Uiverse "ticket" component (zeeshan_2112),
    recolored to the site's theme accent; interaction is the original's
-   hover/active 3D tilt. */
+   hover/active 3D tilt. Scale is driven entirely by this font-size since
+   every dimension inside is in em, so responsive sizing is one property. */
 .id-ticket-wrapper{
   --it-bg:#1a2330; --it-bg-light:#222e3d;
-  position:relative;font-size:10px;perspective:1000px;display:inline-block;user-select:none;
+  position:relative;font-size:15px;perspective:1000px;display:inline-block;user-select:none;
+  max-width:100%;
 }
 .id-card-close{
   position:absolute;top:-14px;right:-14px;z-index:20;
@@ -175,7 +178,7 @@
 }
 .id-card-close:hover{background:rgba(var(--accent-rgb),0.2);border-color:var(--accent);color:var(--accent);}
 .it-ticket{
-  position:relative;width:22em;color:#f8fafc;
+  position:relative;width:22em;max-width:86vw;color:#f8fafc;
   font-family:"Fira Code",monospace;
   transform-style:preserve-3d;
   transition:transform 0.6s cubic-bezier(0.23,1,0.32,1),box-shadow 0.6s ease;

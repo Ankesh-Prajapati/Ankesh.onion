@@ -43,9 +43,20 @@
   #snakeSidePanel{width:100px!important;}
   .taskbar-start{padding:0 8px!important;font-size:0.7rem!important;}
   .taskbar-tasks{display:none!important;}
+
+  .id-ticket-wrapper{font-size:13px!important;}
 }
 @media (max-width: 480px) {
   #snakeSidePanel{display:none!important;}
   .taskbar-clock{display:none;}
+
+  .id-ticket-wrapper{font-size:11px!important;}
+}
+@media (max-width: 360px) {
+  .id-ticket-wrapper{font-size:9.5px!important;}
+}
+@media (max-height: 420px) {
+  /* short/landscape viewports — shrink by viewport height, not just width */
+  .id-ticket-wrapper{font-size:10px!important;}
 }
 
