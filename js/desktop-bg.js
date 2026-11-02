@@ -59,20 +59,38 @@ function _drawNetwork(accent){
     if(p.x<0||p.x>_bgW) p.vx*=-1;
     if(p.y<0||p.y>_bgH) p.vy*=-1;
   }
+  // Build the mesh as a forest (no closed loops) — a plain distance+degree
+  // cap still lets 3 mutually-close nodes form a triangle, and even a thin
+  // translucent triangle outline reads as a solid filled blob once a few
+  // edges cross in a small area. Union-find blocks any edge that would
+  // close a cycle, so only open branching lines are ever drawn.
+  var degree=new Array(particles.length).fill(0);
+  var parent=particles.map((_,idx)=>idx);
+  var MAX_DEGREE=3;
+  function find(x){while(parent[x]!==x){parent[x]=parent[parent[x]];x=parent[x];}return x;}
+  var edges=[];
   for(var i=0;i<particles.length;i++){
     for(var j=i+1;j<particles.length;j++){
-      var a=particles[i],b=particles[j];
-      var dx=a.x-b.x, dy=a.y-b.y;
+      var dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
       var dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<NET_CONNECT_DIST){
-        var op=0.5-0.35*(dist/NET_CONNECT_DIST);
-        ctx.beginPath();
-        ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
-        ctx.strokeStyle="rgba("+accent+","+op+")";
-        ctx.lineWidth=1.2;
-        ctx.stroke();
-      }
+      if(dist<NET_CONNECT_DIST)edges.push({i:i,j:j,dist:dist});
     }
+  }
+  edges.sort(function(a,b){return a.dist-b.dist;});
+  for(var e=0;e<edges.length;e++){
+    var i=edges[e].i,j=edges[e].j,dist=edges[e].dist;
+    if(degree[i]>=MAX_DEGREE||degree[j]>=MAX_DEGREE)continue;
+    var ri=find(i),rj=find(j);
+    if(ri===rj)continue; // would close a loop — skip
+    parent[ri]=rj;
+    degree[i]++;degree[j]++;
+    var a=particles[i],b=particles[j];
+    var op=0.32-0.2*(dist/NET_CONNECT_DIST);
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle="rgba("+accent+","+op+")";
+    ctx.lineWidth=1.2;
+    ctx.stroke();
   }
   for(var i=0;i<particles.length;i++){
     var p=particles[i];
