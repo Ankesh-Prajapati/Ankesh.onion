@@ -50,9 +50,9 @@ function openWindow(name) {
   updateTaskbar();
   if (name === 'skills') setTimeout(animateSkillBars, 100);
   if (name === 'wallpaper') { setTimeout(() => { buildPresetGrid(); initThemeWheel(); }, 60); }
-  if (name === 'typingtest') { setTimeout(() => { if (!ttSnippet) { ttSnippet = getTTSnippet(); } renderTTDisplay(document.getElementById('ttInput')?.value || ''); }, 80); }
-  if (name === 'tetris') { setTimeout(function () { if (typeof tetrisInit === 'function') tetrisInit(); }, 60); }
-  showNotif('Opened', '~/' + name + ' loaded successfully');
+  if (name === 'arcade') Arcade.open();
+  // on phones every window is full-screen, so this toast would cover its content
+  if (window.innerWidth > 768) showNotif('Opened', '~/' + name + ' loaded successfully');
 }
 
 function closeWindow(name) {
@@ -60,6 +60,7 @@ function closeWindow(name) {
   if (!win) return;
   win.style.display = 'none';
   win.classList.remove('minimized', 'maximized', 'focused');
+  if (name === 'arcade') Arcade.close();
   updateTaskbar();
 }
 
@@ -67,6 +68,7 @@ function minimizeWindow(name) {
   const win = document.getElementById('win-' + name);
   if (!win) return;
   win.classList.toggle('minimized');
+  if (name === 'arcade') Arcade.blur();
   updateTaskbar();
 }
 
@@ -103,8 +105,8 @@ document.addEventListener('mousedown', (e) => {
 function updateTaskbar() {
   const tasks = document.getElementById('taskbarTasks');
   tasks.innerHTML = '';
-  const wins = ['about', 'skills', 'experience', 'projects', 'certs', 'contact', 'terminal', 'neofetch', 'wallpaper', 'snake', 'typingtest', 'tetris'];
-  const labels = { about: '👤 about', skills: '⚡ skills', experience: '📋 experience', projects: '🛡️ projects', certs: '🎓 certs', contact: '📡 contact', terminal: '💻 terminal', neofetch: '🖥️ neofetch', wallpaper: '🎨 theme', snake: '🐍 snake', typingtest: '⌨️ hack.exe', tetris: '🎮 tetris.exe' };
+  const wins = ['about', 'skills', 'experience', 'projects', 'certs', 'contact', 'terminal', 'neofetch', 'wallpaper', 'arcade'];
+  const labels = { about: '👤 about', skills: '⚡ skills', experience: '📋 experience', projects: '🛡️ projects', certs: '🎓 certs', contact: '📡 contact', terminal: '💻 terminal', neofetch: '🖥️ neofetch', wallpaper: '🎨 theme', arcade: '🎮 arcade' };
   wins.forEach(n => {
     const win = document.getElementById('win-' + n);
     if (!win || win.style.display === 'none') return;
@@ -203,8 +205,21 @@ function onResizeTouch(e) {
 }
 function stopResizeTouch() { resizeState = null; document.removeEventListener('touchmove', onResizeTouch); document.removeEventListener('touchend', stopResizeTouch); }
 
-// Single-tap icons on mobile
-function iconTap(e, name) { e.preventDefault(); openWindow(name); }
+// Single-tap icons on mobile. touchend also fires at the end of a swipe
+// (e.g. scrolling the icon dock), so only treat it as a tap if the finger
+// barely moved and wasn't held long.
+let tapStart = null;
+document.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  tapStart = { x: t.clientX, y: t.clientY, at: Date.now() };
+}, { passive: true });
+function iconTap(e, target) {
+  const t = e.changedTouches && e.changedTouches[0];
+  if (!tapStart || !t) return;
+  if (Math.abs(t.clientX - tapStart.x) > 10 || Math.abs(t.clientY - tapStart.y) > 10 || Date.now() - tapStart.at > 600) return;
+  e.preventDefault();
+  if (typeof target === 'function') target(); else openWindow(target);
+}
 
 // ===================== SKILL BARS =====================
 function animateSkillBars() {
@@ -214,5 +229,3 @@ function animateSkillBars() {
   });
 }
 
-function openAllWindows() { ['about', 'skills', 'experience', 'projects', 'certs', 'contact', 'terminal', 'neofetch'].forEach(openWindow); }
-function closeAllWindows() { ['about', 'skills', 'experience', 'projects', 'certs', 'contact', 'terminal', 'neofetch', 'wallpaper', 'snake', 'typingtest', 'tetris'].forEach(closeWindow); }

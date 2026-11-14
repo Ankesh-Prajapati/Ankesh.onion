@@ -54,6 +54,6 @@ function initCustomScrollbar(content){
 }
 
 function initCustomScrollbars(){
-  document.querySelectorAll(".win-content,.term-scroll,.neofetch-body,.snake-side-list,.game-code-display").forEach(initCustomScrollbar);
+  document.querySelectorAll(".win-content,.term-scroll,.neofetch-body").forEach(initCustomScrollbar);
 }
 document.addEventListener("DOMContentLoaded",initCustomScrollbars);

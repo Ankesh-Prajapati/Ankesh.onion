@@ -1,20 +1,9 @@
-// ════════════════════════════════════════════════════════════════
-// TETRIS ENGINE
-// ════════════════════════════════════════════════════════════════
+// ══ TETRIS — ROOTBOY cartridge ════════════════════════════════════
+// left/right move · up rotate · down soft drop · B hard drop · S pause
 (function(){
-  var COLS = 10, ROWS = 20, BLOCK = 26; // BLOCK recalculated in init()
-  var canvas, ctx, nextCvs, nextCtx;
-  var board, piece, nextPiece;
-  var score, level, lines, best;
-  var dropInterval, lastDrop, animId;
-  var state = 'idle'; // idle | playing | paused | over
-
-  var COLORS = {
-    I:'#00f5ff', O:'#febc2e', T:'#b06fff',
-    S:'#28c840', Z:'#ff3355', J:'#58a6ff', L:'#ff6d00'
-  };
-
-  var PIECES = {
+  var COLS=10,ROWS=20,BEST_KEY='tetris_best';
+  var COLORS={I:'#00f5ff',O:'#febc2e',T:'#b06fff',S:'#28c840',Z:'#ff3355',J:'#58a6ff',L:'#ff6d00'};
+  var SHAPES={
     I:[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
     O:[[1,1],[1,1]],
     T:[[0,1,0],[1,1,1],[0,0,0]],
@@ -23,472 +12,173 @@
     J:[[1,0,0],[1,1,1],[0,0,0]],
     L:[[0,0,1],[1,1,1],[0,0,0]]
   };
+  var KEYS=Object.keys(SHAPES),g=null;
 
-  var PIECE_KEYS = Object.keys(PIECES);
-  var bag = [], bagNext = [];
-
-  function shuffleBag(arr){
-    for(var i=arr.length-1;i>0;i--){
-      var j=Math.floor(Math.random()*(i+1));
-      var t=arr[i]; arr[i]=arr[j]; arr[j]=t;
+  function best(){try{return parseInt(localStorage.getItem(BEST_KEY)||'0',10)||0;}catch(e){return 0;}}
+  function fromBag(){
+    if(!g.bag.length){
+      g.bag=KEYS.slice();
+      for(var i=g.bag.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=g.bag[i];g.bag[i]=g.bag[j];g.bag[j]=t;}
     }
-    return arr;
+    return g.bag.pop();
   }
-  function refillBag(b){ return shuffleBag(PIECE_KEYS.slice()); }
-
-  function nextFromBag(){
-    if(!bag.length) bag = refillBag();
-    return bag.pop();
+  function make(type){
+    var m=SHAPES[type].map(function(r){return r.slice();});
+    return {m:m,x:Math.floor((COLS-m[0].length)/2),y:type==='I'?-1:0,c:COLORS[type]};
   }
-
-  function makePiece(type){
-    return {
-      type: type,
-      matrix: PIECES[type].map(function(r){ return r.slice(); }),
-      x: Math.floor(COLS/2) - Math.floor(PIECES[type][0].length/2),
-      y: 0,
-      color: COLORS[type]
-    };
-  }
-
-  function init(){
-    canvas  = document.getElementById('tetrisCanvas');
-    nextCvs = document.getElementById('tetrisNext');
-    if(!canvas || !nextCvs) return;
-    canvas.width  = COLS * BLOCK;
-    canvas.height = ROWS * BLOCK;
-    ctx     = canvas.getContext('2d');
-    nextCtx = nextCvs.getContext('2d');
-    best = 0;
-    try { best = parseInt(localStorage.getItem('tetris_best')||'0'); } catch(e){}
-    var b = document.getElementById('tetBest'); if(b) b.textContent = best;
-  }
-
-  function startGame(){
-    if(window.stopDemo) window.stopDemo();
-    board = Array.from({length:ROWS}, function(){ return new Array(COLS).fill(0); });
-    bag = refillBag();
-    score = 0; level = 1; lines = 0;
-    updateHUD();
-    piece     = makePiece(nextFromBag());
-    nextPiece = makePiece(nextFromBag());
-    state = 'playing';
-    hideOverlay();
-    var btn = document.getElementById('tetBtn'); if(btn) btn.textContent = '⏸ PAUSE';
-    var sb = document.getElementById('tetBtnSide'); if(sb){ sb.style.display='block'; sb.textContent='⏸ PAUSE'; }
-    lastDrop = performance.now();
-    if(animId) cancelAnimationFrame(animId);
-    gameLoop(lastDrop);
-
-    // Focus canvas for key events
-    canvas.setAttribute('tabindex','0');
-    canvas.focus();
-  }
-
-  function gameLoop(ts){
-    if(state !== 'playing'){ return; }
-    animId = requestAnimationFrame(gameLoop);
-    var interval = Math.max(80, 600 - (level-1)*55);
-    if(ts - lastDrop >= interval){
-      lastDrop = ts;
-      dropPiece();
+  function collides(p,dx,dy,m){
+    m=m||p.m;
+    for(var r=0;r<m.length;r++)for(var q=0;q<m[r].length;q++){
+      if(!m[r][q])continue;
+      var x=p.x+q+dx,y=p.y+r+dy;
+      if(x<0||x>=COLS||y>=ROWS)return true;
+      if(y>=0&&g.board[y][x])return true;
     }
-    draw();
+    return false;
   }
 
-  function dropPiece(){
-    piece.y++;
-    if(collides(piece)){
-      piece.y--;
-      lock();
-    }
+  function start(){
+    g={board:Array.from({length:ROWS},function(){return new Array(COLS).fill(0);}),bag:[],
+      score:0,lines:0,level:1,acc:0,clearing:null,over:false,overT:0,done:false,hi:best(),flash:0};
+    g.piece=make(fromBag());g.next=make(fromBag());
+    hud();draw();
   }
+  function gravity(){return Math.max(90,700-(g.level-1)*60);}
+  function hud(){Arcade.hud([['SCORE',Arcade.pad(g.score)],['LINES',g.lines],['HI',Arcade.pad(Math.max(g.hi,g.score))]]);}
 
-  function hardDrop(){
-    while(!collides({matrix:piece.matrix, x:piece.x, y:piece.y+1})){
-      piece.y++;
-      score += 2;
-    }
-    lock();
-    updateHUD();
-  }
-
-  function lock(){
-    piece.matrix.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) board[piece.y+r][piece.x+c] = piece.color;
-      });
-    });
-    clearLines();
-    piece = nextPiece;
-    nextPiece = makePiece(nextFromBag());
-    if(collides(piece)){
-      gameOver();
-      return;
-    }
-    drawNext();
-  }
-
-  function clearLines(){
-    var cleared = 0;
-    for(var r=ROWS-1;r>=0;r--){
-      if(board[r].every(function(v){ return v!==0; })){
-        board.splice(r,1);
-        board.unshift(new Array(COLS).fill(0));
-        cleared++;
-        r++;
-      }
-    }
-    if(cleared){
-      var pts = [0,100,300,500,800][cleared] * level;
-      score += pts;
-      lines += cleared;
-      level = Math.floor(lines/10)+1;
-      updateHUD();
-      // Flash effect
-      flashLines();
-    }
-  }
-
-  function flashLines(){
-    ctx.fillStyle = 'rgba(0,255,157,0.18)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-  }
-
-  function collides(p){
-    return p.matrix.some(function(row,r){
-      return row.some(function(v,c){
-        if(!v) return false;
-        var nx = p.x+c, ny = p.y+r;
-        return nx<0 || nx>=COLS || ny>=ROWS || (ny>=0 && board[ny][nx]!==0);
-      });
-    });
-  }
-
-  function rotate(p){
-    var m = p.matrix;
-    var N = m.length;
-    var rotated = Array.from({length:N}, function(_,r){
-      return Array.from({length:N}, function(_,c){ return m[N-1-c][r]; });
-    });
-    var kicked = {matrix:rotated, x:p.x, y:p.y, type:p.type, color:p.color};
-    // Wall kick
-    var kicks = [0,-1,1,-2,2];
+  function move(dx){if(!collides(g.piece,dx,0)){g.piece.x+=dx;Arcade.sfx('shift');}}
+  function rotate(){
+    var m=g.piece.m,N=m.length;
+    var r=m.map(function(row,i){return row.map(function(_,j){return m[N-1-j][i];});});
+    var kicks=[0,-1,1,-2,2];
     for(var k=0;k<kicks.length;k++){
-      kicked.x = p.x + kicks[k];
-      if(!collides(kicked)){ p.matrix=rotated; p.x=kicked.x; return; }
+      if(!collides(g.piece,kicks[k],0,r)){g.piece.m=r;g.piece.x+=kicks[k];Arcade.sfx('rotate');return;}
     }
   }
-
-  function ghostRow(){
-    var gy = piece.y;
-    while(!collides({matrix:piece.matrix, x:piece.x, y:gy+1})) gy++;
-    return gy;
-  }
-
-  function draw(){
-    // Background
-    ctx.fillStyle = '#060a0d';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(0,255,157,0.04)';
-    ctx.lineWidth = 0.5;
-    for(var c=0;c<=COLS;c++){ ctx.beginPath(); ctx.moveTo(c*BLOCK,0); ctx.lineTo(c*BLOCK,canvas.height); ctx.stroke(); }
-    for(var r=0;r<=ROWS;r++){ ctx.beginPath(); ctx.moveTo(0,r*BLOCK); ctx.lineTo(canvas.width,r*BLOCK); ctx.stroke(); }
-
-    // Board
-    board.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) drawBlock(ctx, c, r, v, 1);
-      });
-    });
-
-    // Ghost piece
-    var gy = ghostRow();
-    if(gy !== piece.y){
-      piece.matrix.forEach(function(row,r){
-        row.forEach(function(v,c){
-          if(v) drawBlock(ctx, piece.x+c, gy+r, piece.color, 0.18);
-        });
-      });
+  function lock(){
+    var p=g.piece;
+    for(var r=0;r<p.m.length;r++)for(var q=0;q<p.m[r].length;q++){
+      if(!p.m[r][q])continue;
+      if(p.y+r<0){gameOver();return;}
+      g.board[p.y+r][p.x+q]=p.c;
     }
-
-    // Active piece
-    piece.matrix.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v) drawBlock(ctx, piece.x+c, piece.y+r, piece.color, 1);
-      });
-    });
+    var full=[];
+    for(var y=0;y<ROWS;y++)if(g.board[y].every(Boolean))full.push(y);
+    if(full.length){
+      g.clearing={rows:full,t:0};g.lines+=full.length;
+      g.score+=[0,100,300,500,800][full.length]*g.level;
+      g.level=Math.floor(g.lines/10)+1;
+      Arcade.sfx(full.length===4?'win':'clear');hud();
+    }else{Arcade.sfx('land');spawn();}
   }
+  function spawn(){g.piece=g.next;g.next=make(fromBag());g.acc=0;if(collides(g.piece,0,0))gameOver();}
+  function gameOver(){g.over=true;Arcade.sfx('crash');}
 
-  function drawBlock(c, x, y, color, alpha){
-    c.save();
-    c.globalAlpha = alpha;
-    // Fill
-    c.fillStyle = color;
-    c.fillRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, BLOCK-2);
-    // Shine
-    c.fillStyle = 'rgba(255,255,255,0.18)';
-    c.fillRect(x*BLOCK+2, y*BLOCK+2, BLOCK-4, 4);
-    // Glow border
-    if(alpha > 0.5){
-      c.shadowColor = color;
-      c.shadowBlur  = 6;
-      c.strokeStyle = color;
-      c.lineWidth   = 0.8;
-      c.strokeRect(x*BLOCK+1, y*BLOCK+1, BLOCK-2, BLOCK-2);
+  function input(btn){
+    if(g.over||g.clearing)return btn!=='s';
+    if(btn==='left')move(-1);
+    else if(btn==='right')move(1);
+    else if(btn==='up')rotate();
+    else if(btn==='down'){
+      if(!collides(g.piece,0,1)){g.piece.y++;g.score+=1;g.acc=0;hud();}else lock();
     }
-    c.restore();
-  }
-
-  function drawNext(){
-    nextCtx.fillStyle = '#0a0d10';
-    nextCtx.fillRect(0,0,nextCvs.width,nextCvs.height);
-    if(!nextPiece) return;
-    var m   = nextPiece.matrix;
-    var bsz = 18;
-    var ox  = Math.floor((nextCvs.width  - m[0].length*bsz) / 2);
-    var oy  = Math.floor((nextCvs.height - m.length   *bsz) / 2);
-    m.forEach(function(row,r){
-      row.forEach(function(v,c){
-        if(v){
-          nextCtx.fillStyle = nextPiece.color;
-          nextCtx.shadowColor = nextPiece.color;
-          nextCtx.shadowBlur  = 5;
-          nextCtx.fillRect(ox+c*bsz+1, oy+r*bsz+1, bsz-2, bsz-2);
-        }
-      });
-    });
-  }
-
-  function drawIdleBoard(){
-    if(!ctx) return;
-    ctx.fillStyle = '#060a0d';
-    ctx.fillRect(0,0,COLS*BLOCK,ROWS*BLOCK);
-    ctx.strokeStyle = 'rgba(0,255,157,0.04)';
-    ctx.lineWidth = 0.5;
-    for(var c=0;c<=COLS;c++){ ctx.beginPath(); ctx.moveTo(c*BLOCK,0); ctx.lineTo(c*BLOCK,ROWS*BLOCK); ctx.stroke(); }
-    for(var r=0;r<=ROWS;r++){ ctx.beginPath(); ctx.moveTo(0,r*BLOCK); ctx.lineTo(COLS*BLOCK,r*BLOCK); ctx.stroke(); }
-  }
-
-  function updateHUD(){
-    document.getElementById('tetScore').textContent = score;
-    document.getElementById('tetLevel').textContent = level;
-    document.getElementById('tetLines').textContent = lines;
-    if(score > best){
-      best = score;
-      document.getElementById('tetBest').textContent = best;
-      try { localStorage.setItem('tetris_best', best); } catch(e){}
+    else if(btn==='b'){
+      var n=0;while(!collides(g.piece,0,1)){g.piece.y++;n++;}
+      g.score+=n*2;g.flash=1;Arcade.sfx('drop');lock();hud();
     }
+    else return false;
+    return true;
   }
 
-  function showGameScreen(){
-    var idle = document.getElementById('tetIdleScreen');
-    var game = document.getElementById('tetGameScreen');
-    if(idle) idle.style.display = 'none';
-    if(game){ game.style.display = 'flex'; }
-  }
-
-  function showIdleScreen(){
-    var idle = document.getElementById('tetIdleScreen');
-    var game = document.getElementById('tetGameScreen');
-    if(game) game.style.display = 'none';
-    if(idle) idle.style.display = 'flex';
-    // Update best on idle screen too
-    var bi = document.getElementById('tetBestIdle');
-    if(bi) bi.textContent = best;
-    startDemo();
-  }
-
-  function gameOver(){
-    state = 'over';
-    cancelAnimationFrame(animId);
-    // Show pause/gameover overlay on top of game screen
-    var ov = document.getElementById('tetOverlay');
-    var title = document.getElementById('tetOverlayTitle');
-    var sub   = document.getElementById('tetOverlaySub');
-    if(title) title.textContent = 'GAME OVER';
-    if(sub)   sub.textContent   = 'Score: ' + score + '  ·  Best: ' + best;
-    if(ov)    ov.style.display  = 'flex';
-  }
-
-  function hideOverlay(){
-    var ov = document.getElementById('tetOverlay');
-    if(ov) ov.style.display = 'none';
-  }
-
-  function showPause(){
-    var ov    = document.getElementById('tetOverlay');
-    var title = document.getElementById('tetOverlayTitle');
-    var sub   = document.getElementById('tetOverlaySub');
-    if(title) title.textContent = 'PAUSED';
-    if(sub)   sub.textContent   = 'Press P to resume';
-    if(ov)    ov.style.display  = 'flex';
-  }
-
-  // Go back to main menu
-  window.tetrisBackToMenu = function(){
-    state = 'idle';
-    cancelAnimationFrame(animId);
-    hideOverlay();
-    showIdleScreen();
-  };
-
-  // Public start/pause/resume toggle
-  window.tetrisStartOrRestart = function(){
-    if(state === 'idle' || state === 'over'){
-      if(state === 'over') hideOverlay();
-      showGameScreen();
-      init();
-      startGame();
-    } else if(state === 'playing'){
-      state = 'paused';
-      cancelAnimationFrame(animId);
-      showPause();
-      var btn = document.getElementById('tetBtn');
-      if(btn) btn.textContent = '▶ RESUME';
-    } else if(state === 'paused'){
-      state = 'playing';
-      hideOverlay();
-      var btn = document.getElementById('tetBtn');
-      if(btn) btn.textContent = '⏸ PAUSE';
-      lastDrop = performance.now();
-      gameLoop(lastDrop);
-    }
-  };
-
-  // Keyboard controls — only when tetris window is focused/open
-  document.addEventListener('keydown', function(e){
-    var win = document.getElementById('win-tetris');
-    if(!win || win.style.display === 'none' || win.classList.contains('minimized')) return;
-    if(state !== 'playing') {
-      if(e.code === 'Space'){ e.preventDefault(); tetrisStartOrRestart(); }
+  function tick(dt){
+    if(g.over){
+      g.overT+=dt;draw();
+      if(g.overT>1000&&!g.done){g.done=true;finish();}
       return;
     }
-    switch(e.code){
-      case 'ArrowLeft':  e.preventDefault(); piece.x--; if(collides(piece)) piece.x++; break;
-      case 'ArrowRight': e.preventDefault(); piece.x++; if(collides(piece)) piece.x--; break;
-      case 'ArrowDown':  e.preventDefault(); piece.y++; if(collides(piece)) piece.y--; score++; updateHUD(); break;
-      case 'ArrowUp':    e.preventDefault(); rotate(piece); break;
-      case 'Space':      e.preventDefault(); hardDrop(); break;
-      case 'KeyP':       e.preventDefault(); tetrisStartOrRestart(); break;
-    }
-    draw();
-  });
-
-  // tetrisInit called by openWindow in main script
-  window.tetrisInit = function(){
-    best = 0;
-    try { best = parseInt(localStorage.getItem('tetris_best')||'0'); } catch(e){}
-    var bi = document.getElementById('tetBestIdle');
-    if(bi) bi.textContent = best;
-    var b = document.getElementById('tetBest');
-    if(b) b.textContent = best;
-    showIdleScreen();
-  };
-
-  // ── DEMO ANIMATION — random pieces fall on idle screen ────────
-  var demoAnim = null;
-  var demoPieces = [];
-  var DEMO_COLS = ['#00f5ff','#00ff9d','#b06fff','#febc2e','#ff3355','#58a6ff','#ff6d00'];
-  var DEMO_SHAPES = [
-    [[1,1,1,1]],
-    [[1,1],[1,1]],
-    [[0,1,0],[1,1,1]],
-    [[0,1,1],[1,1,0]],
-    [[1,1,0],[0,1,1]],
-    [[1,0,0],[1,1,1]],
-    [[0,0,1],[1,1,1]]
-  ];
-
-  function startDemo(){
-    var dc = document.getElementById('tetDemoCanvas');
-    if(!dc) return;
-    var overlay = document.getElementById('tetOverlay');
-    if(!overlay) return;
-    dc.width  = overlay.offsetWidth  || 400;
-    dc.height = overlay.offsetHeight || 500;
-    var dctx = dc.getContext('2d');
-    var BSZ  = 22;
-    demoPieces = [];
-
-    // Spawn a piece at random column
-    function spawnDemo(){
-      var shape = DEMO_SHAPES[Math.floor(Math.random()*DEMO_SHAPES.length)];
-      var color = DEMO_COLS[Math.floor(Math.random()*DEMO_COLS.length)];
-      var maxX  = Math.max(0, dc.width - shape[0].length * BSZ);
-      demoPieces.push({
-        shape: shape, color: color,
-        x: Math.floor(Math.random() * (maxX / BSZ)) * BSZ,
-        y: -shape.length * BSZ,
-        speed: 0.6 + Math.random() * 1.2,
-        rot: 0, rotSpeed: (Math.random()-0.5)*0.02
-      });
-    }
-
-    // Spawn a few to start
-    for(var i=0;i<5;i++){
-      spawnDemo();
-      demoPieces[i].y = Math.random() * dc.height;
-    }
-
-    var spawnTimer = 0;
-    function demoLoop(){
-      if(state !== 'idle'){ return; }
-      demoAnim = requestAnimationFrame(demoLoop);
-
-      dctx.clearRect(0,0,dc.width,dc.height);
-
-      // Spawn new piece every ~60 frames
-      spawnTimer++;
-      if(spawnTimer > 55){ spawnTimer=0; spawnDemo(); }
-
-      // Update + draw pieces
-      for(var i=demoPieces.length-1;i>=0;i--){
-        var p = demoPieces[i];
-        p.y += p.speed;
-        p.rot += p.rotSpeed;
-        if(p.y > dc.height + 80){ demoPieces.splice(i,1); continue; }
-
-        dctx.save();
-        var cx = p.x + (p.shape[0].length*BSZ)/2;
-        var cy = p.y + (p.shape.length*BSZ)/2;
-        dctx.translate(cx, cy);
-        dctx.rotate(p.rot);
-        dctx.translate(-cx, -cy);
-
-        p.shape.forEach(function(row,r){
-          row.forEach(function(v,c){
-            if(!v) return;
-            var bx = p.x + c*BSZ;
-            var by = p.y + r*BSZ;
-            // Block fill
-            dctx.fillStyle = p.color;
-            dctx.shadowColor = p.color;
-            dctx.shadowBlur  = 8;
-            dctx.beginPath();
-            dctx.roundRect ? dctx.roundRect(bx+1,by+1,BSZ-2,BSZ-2,2) : dctx.rect(bx+1,by+1,BSZ-2,BSZ-2);
-            dctx.fill();
-            // Shine
-            dctx.shadowBlur = 0;
-            dctx.fillStyle = 'rgba(255,255,255,0.2)';
-            dctx.fillRect(bx+2,by+2,BSZ-4,3);
-          });
-        });
-        dctx.restore();
+    if(g.clearing){
+      g.clearing.t+=dt;
+      if(g.clearing.t>=260){
+        g.clearing.rows.forEach(function(y){g.board.splice(y,1);g.board.unshift(new Array(COLS).fill(0));});
+        g.clearing=null;spawn();
       }
+      draw();return;
     }
-
-    if(demoAnim) cancelAnimationFrame(demoAnim);
-    demoLoop();
+    g.acc+=dt;
+    if(g.acc>=gravity()){g.acc=0;if(!collides(g.piece,0,1))g.piece.y++;else lock();}
+    g.flash=Math.max(0,g.flash-dt/180);
+    draw();
   }
 
-  // Stop demo when game starts
-  window.stopDemo = function(){
-    if(demoAnim){ cancelAnimationFrame(demoAnim); demoAnim=null; }
-    var dc = document.getElementById('tetDemoCanvas');
-    if(dc){ var c=dc.getContext('2d'); c.clearRect(0,0,dc.width,dc.height); }
-  };
+  function finish(){
+    var nb=g.score>0&&g.score>best();
+    if(nb)try{localStorage.setItem(BEST_KEY,g.score);}catch(e){}
+    Arcade.gameOver({body:'SCORE '+Arcade.pad(g.score)+'<br>LINES '+g.lines+' &middot; LVL '+g.level+
+      (nb?'<br><span class="arc-gold">NEW HIGH SCORE!</span>':'')});
+  }
 
+  // ── render ──
+  function block(c,x,y,b,col,a){
+    var e=Math.max(1,Math.round(b*.15));
+    c.globalAlpha=a;
+    c.fillStyle=col;c.fillRect(x+1,y+1,b-2,b-2);
+    c.fillStyle='rgba(255,255,255,.3)';c.fillRect(x+1,y+1,b-2,e);c.fillRect(x+1,y+1,e,b-2);
+    c.fillStyle='rgba(0,0,0,.3)';c.fillRect(x+1,y+b-1-e,b-2,e);c.fillRect(x+b-1-e,y+1,e,b-2);
+    c.globalAlpha=1;
+  }
+  function eachCell(p,fn){for(var r=0;r<p.m.length;r++)for(var q=0;q<p.m[r].length;q++)if(p.m[r][q])fn(p.x+q,p.y+r);}
+  function draw(){
+    if(!g)return;
+    var c=Arcade.ctx,W=Arcade.W,H=Arcade.H,A=Arcade.A,x,y;
+    var b=Math.max(6,Math.floor((H-10)/ROWS)),bw=b*COLS,bh=b*ROWS;
+    var side=Math.max(Math.round(b*4.4),54),gap=Math.max(8,Math.round(b*.7));
+    var ox=Math.floor((W-bw-gap-side)/2),oy=Math.floor((H-bh)/2);
+    c.fillStyle='#020604';c.fillRect(0,0,W,H);
+    c.fillStyle='#04100a';c.fillRect(ox,oy,bw,bh);
+    c.strokeStyle='rgba('+A.rgb+',.07)';c.lineWidth=1;c.beginPath();
+    for(x=1;x<COLS;x++){c.moveTo(ox+x*b+.5,oy);c.lineTo(ox+x*b+.5,oy+bh);}
+    for(y=1;y<ROWS;y++){c.moveTo(ox,oy+y*b+.5);c.lineTo(ox+bw,oy+y*b+.5);}
+    c.stroke();
+    c.save();c.shadowColor=A.hex;c.shadowBlur=4+g.flash*14;
+    c.strokeStyle='rgba('+A.rgb+','+(.45+g.flash*.5)+')';c.strokeRect(ox-1.5,oy-1.5,bw+3,bh+3);c.restore();
+
+    for(y=0;y<ROWS;y++)for(x=0;x<COLS;x++)if(g.board[y][x])block(c,ox+x*b,oy+y*b,b,g.board[y][x],1);
+
+    if(g.clearing){
+      var on=Math.floor(g.clearing.t/65)%2===0;
+      c.fillStyle=on?'rgba(255,255,255,.92)':'rgba('+A.rgb+',.6)';
+      g.clearing.rows.forEach(function(r){c.fillRect(ox,oy+r*b,bw,b);});
+    }else if(!g.over){
+      var d=0;while(!collides(g.piece,0,d+1))d++;
+      eachCell(g.piece,function(px,py){if(py+d>=0)block(c,ox+px*b,oy+(py+d)*b,b,g.piece.c,.18);});
+      eachCell(g.piece,function(px,py){if(py>=0)block(c,ox+px*b,oy+py*b,b,g.piece.c,1);});
+    }
+    if(g.over){
+      var k=Math.min(ROWS,Math.floor(g.overT/40));
+      for(y=ROWS-1;y>=ROWS-k;y--)for(x=0;x<COLS;x++)block(c,ox+x*b,oy+y*b,b,'#2a3a33',1);
+    }
+
+    // side panel: next piece + level
+    var sx=ox+bw+gap,fs=Math.max(6,Math.round(b*.45));
+    c.font=Arcade.font(fs);c.textAlign='left';c.textBaseline='top';
+    c.fillStyle='#7f9a8c';c.fillText('NEXT',sx,oy);
+    var by=oy+Math.round(fs*1.8),bxh=Math.round(side*.8);
+    c.strokeStyle='rgba('+A.rgb+',.3)';c.strokeRect(sx+.5,by+.5,side-1,bxh-1);
+    var m=g.next.m,minR=9,maxR=-1,minC=9,maxC=-1;
+    for(var r=0;r<m.length;r++)for(var q=0;q<m[r].length;q++)if(m[r][q]){minR=Math.min(minR,r);maxR=Math.max(maxR,r);minC=Math.min(minC,q);maxC=Math.max(maxC,q);}
+    var nb=Math.floor(Math.min(side/5,bxh/3.2)),nw=(maxC-minC+1)*nb,nh=(maxR-minR+1)*nb;
+    var nx=sx+Math.floor((side-nw)/2),ny=by+Math.floor((bxh-nh)/2);
+    for(r=minR;r<=maxR;r++)for(q=minC;q<=maxC;q++)if(m[r][q])block(c,nx+(q-minC)*nb,ny+(r-minR)*nb,nb,g.next.c,1);
+    var ly=by+bxh+Math.round(fs*1.6);
+    c.fillStyle='#7f9a8c';c.fillText('LEVEL',sx,ly);
+    c.fillStyle=A.hex;c.font=Arcade.font(Math.round(fs*1.6));c.fillText(String(g.level),sx,ly+Math.round(fs*1.6));
+  }
+
+  Arcade.register({
+    id:'tetris',title:'Tetris',sprite:'tetro',
+    help:'TETRIS: UP ROTATE &middot; DOWN SOFT DROP &middot; B HARD DROP',
+    best:best,bestLabel:function(){return Arcade.pad(best());},
+    start:start,input:input,tick:tick,
+    draw:function(){draw();},stop:function(){g=null;}
+  });
 })();

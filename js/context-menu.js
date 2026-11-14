@@ -31,7 +31,7 @@ function hideIdCard(){document.getElementById("idCardOverlay").classList.remove(
 document.addEventListener("keydown",(e)=>{if(e.key==="Escape")hideIdCard();});
 
 function openAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch"].forEach(openWindow);}
-function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","snake","typingtest","tetris"].forEach(closeWindow);}
+function closeAllWindows(){["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","arcade"].forEach(closeWindow);}
 
 // ===================== NOTIFICATIONS =====================
 let notifTimeout;

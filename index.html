@@ -157,7 +157,7 @@
 <!-- Performance -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet"/>
 
 <!-- Icons (static ones for crawlers; the animated #favicon below is swapped in by js/favicon.js) -->
 <link rel="icon" href="favicon.ico" sizes="48x48"/>
@@ -175,7 +175,7 @@
 <link rel="stylesheet" href="css/windows.css">
 <link rel="stylesheet" href="css/terminal.css">
 <link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/games.css">
+<link rel="stylesheet" href="css/arcade.css">
 <link rel="stylesheet" href="css/animations.css">
 <link rel="stylesheet" href="css/responsive.css">
 </head>
@@ -316,7 +316,7 @@
       <div class="icon-img">🖥️</div>
       <div class="icon-label">neofetch</div>
     </div>
-    <div class="icon" ondblclick="showIdCard()" ontouchend="event.preventDefault();showIdCard()" title="Access Pass">
+    <div class="icon" ondblclick="showIdCard()" ontouchend="iconTap(event,showIdCard)" title="Access Pass">
       <div class="icon-img">&#x1FAAA;</div>
       <div class="icon-label">id.card</div>
     </div>
@@ -324,37 +324,21 @@
       <div class="icon-img">🎨</div>
       <div class="icon-label">theme</div>
     </div>
-    <div class="icon" ondblclick="openWindow('snake')" ontouchend="iconTap(event,'snake')" title="Snake Game">
-      <div class="icon-img">🐍</div>
-      <div class="icon-label">snake.exe</div>
-    </div>
-    <div class="icon" ondblclick="openWindow('typingtest')" ontouchend="iconTap(event,'typingtest')" title="Hack Typing Test">
-      <div class="icon-img">⌨️</div>
-      <div class="icon-label">hack.exe</div>
-    </div>
-    <div class="icon" ondblclick="openWindow('tetris')" ontouchend="iconTap(event,'tetris')" title="Tetris">
+    <div class="icon" ondblclick="openWindow('arcade')" ontouchend="iconTap(event,'arcade')" title="Arcade">
       <div class="icon-img" style="font-size:0;line-height:0;">
         <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-          <!-- T-piece in cyan/green blocks -->
-          <rect x="2"  y="2"  width="8" height="8" rx="1.5" fill="#00f5ff" opacity="0.95"/>
-          <rect x="12" y="2"  width="8" height="8" rx="1.5" fill="#00ff9d" opacity="0.95"/>
-          <rect x="22" y="2"  width="8" height="8" rx="1.5" fill="#00f5ff" opacity="0.95"/>
-          <rect x="12" y="12" width="8" height="8" rx="1.5" fill="#b06fff" opacity="0.95"/>
-          <!-- bottom row partial - stacked blocks -->
-          <rect x="2"  y="22" width="8" height="8" rx="1.5" fill="#febc2e" opacity="0.95"/>
-          <rect x="12" y="22" width="8" height="8" rx="1.5" fill="#ff3355" opacity="0.95"/>
-          <rect x="22" y="22" width="8" height="8" rx="1.5" fill="#58a6ff" opacity="0.95"/>
-          <!-- shine overlays -->
-          <rect x="3"  y="3"  width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="13" y="3"  width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="23" y="3"  width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="13" y="13" width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="3"  y="23" width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="13" y="23" width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
-          <rect x="23" y="23" width="6" height="2" rx="0.5" fill="white" opacity="0.25"/>
+          <rect x="6" y="1" width="20" height="15" rx="3" fill="#1f262e" stroke="#3a4450"/>
+          <rect x="8.5" y="3.5" width="15" height="9" rx="1.2" fill="#03140b"/>
+          <rect x="11" y="6" width="5" height="2" fill="#00ff9d"/><rect x="16" y="8" width="2" height="2" fill="#00ff9d"/>
+          <rect x="20" y="9" width="2" height="2" fill="#ff3355"/>
+          <rect x="14" y="16" width="4" height="3" fill="#c9922e"/>
+          <path d="M5 18.5h22a3 3 0 0 1 3 3V27a4 4 0 0 1-4 4h-4.5l-2-2h-7l-2 2H6a4 4 0 0 1-4-4v-5.5a3 3 0 0 1 3-3z" fill="#1f262e" stroke="#3a4450"/>
+          <rect x="8" y="21.5" width="2.4" height="7" rx=".6" fill="#0b0e12"/><rect x="5.7" y="23.8" width="7" height="2.4" rx=".6" fill="#0b0e12"/>
+          <rect x="18.5" y="23" width="3.6" height="3.6" rx="1" fill="#0b0e12" stroke="#00ff9d" stroke-width=".6"/>
+          <rect x="23.5" y="23" width="3.6" height="3.6" rx="1" fill="#0b0e12" stroke="#00ff9d" stroke-width=".6"/>
         </svg>
       </div>
-      <div class="icon-label">tetris.exe</div>
+      <div class="icon-label">arcade.exe</div>
     </div>
   </div>
 
@@ -456,9 +440,7 @@
   <div class="sm-item" onclick="openWindow('neofetch');hideStart()">🖥️ <span>neofetch</span><em>System Info</em></div>
   <div class="sm-item" onclick="showIdCard();hideStart()">&#x1FAAA; <span>id.card</span><em>Access Pass</em></div>
   <div class="sm-item" onclick="openWindow('wallpaper');hideStart()">🎨 <span>theme</span><em>Appearance</em></div>
-  <div class="sm-item" onclick="openWindow('snake');hideStart()">🐍 <span>snake.exe</span><em>Leaderboard</em></div>
-  <div class="sm-item" onclick="openWindow('typingtest');hideStart()">⌨️ <span>hack.exe</span><em>Typing Test</em></div>
-  <div class="sm-item" onclick="openWindow('tetris');hideStart()">🎮 <span>tetris.exe</span><em>Tetris</em></div>
+  <div class="sm-item" onclick="openWindow('arcade');hideStart()">🎮 <span>arcade.exe</span><em>Games</em></div>
   <div class="sm-sep"></div>
   <div class="sm-item sm-danger" onclick="closeAllWindows();hideStart()">✕ <span>Close All Windows</span><em></em></div>
 </div>
@@ -941,279 +923,83 @@
   <div class="win-resize" onmousedown="startResize(event,'win-wallpaper')" ontouchstart="startResizeTouch(event,'win-wallpaper')"></div>
 </div>
 
-<!-- Typing Test Window -->
-<div class="window" id="win-typingtest" style="width:700px;height:480px;top:70px;left:160px;display:none;" data-win="typingtest">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-typingtest')" ontouchstart="startDragTouch(event,'win-typingtest')">
-    <div class="win-dots">
-      <div class="win-dot close" onclick="closeWindow('typingtest')"></div>
-      <div class="win-dot minimize" onclick="minimizeWindow('typingtest')"></div>
-      <div class="win-dot maximize" onclick="toggleMaximize('typingtest')"></div>
-    </div>
-    <div class="win-title">⌨️ hack.exe — Hacker Typing Challenge</div>
-    <div class="win-title-right"></div>
-  </div>
-  <div class="win-body game-body">
-
-    <!-- Header stats bar -->
-    <div id="ttHeader" class="game-header">
-      <div class="game-label">WPM</div>
-      <div id="ttWpm" class="game-stat">—</div>
-      <div class="game-divider-v"></div>
-      <div class="game-label">ACC</div>
-      <div id="ttAcc" class="game-stat" style="min-width:44px;">—</div>
-      <div class="game-divider-v"></div>
-      <div class="game-label">TIME</div>
-      <div id="ttTime" class="game-stat game-stat-amber" style="min-width:32px;">60</div>
-      <div class="game-spacer"></div>
-      <div id="ttDiff" style="display:flex;gap:5px;">
-        <button onclick="setTTDiff('easy')" id="ttDiffEasy" class="game-btn-tab active">EASY</button>
-        <button onclick="setTTDiff('hard')" id="ttDiffHard" class="game-btn-tab">HARD</button>
-        <button onclick="setTTDiff('elite')" id="ttDiffElite" class="game-btn-tab">ELITE</button>
+<!-- ROOTBOY arcade console (js/arcade.js + game cartridges) -->
+<div class="window arc-window" id="win-arcade" style="display:none;top:20px;left:200px;" data-win="arcade" data-no-cascade="true">
+  <div class="arc-device" id="arcDevice" data-shell="stealth">
+    <div class="arc-top">
+      <div class="arc-topbar" onmousedown="if(!event.target.closest('button'))startDrag(event,'win-arcade')">
+        <button class="arc-round" data-act="close" aria-label="Power off">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>
+        </button>
+        <div class="arc-spacer"></div>
+        <span class="arc-led" id="arcLed"></span>
+        <button class="arc-round" data-act="sound" aria-label="Toggle sound">
+          <svg class="arc-ico-on" viewBox="0 0 16 16" fill="currentColor"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 5.5a3.5 3.5 0 0 1 0 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <svg class="arc-ico-off" viewBox="0 0 16 16" fill="currentColor"><path d="M2 6h3l4-3v10l-4-3H2z"/><path d="M11 6l3.5 4M14.5 6L11 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+        <button class="arc-round" data-act="min" aria-label="Minimize">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3.5 8h9"/></svg>
+        </button>
       </div>
-      <button onclick="resetTypingTest()" class="game-btn">↺ RESET</button>
-    </div>
-
-    <!-- Text display area -->
-    <div class="game-text-area">
-      <!-- Prompt label -->
-      <div id="ttPromptLabel" class="game-prompt-label">[ BREACH CODE — TYPE TO HACK ]</div>
-      <!-- The code to type -->
-      <div id="ttTextDisplay" class="game-code-display"></div>
-    </div>
-
-    <!-- Input area -->
-    <div class="game-input-wrap">
-      <textarea id="ttInput"
-        class="game-input"
-        rows="2"
-        placeholder="[ Click here and start typing to begin breach... ]"
-        spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off"
-        oninput="onTTInput()"
-      ></textarea>
-      <!-- Mini keyboard hint -->
-      <div class="game-hint-row">
-        <div class="game-hint">TAB = restart &nbsp;|&nbsp; ESC = reset difficulty</div>
-        <div class="game-spacer"></div>
-        <div id="ttProgress" class="game-progress"></div>
-      </div>
-    </div>
-
-    <!-- Results overlay -->
-    <div id="ttResults" class="game-overlay">
-      <div class="game-overlay-caption">[ BREACH COMPLETE ]</div>
-      <div class="game-overlay-big" id="ttFinalWpm">0 WPM</div>
-      <div class="game-result-row">
-        <div class="game-result-col">
-          <div class="game-result-val" id="ttFinalAcc">0%</div>
-          <div class="game-result-label">ACCURACY</div>
-        </div>
-        <div class="game-result-col">
-          <div class="game-result-val-amber" id="ttFinalTime">0s</div>
-          <div class="game-result-label">TIME</div>
-        </div>
-        <div class="game-result-col">
-          <div class="game-result-val-blue" id="ttFinalRank">—</div>
-          <div class="game-result-label">RANK</div>
-        </div>
-      </div>
-      <div class="game-btn-row">
-        <button onclick="resetTypingTest()" class="game-btn-primary">↺ TRY AGAIN</button>
-        <button onclick="setTTDiff(ttCurrentDiff==='elite'?'easy':ttCurrentDiff==='hard'?'elite':'hard');resetTypingTest()" class="game-btn-ghost">CHANGE DIFF</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-typingtest')" ontouchstart="startResizeTouch(event,'win-typingtest')"></div>
-</div>
-
-<!-- Tetris Window -->
-<div class="window" id="win-tetris" style="width:520px;height:580px;top:60px;left:150px;display:none;" data-win="tetris">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-tetris')" ontouchstart="startDragTouch(event,'win-tetris')">
-    <div class="win-dots">
-      <div class="win-dot close" onclick="closeWindow('tetris')"></div>
-      <div class="win-dot minimize" onclick="minimizeWindow('tetris')"></div>
-      <div class="win-dot maximize" onclick="toggleMaximize('tetris')"></div>
-    </div>
-    <div class="win-title">🎮 tetris.exe — Block Drop</div>
-    <div class="win-title-right"></div>
-  </div>
-
-  <div class="win-body game-body-dark">
-
-    <!-- ═══ IDLE SCREEN (fullscreen animated demo) ═══ -->
-    <div id="tetIdleScreen" class="game-idle-screen">
-      <canvas id="tetDemoCanvas" class="game-idle-canvas"></canvas>
-      <div class="game-idle-content">
-        <div class="game-idle-tag">— BLOCK DROP —</div>
-        <div class="game-idle-title">TETRIS</div>
-        <div class="game-idle-sub">Press SPACE or click to play</div>
-        <button id="tetStartBtn" onclick="tetrisStartOrRestart()" class="game-btn-start">▶ START</button>
-        <div class="game-idle-best">BEST &nbsp;<span id="tetBestIdle">0</span></div>
-      </div>
-    </div>
-
-    <!-- ═══ GAME SCREEN ═══ -->
-    <div id="tetGameScreen" class="tet-screen">
-
-      <!-- Canvas -->
-      <div class="tet-canvas-wrap">
-        <canvas id="tetrisCanvas" class="tet-canvas"></canvas>
-      </div>
-
-      <!-- Side panel -->
-      <div class="tet-side">
-        <div>
-          <div class="tet-side-label">NEXT</div>
-          <canvas id="tetrisNext" width="80" height="80" class="tet-next-canvas"></canvas>
-        </div>
-        <div>
-          <div class="tet-side-label">SCORE</div>
-          <div id="tetScore" class="tet-side-val-score">0</div>
-        </div>
-        <div>
-          <div class="tet-side-label">LEVEL</div>
-          <div id="tetLevel" class="tet-side-val">1</div>
-        </div>
-        <div>
-          <div class="tet-side-label">LINES</div>
-          <div id="tetLines" class="tet-side-val-blue">0</div>
-        </div>
-        <div>
-          <div class="tet-side-label">BEST</div>
-          <div id="tetBest" class="tet-side-val-best">0</div>
-        </div>
-        <div class="game-spacer"></div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
-          <div class="tet-key-row"><span class="tet-key-badge">← →</span><span class="tet-key-desc">Move</span></div>
-          <div class="tet-key-row"><span class="tet-key-badge">↑</span><span class="tet-key-desc">Rotate</span></div>
-          <div class="tet-key-row"><span class="tet-key-badge">↓</span><span class="tet-key-desc">Soft drop</span></div>
-          <div class="tet-key-row"><span class="tet-key-badge">SPC</span><span class="tet-key-desc">Hard drop</span></div>
-          <div class="tet-key-row"><span class="tet-key-badge">P</span><span class="tet-key-desc">Pause</span></div>
-        </div>
-        <button id="tetBtn" onclick="tetrisStartOrRestart()" class="game-btn-side">⏸ PAUSE</button>
-      </div>
-    </div>
-
-    <!-- Pause / Game Over overlay -->
-    <div id="tetOverlay" class="game-overlay" style="background:rgba(6,10,13,0.88);">
-      <div id="tetOverlayTitle" class="tet-overlay-title">PAUSED</div>
-      <div id="tetOverlaySub" class="tet-overlay-sub"></div>
-      <div class="game-btn-row">
-        <button onclick="tetrisStartOrRestart()" class="game-btn-primary">▶ RESUME</button>
-        <button onclick="tetrisBackToMenu()" class="game-btn-ghost">⌂ MENU</button>
-      </div>
-    </div>
-
-  </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-tetris')" ontouchstart="startResizeTouch(event,'win-tetris')"></div>
-</div>
-
-<!-- Snake Game Window -->
-<div class="window" id="win-snake" style="width:720px;height:480px;top:50px;left:100px;display:none;" data-win="snake">
-  <div class="win-titlebar" onmousedown="startDrag(event,'win-snake')" ontouchstart="startDragTouch(event,'win-snake')">
-    <div class="win-dots">
-      <div class="win-dot close" onclick="closeWindow('snake')"></div>
-      <div class="win-dot minimize" onclick="minimizeWindow('snake')"></div>
-      <div class="win-dot maximize" onclick="toggleMaximize('snake')"></div>
-    </div>
-    <div class="win-title">🐍 snake.exe</div>
-    <div class="win-title-right"></div>
-  </div>
-  <div class="win-body" style="background:#000;display:flex;flex-direction:row;position:relative;overflow:hidden;">
-
-    <!-- LEFT: Game area -->
-    <div style="flex:1;display:flex;flex-direction:column;position:relative;min-width:0;">
-
-      <!-- Snake Idle / Name modal -->
-      <div id="snakeNameModal" class="snake-modal">
-
-        <!-- Animated snake canvas background -->
-        <canvas id="snakeDemoCanvas" class="game-idle-canvas" style="opacity:0.6;"></canvas>
-
-        <!-- Content -->
-        <div class="snake-modal-content">
-          <div class="game-idle-tag">— SLITHERING SINCE 1976 —</div>
-          <div class="snake-title">SNAKE</div>
-          <div class="game-idle-sub" style="color:rgba(200,210,220,0.6);">Enter your callsign to play</div>
-
-          <input id="snakeNameInput" type="text" maxlength="12" placeholder="player01" autocomplete="off" spellcheck="false"
-            class="snake-name-input"
-            oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')"
-            onkeydown="if(event.key==='Enter')startSnakeGame()">
-          <div id="snakeNameErr" class="snake-err"></div>
-
-          <button onclick="startSnakeGame()" class="game-btn-start">▶ START</button>
-
-          <div style="font-size:0.58rem;color:#4a5568;text-align:center;line-height:2;margin-top:2px;">
-            Arrow Keys / WASD &nbsp;·&nbsp; P = Pause
-          </div>
-        </div>
-      </div>
-
-      <!-- HUD -->
-      <div id="snakeHUD" class="snake-hud">
-        <span class="snake-hud-key">👤 <span id="snakePlayerLabel" class="snake-hud-val"></span></span>
-        <span class="snake-hud-key">SCORE <span id="snakeScoreLabel" class="snake-hud-val">0</span></span>
-        <span class="snake-hud-key">BEST <span id="snakeHiLabel" style="color:var(--accent);">0</span></span>
-      </div>
-
-      <!-- Canvas -->
-      <div id="snakeCanvasWrap" class="snake-canvas-wrap">
-        <canvas id="snakeCanvas" class="snake-canvas"></canvas>
-        <!-- Pause overlay -->
-        <div id="snakePauseOverlay" class="snake-overlay snake-pause-overlay">
-          <div style="font-size:1.4rem;color:var(--accent);letter-spacing:0.12em;">PAUSED</div>
-          <div style="font-size:0.63rem;color:var(--muted);">Press P to resume</div>
-          <!-- Mobile d-pad -->
-          <div id="snakeDpad" style="display:none;margin-top:10px;user-select:none;">
-            <div class="dpad-grid">
-              <div></div>
-              <button onclick="snakeMobileDir(0,-1)" class="dpad-btn">▲</button>
-              <div></div>
-              <button onclick="snakeMobileDir(-1,0)" class="dpad-btn">◀</button>
-              <button onclick="snakeMobileDir(0,0)" class="dpad-btn dpad-btn-p">P</button>
-              <button onclick="snakeMobileDir(1,0)" class="dpad-btn">▶</button>
-              <div></div>
-              <button onclick="snakeMobileDir(0,1)" class="dpad-btn">▼</button>
-              <div></div>
+      <div class="arc-bezel">
+        <div class="arc-screen">
+          <div class="arc-inner" id="arcInner">
+            <div class="arc-view arc-v-boot" id="arcVBoot">
+              <div class="arc-boot-logo"><span>ROOT</span><span class="arc-logo-box">BOY</span></div>
+              <div class="arc-boot-sub">ANKESH-OS ENTERTAINMENT</div>
+              <div class="arc-boot-bar"><i></i></div>
             </div>
+            <div class="arc-view arc-v-menu" id="arcVMenu">
+              <canvas class="arc-banner" id="arcBanner"></canvas>
+              <div class="arc-powered">POWERED BY <span class="arc-badge">ANKESH-OS</span></div>
+              <div class="arc-row arc-sel-head"><span>SELECT YOUR GAME</span><span id="arcSelCount">01/03</span></div>
+              <div class="arc-list" id="arcList"></div>
+              <div class="arc-row arc-foot"><span>BEST <b id="arcMenuBest">00000</b></span><span class="arc-blink">PRESS S TO PLAY &gt;</span></div>
+            </div>
+            <div class="arc-view arc-v-game" id="arcVGame">
+              <div class="arc-hud" id="arcHud"></div>
+              <div class="arc-stage" id="arcStage">
+                <canvas id="arcCanvas"></canvas>
+                <div class="arc-dom" id="arcDom"></div>
+              </div>
+            </div>
+            <div class="arc-ovl" id="arcOvl"></div>
+            <div class="arc-toast" id="arcToast"></div>
           </div>
+          <div class="arc-glass"></div>
         </div>
-        <!-- Dead overlay -->
-        <div id="snakeDeadOverlay" class="snake-overlay snake-dead-overlay">
-          <div class="snake-dead-title">GAME OVER</div>
-          <div id="snakeFinalScore" style="font-size:0.85rem;color:var(--accent);text-align:center;"></div>
-          <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
-            <button onclick="snakeRetry()" class="game-btn-primary" style="padding:8px 20px;">↺ Again</button>
-            <button onclick="snakeChangeUser()" class="game-btn-ghost" style="padding:7px 14px;">Change Player</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile D-pad (always visible during game on mobile) -->
-      <div id="snakeDpadBottom" class="dpad-bottom">
-        <div class="dpad-grid-lg">
-          <div></div>
-          <button ontouchstart="snakeMobileDir(0,-1)" onclick="snakeMobileDir(0,-1)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▲</button>
-          <div></div>
-          <button ontouchstart="snakeMobileDir(-1,0)" onclick="snakeMobileDir(-1,0)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">◀</button>
-          <button ontouchstart="snakeTogglePause()" onclick="snakeTogglePause()" class="dpad-btn dpad-btn-lg dpad-btn-p" style="font-size:0.6rem;">II</button>
-          <button ontouchstart="snakeMobileDir(1,0)" onclick="snakeMobileDir(1,0)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▶</button>
-          <div></div>
-          <button ontouchstart="snakeMobileDir(0,1)" onclick="snakeMobileDir(0,1)" class="dpad-btn dpad-btn-lg" style="font-size:1.1rem;">▼</button>
-          <div></div>
-        </div>
+        <div class="arc-logo"><span>ROOT</span><span class="arc-logo-box">BOY</span></div>
       </div>
     </div>
-
-    <!-- RIGHT: Live leaderboard side panel -->
-    <div id="snakeSidePanel" class="snake-side">
-      <div class="snake-side-title">🏆 TOP 10</div>
-      <div id="snakeSideLbList" class="snake-side-list"></div>
+    <div class="arc-hinge"><div class="arc-ribbon"></div></div>
+    <div class="arc-pad">
+      <svg class="arc-circuit" viewBox="0 0 250 175" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M18 40h40l12 12v34"/><path d="M200 28v22h-30l-10 10v20"/><path d="M110 168v-28l14-14h40"/>
+          <path d="M8 130h26l10-10"/><path d="M242 120h-22l-10 10v28"/><path d="M128 70v-30"/>
+        </g>
+        <g fill="currentColor">
+<circle cx="70" cy="86" r="2.6"/><circle cx="160" cy="80" r="2.6"/>
+          <circle cx="44" cy="120" r="2.6"/><circle cx="210" cy="130" r="2.6"/><circle cx="164" cy="126" r="2.6"/>
+        </g>
+      </svg>
+      <div class="arc-mini">
+        <div class="arc-mini-b"><button class="arc-pill" data-act="theme" aria-label="Change shell"><i></i></button><span>THEME</span></div>
+        <div class="arc-mini-b"><button class="arc-q" data-act="help" aria-label="Help"><b>?</b></button><span>HELP</span></div>
+      </div>
+      <div class="arc-dring"><i></i><i></i><i></i><i></i></div>
+      <div class="arc-dpad">
+        <button class="arc-dk" data-btn="up" aria-label="Up"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 2l4 6H1z"/></svg></button>
+        <button class="arc-dk" data-btn="left" aria-label="Left"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M2 5l6-4v8z"/></svg></button>
+        <div class="c"></div>
+        <button class="arc-dk" data-btn="right" aria-label="Right"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M8 5L2 9V1z"/></svg></button>
+        <button class="arc-dk" data-btn="down" aria-label="Down"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M5 8L1 2h8z"/></svg></button>
+      </div>
+      <button class="arc-key arc-key-b" data-btn="b" aria-label="B button"><span>B</span></button>
+      <button class="arc-key arc-key-s" data-btn="s" aria-label="Start button"><span>S</span></button>
+      <span class="arc-screw l"></span><span class="arc-screw r"></span>
     </div>
-
   </div>
-  <div class="win-resize" onmousedown="startResize(event,'win-snake')" ontouchstart="startResizeTouch(event,'win-snake')"></div>
 </div>
 
 <!-- Shutdown / Reboot Overlay -->
@@ -1237,6 +1023,7 @@
 <script src="js/tray.js"></script>
 <script src="js/konami.js"></script>
 <script src="js/boot-shutdown.js"></script>
+<script src="js/arcade.js"></script>
 <script src="js/snake.js"></script>
 <script src="js/tetris.js"></script>
 <script src="js/typingtest.js"></script>

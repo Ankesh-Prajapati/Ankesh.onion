@@ -16,11 +16,11 @@ function triggerShutdown(onDone){
   overlay.style.display="flex";log.innerHTML="";
 
   var shutLines=[
-    {t:0,   s:"[ <span style='color:#28c840'>OK</span> ] Stopping Snake Game service..."},
+    {t:0,   s:"[ <span style='color:#28c840'>OK</span> ] Stopping ROOTBOY arcade service..."},
     {t:220, s:"[ <span style='color:#28c840'>OK</span> ] Stopping terminal sessions..."},
     {t:430, s:"[ <span style='color:#28c840'>OK</span> ] Flushing filesystem buffers..."},
     {t:640, s:"[ <span style='color:#28c840'>OK</span> ] Saving session state to /var/cache..."},
-    {t:860, s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Archiving 50+ VAPT assessment reports...</span>"},
+    {t:860, s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Archiving 100+ VAPT assessment reports...</span>"},
     {t:1080,s:"[ <span style='color:#28c840'>OK</span> ] Unmounting /dev/sda1 ..."},
     {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Stopping network manager (root-net)..."},
     {t:1520,s:"[ <span style='color:#28c840'>OK</span> ] All processes terminated."},

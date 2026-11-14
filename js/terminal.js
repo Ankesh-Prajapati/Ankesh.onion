@@ -223,7 +223,7 @@ function handleTermCmd(cmd){
     runScan();
   } else if(c.startsWith("open ")){
     const target=c.replace("open ","").trim();
-    const valid=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper"];
+    const valid=["about","skills","experience","projects","certs","contact","terminal","neofetch","wallpaper","arcade"];
     if(valid.includes(target)){
       openWindow(target);
       printTerm(`<span class="t-green">Opening ${escHtml(target)}...</span>`);
