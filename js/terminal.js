@@ -143,7 +143,7 @@ function initTerminal(){
     } else if(e.key==="Tab"){
       e.preventDefault();
       var p=_tv.toLowerCase().trimStart();
-      var opts=["help","whoami","pwd","ls","ls -la","clear","exit","scan","hack ","open ","about","skills","experience","projects","certs","contact"];
+      var opts=["help","whoami","pwd","ls","ls -la","clear","exit","scan","hack ","open ","cat .secrets","about","skills","experience","projects","certs","contact"];
       var m=opts.find(function(o){return o.startsWith(p)&&o!==p;});
       if(m){_tv=m;ta.value=m;termSync();}
     } else if(e.ctrlKey&&e.key==="c"){
@@ -200,6 +200,7 @@ function handleTermCmd(cmd){
     printTerm('  <span class="t-green">hack &lt;target&gt;</span>  <span class="t-muted">e.g. hack nasa.gov</span>');
     printTerm('  <span class="t-green">open &lt;window&gt;</span>  <span class="t-muted">e.g. open about</span>');
     printTerm('  <span class="t-muted">Tab</span> autocomplete  ·  <span class="t-muted">↑↓</span> history  ·  <span class="t-muted">Ctrl+C</span> cancel');
+    printTerm('  <span class="t-muted">psst... not every file here shows up with a plain</span> <span class="t-green">ls</span>');
   } else if(c==="whoami"){
     printTerm('<span class="t-green">ankesh</span> - Security Analyst | VAPT Specialist');
   } else if(c==="pwd"){
@@ -212,13 +213,23 @@ function handleTermCmd(cmd){
     printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   projects/');
     printTerm('<span class="t-blue">drwxr-xr-x</span>  ankesh  staff   certs.db');
     printTerm('<span class="t-green">-rwxr-xr-x</span>  ankesh  staff   contact.txt');
+    if(c==="ls -la")printTerm('<span class="t-red">-rw-------</span>  root    root    <span class="t-yellow">.secrets</span>');
   } else if(c==="clear"){
     document.getElementById("termOutput").innerHTML="";
   } else if(c==="exit"){
     printTerm("Closing terminal...");
     setTimeout(()=>closeWindow("terminal"),500);
-  } else if(c==="konami"){
-    printTerm('<span class="t-yellow">Hint: Type the Konami code (↑↑↓↓←→←→BA) to trigger RED TEAM mode.</span>');
+  } else if(c==="cat .secrets"||c==="secrets"||c==="konami"){
+    printTerm('<span class="t-muted"># .secrets (classified)</span>');
+    printTerm('<span class="t-yellow">An old 1986 cheat code still works on this machine:</span>');
+    printTerm('  <span class="t-green">↑ ↑ ↓ ↓ ← → ← → B A</span>  <span class="t-muted">anywhere on the desktop</span>');
+    printTerm('  <span class="t-muted">no keyboard? enter it on</span> <span class="t-green">arcade.exe</span><span class="t-muted">: D-pad, then B, then S</span>');
+  } else if(c==="cat"||c.startsWith("cat ")){
+    const files={"about.sh":"about","skills.sh":"skills","experience.log":"experience","certs.db":"certs","contact.txt":"contact"};
+    const f=c.slice(4).trim();
+    if(files[f])handleTermCmd(files[f]);
+    else if(f==="projects/"||f==="projects")printTerm('<span class="t-red">cat: projects/: Is a directory</span>');
+    else printTerm(`<span class="t-red">cat: ${escHtml(f||'missing operand')}: No such file or directory</span>`);
   } else if(c==="scan"){
     runScan();
   } else if(c.startsWith("open ")){

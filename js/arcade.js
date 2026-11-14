@@ -225,7 +225,8 @@ var Arcade=(function(){
     '<div><kbd>D-PAD</kbd><span>MOVE / STEER</span></div>'+
     '<div><kbd>S</kbd><span>START / PAUSE</span></div>'+
     '<div><kbd>B</kbd><span>ACTION / BACK</span></div>'+
-    '<p>KEYS: ARROWS &middot; ENTER=S &middot; SPACE=B &middot; ESC=B</p>';
+    '<p>KEYS: ARROWS &middot; ENTER=S &middot; SPACE=B &middot; ESC=B</p>'+
+    '<p>PSST: A CHEAT CODE FROM 1986 STILL WORKS HERE</p>';
   function toggleHelp(){
     if(state==='off'||state==='boot')return;
     if(state==='help'){closeHelp();return;}
@@ -272,6 +273,7 @@ var Arcade=(function(){
     try{b.setPointerCapture(e.pointerId);}catch(x){}
     stopRepeat();held=b;
     var n=b.dataset.btn;b.classList.add('down');press(n);
+    if(window.konamiFeed)konamiFeed(DIRS[n]?'arrow'+n:n==='s'?'a':n);
     if(DIRS[n])repT=setTimeout(function rep(){press(n);repT=setTimeout(rep,80);},240);
   }
   function stopRepeat(){clearTimeout(repT);if(held){held.classList.remove('down');held=null;}}
