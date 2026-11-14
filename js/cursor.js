@@ -1,5 +1,5 @@
 // =====================================================================
-// CURSOR — standard pointer shape, tinted to match the active theme.
+// CURSOR - standard pointer shape, tinted to match the active theme.
 // No custom crosshair, no DOM element following the mouse. We simply
 // generate a tiny SVG arrow cursor in the current accent color and set
 // it via CSS `cursor:url()`, keeping things minimal and immersive.

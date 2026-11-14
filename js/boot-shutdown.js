@@ -24,9 +24,9 @@ function triggerShutdown(onDone){
     {t:1080,s:"[ <span style='color:#28c840'>OK</span> ] Unmounting /dev/sda1 ..."},
     {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Stopping network manager (root-net)..."},
     {t:1520,s:"[ <span style='color:#28c840'>OK</span> ] All processes terminated."},
-    {t:1760,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 3...</span>"},
-    {t:2360,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 2...</span>"},
-    {t:2960,s:"<span style='color:#00ff9d'>Ankesh-OS — Rebooting in 1...</span>"},
+    {t:1760,s:"<span style='color:#00ff9d'>Ankesh-OS - Rebooting in 3...</span>"},
+    {t:2360,s:"<span style='color:#00ff9d'>Ankesh-OS - Rebooting in 2...</span>"},
+    {t:2960,s:"<span style='color:#00ff9d'>Ankesh-OS - Rebooting in 1...</span>"},
     {t:3560,s:"<span style='color:#ff5f57'>⏻  System halted.</span>"},
   ];
   shutLines.forEach(function(l){
@@ -48,7 +48,7 @@ function triggerShutdown(onDone){
       {t:1300,s:"[ <span style='color:#28c840'>OK</span> ] Started Network Manager (root-net)"},
       {t:1500,s:"[ <span style='color:#28c840'>OK</span> ] OpenSSH server running on :22"},
       {t:1700,s:"[ <span style='color:#28c840'>OK</span> ] Firewall rules applied (iptables + nftables)"},
-      {t:1900,s:"[ <span style='color:#28c840'>OK</span> ] VPN tunnel up (wg0 — 10.8.0.1)"},
+      {t:1900,s:"[ <span style='color:#28c840'>OK</span> ] VPN tunnel up (wg0 - 10.8.0.1)"},
       {t:2100,s:"[ <span style='color:#febc2e'>!!</span> ] <span style='color:#febc2e'>Security notice: 3 failed SSH attempts since last boot</span>"},
       {t:2340,s:"[ <span style='color:#28c840'>OK</span> ] Starting portfolio renderer (v2.5.1)..."},
       {t:2560,s:"[ <span style='color:#28c840'>OK</span> ] Loading VAPT workspace..."},
@@ -70,7 +70,7 @@ function triggerShutdown(onDone){
   },4000);
 }
 // ══════════════════════════════════════════════════════════════════
-// INTRUDER ALERT TOAST — cybersec flavoured pop-up on load, backed by
+// INTRUDER ALERT TOAST - cybersec flavoured pop-up on load, backed by
 // the visitor's real browser/OS and an approximate IP-geolocation
 // lookup so it reads as an actual recon hit, not flavour text.
 // ══════════════════════════════════════════════════════════════════

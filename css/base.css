@@ -36,7 +36,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:"Fira Code",monospa
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),0.2);border-radius:3px;}
 
-/* Custom scrollbars — js/scrollbars.js hides the native one on elements it
+/* Custom scrollbars - js/scrollbars.js hides the native one on elements it
    manages and paints this instead, because Edge's Fluent scrollbar ignores
    ::-webkit-scrollbar / scrollbar-color entirely and always draws its own
    native-themed bar regardless of page CSS. */

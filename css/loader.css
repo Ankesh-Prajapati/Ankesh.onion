@@ -1,7 +1,7 @@
 /* ── FAST TERMINAL BOOT SCREEN ──
    A quick, lightweight boot sequence (~1-1.5s) instead of the old
    multi-second hacking animation. No canvas rain, no multi-phase
-   overlay — just a terminal box printing a few boot lines. */
+   overlay - just a terminal box printing a few boot lines. */
 #loadingScreen {
   position: fixed; inset: 0; z-index: 999999;
   background: #0d1117;

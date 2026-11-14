@@ -1,4 +1,4 @@
-// ══ FIREWALL — ROOTBOY cartridge ══════════════════════════════════
+// ══ FIREWALL - ROOTBOY cartridge ══════════════════════════════════
 // Space-Invaders-style: hold left/right to move, B (or up) to fire,
 // S to pause. Five themed waves cycle (classic, armored rootkits,
 // diving worms, mixed V, ransomware boss) and speed up each loop.

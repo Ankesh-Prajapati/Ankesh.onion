@@ -1,5 +1,5 @@
 // =====================================================================
-// FAST BOOT SEQUENCE — quick terminal-style boot (~1-1.5s total)
+// FAST BOOT SEQUENCE - quick terminal-style boot (~1-1.5s total)
 // then hands off to the desktop.
 // =====================================================================
 (function () {

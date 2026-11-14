@@ -1,4 +1,4 @@
-// ══ TETRIS — ROOTBOY cartridge ════════════════════════════════════
+// ══ TETRIS - ROOTBOY cartridge ════════════════════════════════════
 // left/right move · up rotate · down soft drop · B hard drop · S pause
 (function(){
   var COLS=10,ROWS=20,BEST_KEY='tetris_best';

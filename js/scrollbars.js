@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// CUSTOM SCROLLBARS — Edge's Fluent scrollbar ignores author CSS
+// CUSTOM SCROLLBARS - Edge's Fluent scrollbar ignores author CSS
 // (::-webkit-scrollbar / scrollbar-color) and always paints its own
 // native-themed bar, so the only way to get a consistent themed look
 // across browsers is to hide the native one and draw this instead.

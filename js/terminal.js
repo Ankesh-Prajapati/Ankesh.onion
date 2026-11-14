@@ -32,7 +32,7 @@ const termData={
 `,
   projects:`<span class="t-green">1. Warden</span> <span class="t-muted">(private)</span>
    Static security analysis for Windows
-   thick-client apps — secrets, DLL hijack
+   thick-client apps: secrets, DLL hijack
    risk, code-signing, RE exposure.
 
 <span class="t-green">2. GhostRecon</span>
@@ -49,10 +49,10 @@ const termData={
 `,
   certs:`<span class="t-green">✓</span> Certified Ethical Hacker (CEH)
 <span class="t-green">✓</span> Certified Network Security Practitioner (CNSP)
-<span class="t-green">✓</span> Junior Cybersecurity Analyst — Cisco
-<span class="t-green">✓</span> Endpoint Security — Cisco
-<span class="t-green">✓</span> PHP & MySQL Training — IIT Bombay
-<span class="t-green">✓</span> Power BI — Parul University
+<span class="t-green">✓</span> Junior Cybersecurity Analyst - Cisco
+<span class="t-green">✓</span> Endpoint Security - Cisco
+<span class="t-green">✓</span> PHP & MySQL Training - IIT Bombay
+<span class="t-green">✓</span> Power BI - Parul University
 `,
   contact:`<span class="t-green">Email:</span>    ankeshprajapati217@gmail.com
 <span class="t-green">LinkedIn:</span> linkedin.com/in/ankesh-prajapati-0a87a8249
@@ -107,7 +107,7 @@ function initTerminal(){
   var ta=document.getElementById("termCapture");
   if(!ta)return;
   _tv=""; ta.value="";
-  printTerm("<span class=\"t-green\">Ankesh-OS</span> <span class=\"t-muted\">v2.5.1 — ankesh@root</span>");
+  printTerm("<span class=\"t-green\">Ankesh-OS</span> <span class=\"t-muted\">v2.5.1 - ankesh@root</span>");
   printTerm("<span class=\"t-muted\">─────────────────────────────────────</span>");
   printTerm("Type <span class=\"t-green\">help</span> for commands. Tab to autocomplete.");
   printTerm("");
@@ -201,7 +201,7 @@ function handleTermCmd(cmd){
     printTerm('  <span class="t-green">open &lt;window&gt;</span>  <span class="t-muted">e.g. open about</span>');
     printTerm('  <span class="t-muted">Tab</span> autocomplete  ·  <span class="t-muted">↑↓</span> history  ·  <span class="t-muted">Ctrl+C</span> cancel');
   } else if(c==="whoami"){
-    printTerm('<span class="t-green">ankesh</span> — Security Analyst | VAPT Specialist');
+    printTerm('<span class="t-green">ankesh</span> - Security Analyst | VAPT Specialist');
   } else if(c==="pwd"){
     printTerm('<span class="t-muted">/home/ankesh/portfolio</span>');
   } else if(c==="ls"||c==="ls -la"){
@@ -250,7 +250,7 @@ function handleTermCmd(cmd){
   } else if(termData[c]){
     printTerm(termData[c]);
   } else {
-    printTerm(`<span class="t-red">command not found: ${escHtml(cmd)}</span> — type <span class="t-green">help</span>`);
+    printTerm(`<span class="t-red">command not found: ${escHtml(cmd)}</span>, type <span class="t-green">help</span>`);
   }
 }
 
@@ -295,7 +295,7 @@ function runHack(target, done){
     {delay:9100, fn:()=>{
       printTerm(`<span class="t-red">root@${tgt}:/#</span> <span class="t-muted">uid=0(root) gid=0(root) groups=0(root)</span>`);
       printTerm(`<span class="t-muted">┌──────────────────────────────────────┐</span>`);
-      printTerm(`<span class="t-muted">│</span>  <span class="t-red">⚡ BREACH COMPLETE</span> — <span class="t-green">ROOT ACCESS</span>     <span class="t-muted">│</span>`);
+      printTerm(`<span class="t-muted">│</span>  <span class="t-red">⚡ BREACH COMPLETE</span> - <span class="t-green">ROOT ACCESS</span>     <span class="t-muted">│</span>`);
       printTerm(`<span class="t-muted">│</span>  <span class="t-muted">[ FOR EDUCATIONAL / CTF USE ONLY ]</span>   <span class="t-muted">│</span>`);
       printTerm(`<span class="t-muted">└──────────────────────────────────────┘</span>`);
       if(done)done();

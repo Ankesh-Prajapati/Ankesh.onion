@@ -1,4 +1,4 @@
-// ══ SNAKE — ROOTBOY cartridge ═════════════════════════════════════
+// ══ SNAKE - ROOTBOY cartridge ═════════════════════════════════════
 // No name prompt: every run gets a random callsign for the local
 // high-score table. The outer ring of cells is a solid wall.
 (function(){

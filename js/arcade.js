@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════════
-// ROOTBOY — handheld console that hosts the portfolio games.
+// ROOTBOY - handheld console that hosts the portfolio games.
 // Each game registers a cartridge:
 //   {id,title,sprite,help,best(),bestLabel(),start(),tick(dt,t),
 //    input(btn)->handled, draw?(t), pause?(), resume?(), stop?(), tap?()}

@@ -11,7 +11,7 @@
   white-space:normal;
   word-break:break-word;
 }
-/* Every output line — no extra margin, no min-height */
+/* Every output line - no extra margin, no min-height */
 .term-line{
   display:block;
   margin:0;padding:0;

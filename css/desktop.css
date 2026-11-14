@@ -152,7 +152,7 @@
 .notif-title{color:var(--accent);font-size:0.72rem;margin-bottom:4px;}
 @keyframes slideInNotif{from{transform:translateX(20px);opacity:0;}to{transform:translateX(0);opacity:1;}}
 
-/* ID card overlay — opens as just the card itself (no window chrome) */
+/* ID card overlay - opens as just the card itself (no window chrome) */
 .id-card-overlay{
   position:fixed;inset:0;z-index:99985;
   background:rgba(0,0,0,0.55);backdrop-filter:blur(2px);
@@ -161,7 +161,7 @@
 }
 .id-card-overlay.show{display:flex;}
 
-/* ID ticket — adapted from the Uiverse "ticket" component (zeeshan_2112),
+/* ID ticket - adapted from the Uiverse "ticket" component (zeeshan_2112),
    recolored to the site's theme accent; interaction is the original's
    hover/active 3D tilt. Scale is driven entirely by this font-size since
    every dimension inside is in em, so responsive sizing is one property. */

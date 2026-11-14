@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// DECRYPT TEXT REVEAL — scrambles then resolves to the real text,
+// DECRYPT TEXT REVEAL - scrambles then resolves to the real text,
 // like a terminal brute-forcing a string. Supports <br> line breaks.
 // ══════════════════════════════════════════════════════
 var DECRYPT_CHARS="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*";

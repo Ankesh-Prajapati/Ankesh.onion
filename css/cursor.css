@@ -1,7 +1,7 @@
 /* ── CURSOR ──
    Standard system pointer everywhere. We only tint a tiny inline SVG
    arrow with the current theme accent color and swap it in via
-   `cursor: url(...)`, so the shape stays a normal, familiar pointer —
+   `cursor: url(...)`, so the shape stays a normal, familiar pointer -
    just colored to match the active theme. No custom crosshair,
    no cursor-following DOM elements. */
 html, body {

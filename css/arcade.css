@@ -1,5 +1,5 @@
 /* =====================================================================
-   ROOTBOY — handheld console hosting the games (js/arcade.js).
+   ROOTBOY - handheld console hosting the games (js/arcade.js).
    Every dimension is in em off .arc-device's font-size, so the whole
    device scales with that one property (desktop: viewport height;
    mobile: whichever of width/height runs out first).
@@ -24,7 +24,7 @@
 .arc-device.pop{animation:arcRise .5s cubic-bezier(.2,1.25,.35,1) both;}
 @keyframes arcRise{from{opacity:0;transform:translateY(2.5em) scale(.94);}to{opacity:1;transform:none;}}
 
-/* shell finishes — cycled by the THEME button */
+/* shell finishes - cycled by the THEME button */
 .arc-device[data-shell="glass"]{--sh1:rgba(34,44,52,.62);--sh2:rgba(14,19,24,.76);--hl:rgba(255,255,255,.12);--circ:.32;}
 .arc-device[data-shell="glass"] .arc-top,
 .arc-device[data-shell="glass"] .arc-pad{backdrop-filter:blur(.5em);-webkit-backdrop-filter:blur(.5em);}

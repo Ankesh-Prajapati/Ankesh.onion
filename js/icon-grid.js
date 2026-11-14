@@ -1,6 +1,6 @@
 
 // ══════════════════════════════════════════════════════════════
-// DESKTOP ICON GRID — snap grid, drag on desktop only, responsive
+// DESKTOP ICON GRID - snap grid, drag on desktop only, responsive
 // ══════════════════════════════════════════════════════════════
 (function(){
   var STORE_KEY  = 'ankesh_icon_grid_v2';

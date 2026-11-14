@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════
-// DESKTOP ANIMATED BACKGROUND — matrix rain / network
+// DESKTOP ANIMATED BACKGROUND - matrix rain / network
 // ══════════════════════════════════════════════════════
 var MATRIX_FONT=16;
 var MATRIX_CHARS="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -34,7 +34,7 @@ function _bgResize(){
   _bgPackets=[];
 }
 
-// classic matrix code-rain — same algorithm as the canonical canvas demo:
+// classic matrix code-rain - same algorithm as the canonical canvas demo:
 // one fixed column grid, a single falling glyph per column, each column
 // independently re-rolls a ~2.5% chance to restart once it clears the bottom.
 function _drawMatrix(accent){
@@ -59,7 +59,7 @@ function _drawNetwork(accent){
     if(p.x<0||p.x>_bgW) p.vx*=-1;
     if(p.y<0||p.y>_bgH) p.vy*=-1;
   }
-  // Build the mesh as a forest (no closed loops) — a plain distance+degree
+  // Build the mesh as a forest (no closed loops) - a plain distance+degree
   // cap still lets 3 mutually-close nodes form a triangle, and even a thin
   // translucent triangle outline reads as a solid filled blob once a few
   // edges cross in a small area. Union-find blocks any edge that would
@@ -81,7 +81,7 @@ function _drawNetwork(accent){
     var i=edges[e].i,j=edges[e].j,dist=edges[e].dist;
     if(degree[i]>=MAX_DEGREE||degree[j]>=MAX_DEGREE)continue;
     var ri=find(i),rj=find(j);
-    if(ri===rj)continue; // would close a loop — skip
+    if(ri===rj)continue; // would close a loop - skip
     parent[ri]=rj;
     degree[i]++;degree[j]++;
     var a=particles[i],b=particles[j];

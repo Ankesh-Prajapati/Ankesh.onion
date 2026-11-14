@@ -1,4 +1,4 @@
-// ══ HACK TYPER — ROOTBOY cartridge ════════════════════════════════
+// ══ HACK TYPER - ROOTBOY cartridge ════════════════════════════════
 // Picks a difficulty on the D-pad, then types into a hidden textarea
 // (physical keyboard, or the on-screen keyboard after tapping the screen).
 (function(){

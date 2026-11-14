@@ -1,5 +1,5 @@
 // =====================================================================
-// WINDOW MANAGER — open/close/minimize/maximize/focus/drag/resize
+// WINDOW MANAGER - open/close/minimize/maximize/focus/drag/resize
 // =====================================================================
 let activeWindow = null;
 let zCounter = 10;

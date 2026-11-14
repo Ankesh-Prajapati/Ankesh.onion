@@ -65,7 +65,7 @@
   .id-ticket-wrapper{font-size:9.5px!important;}
 }
 @media (max-height: 420px) {
-  /* short/landscape viewports — shrink by viewport height, not just width */
+  /* short/landscape viewports - shrink by viewport height, not just width */
   .id-ticket-wrapper{font-size:10px!important;}
 }
 
