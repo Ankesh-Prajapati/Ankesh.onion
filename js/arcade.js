@@ -27,6 +27,7 @@ var Arcade=(function(){
   var SPRITES={
     snake:["..AAAA...",".AKAAKA..",".AAAAAAR.","..AAAA...","AA..AA...","AAAAAA...",".AAAA...."],
     tetro:["CCCPPPCCC","CwCPwPCwC","CCCPPPCCC","...YYY...","...YwY...","...YYY..."],
+    bug:[".R....R.","..R..R..",".RRRRRR.","RRKRRKRR",".RRRRRR.","R.RRRR.R",".R....R."],
     term:["WWWWWWWWWW","WKKKKKKKKW","WKAKKKKKKW","WKKAKKKKKW","WKAKKAAAKW","WKKKKKKKKW","WWWWWWWWWW","...WWWW..."]
   };
   function col(ch){return {A:A.hex,K:'#04100a',R:'#ff3355',P:'#b06fff',C:'#00c8ff',Y:'#febc2e',W:'#7d8a96',w:'rgba(255,255,255,.55)'}[ch];}
@@ -49,7 +50,7 @@ var Arcade=(function(){
   }
 
   // ── chiptune sfx (WebAudio, created on first user gesture) ──
-  var ac=null;
+  var ac=null,marchI=0;
   function tone(f,d,o){
     o=o||{};
     try{
@@ -78,7 +79,10 @@ var Arcade=(function(){
     crash:function(){tone(220,.35,{type:'sawtooth',to:55,vol:.045});},
     over:function(){seq([392,330,262,196],.16,.13);},
     boot:function(){seq([392,523,659,784],.13,.1,.03);tone(1047,.35,{at:.42,vol:.03});},
-    key:function(){tone(1500,.012,{vol:.015});}
+    key:function(){tone(1500,.012,{vol:.015});},
+    shoot:function(){tone(1400,.07,{to:500,vol:.025});},
+    zap:function(){tone(320,.14,{type:'sawtooth',to:70,vol:.04});},
+    march:function(){tone([98,92,87,82][marchI++%4],.07,{type:'triangle',vol:.07});}
   };
   function sfx(n){
     if(muted||!SFX[n])return;SFX[n]();
@@ -151,7 +155,11 @@ var Arcade=(function(){
     cancelAnimationFrame(raf);
     inner.classList.remove('crt-off','crt-on');
   }
-  function blur(){if(state==='game')pause();}
+  function blur(){
+    if(state==='game')pause();
+    // keyup/pointerup can be missed once focus leaves; don't leave buttons stuck down
+    if(dev)dev.querySelectorAll('[data-btn].down').forEach(function(b){b.classList.remove('down');});
+  }
 
   // ── views ──
   function show(v){
@@ -378,6 +386,8 @@ var Arcade=(function(){
   }
 
   api.register=function(g){games.push(g);};
+  // held state for games that poll (e.g. smooth movement); keyboard and pointer both toggle .down
+  api.isDown=function(n){return !!(dev&&dev.querySelector('[data-btn="'+n+'"].down'));};
   api.open=open;api.close=close;api.blur=blur;
   api.toMenu=toMenu;api.gameOver=gameOver;api.sfx=sfx;api.pad=pad;
   api.hud=function(items){hudEl.innerHTML=items.map(function(p){return '<span>'+p[0]+' <b>'+escHtml(String(p[1]))+'</b></span>';}).join('');};
