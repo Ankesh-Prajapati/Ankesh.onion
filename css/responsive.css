@@ -29,6 +29,11 @@
     gap:6px!important;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
+    /* desktop.css sets pointer-events:none on this container so desktop clicks
+       pass through between icons; iOS Safari then refuses to scroll it as a dock */
+    pointer-events:auto!important;
+    touch-action:pan-x;
+    overscroll-behavior-x:contain;
   }
   #desktopIcons::-webkit-scrollbar{display:none;}
   .icon{
